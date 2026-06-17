@@ -1,81 +1,54 @@
 ---
 title: Introduction
-description: A template for building and publishing your own shadcn registry components.
+description: A shadcn-style registry of complete agent recipes for Eve and Flue.
 ---
 
-A **ready-to-use template** for creating and publishing custom components to the [shadcn registry](https://ui.shadcn.com/docs/registry).
-
-## What You Get
-
-- 📦 **Simple structure** - One component file + one config file
-- 📚 **Documentation site** - Powered by Fumadocs
-- 🎨 **Registry compatible** - Works with `npx shadcn add`
-- 🤖 **[Agent ready](https://www.mintlify.com/score/startercn)** - Ships with `llms.txt`, `llms-full.txt`, API catalog routes, and agent skill discovery endpoints
-- 🔊 **[Web audio feedback](https://audio.raphaelsalaja.com/)** - Built-in interaction sounds powered by `@web-kits/audio`
-- 📳 **[Web haptics](https://haptics.lochie.me/)** - Optional haptic feedback for supported devices via `web-haptics`
-- ✨ **[Motion animations](https://motion.dev/)** - Uses `motion` for animated UI states and transitions
-- 🎯 **[Animated icons](https://lucide-animated.com/)** - Includes reusable animated icons for buttons, sharing, and navigation
-- 🔄 **[View transitions](https://nextjs.org/docs/app/api-reference/config/next-config-js/viewTransition)** - Uses Next.js view transitions for smoother page changes
-- 🚀 **Deploy ready** - Deploy anywhere
-
-## Tech Stack
-
-- `Next.js 16` + App Router
-- `React 19`
-- `Tailwind CSS 4`
-- `Fumadocs`
-- `motion`
-- `@web-kits/audio`
-- `web-haptics`
-- `shiki` + `rehype-pretty-code`
+**agentcn** is a registry of complete, production-ready agent recipes for the
+[Eve](https://vercel.com/docs/eve) and [Flue](https://flueframework.com)
+frameworks. It is **not** a UI component registry — each recipe distributes the
+backend agent files (instructions, tools, skills, workflows) that you copy
+straight into your Eve or Flue project with the shadcn CLI.
 
 ## How It Works
 
-1. Edit your component at `registry/new-york/your-component.tsx`
-2. Update `registry.json` with your component name and details
-3. Run `pnpm registry:build`
-
-That's it. Deploy your app and users can install your component:
+Browse the [Agents](/docs/agents) section, pick a recipe, and run its install
+command:
 
 ```bash
-npx shadcn@latest add https://your-site.com/r/your-component.json
+npx shadcn@latest add https://agentcn.sh/r/eve/competitor-intel
 ```
 
-## FAQ
+The CLI writes the recipe's files into your project at their target paths. From
+there the code is yours — swap the model, extend the tools, or reshape the
+output to fit your use case.
 
-<Accordion type="multiple">
+## Why Recipes Instead of Packages
 
-<AccordionItem value="faq-1">
-<AccordionTrigger>
-Why copy/paste instead of npm packages?
-</AccordionTrigger>
-<AccordionContent>
+The shadcn philosophy gives you **ownership** of the code. Instead of importing
+an opaque agent from a package, you get the full source — agent definition,
+instructions, tools, and skills — and can customize every part without fighting
+library constraints.
 
-The shadcn philosophy gives you **ownership** of the code. You can customize components to your exact needs without fighting library constraints.
+## Frameworks
 
-</AccordionContent>
-</AccordionItem>
+- **[Eve](https://vercel.com/docs/eve)** — a filesystem-first framework for
+  durable backend AI agents that run on Vercel Functions.
+- **[Flue](https://flueframework.com)** — an agent runtime with first-class
+  subagents, skills, and bounded workflows.
 
-<AccordionItem value="faq-2">
-<AccordionTrigger>
-Which frameworks are supported?
-</AccordionTrigger>
-<AccordionContent>
+Every recipe ships in both flavors where it makes sense, so you can adopt the
+pattern in whichever framework you already use.
 
-Any React framework: Next.js, Remix, Astro, Gatsby, Vite, etc.
+## What's Included
 
-</AccordionContent>
-</AccordionItem>
-
-<AccordionItem value="faq-3">
-<AccordionTrigger>
-Can I publish multiple components?
-</AccordionTrigger>
-<AccordionContent>
-
-Yes! Add more files to `registry/new-york/` and list them in `registry.json`.
-
-</AccordionContent>
-</AccordionItem>
-
-</Accordion>
+- 📦 **Copy-paste recipes** — install with `npx shadcn add`
+- 🧪 **Live previews** — run each agent right from its docs page
+- 📚 **Documentation site** — powered by Fumadocs
+- 🤖 **Agent ready** — ships with `llms.txt`, `llms-full.txt`, API catalog
+  routes, and agent skill discovery endpoints
+- 🔊 **[Web audio feedback](https://audio.raphaelsalaja.com/)** — built-in
+  interaction sounds powered by `@web-kits/audio`
+- 📳 **[Web haptics](https://haptics.lochie.me/)** — optional haptic feedback via
+  `web-haptics`
+- ✨ **[Motion animations](https://motion.dev/)** — animated UI states and
+  transitions

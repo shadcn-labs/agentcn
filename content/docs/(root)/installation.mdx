@@ -1,103 +1,49 @@
 ---
 title: Installation
-description: How to use this template to build your own shadcn component.
+description: Install an agent recipe into your Eve or Flue project.
 ---
 
-## Building Your Component
+## Prerequisites
 
-### 1. Fork the Template
+Start from an existing agent project (or scaffold one):
 
-Click "Use this template" on [GitHub](https://github.com/mehmetpekcan/shadcn-registry-kit).
+- **Eve** — `npx eve@latest init my-agent` ([docs](https://vercel.com/docs/eve))
+- **Flue** — `npx flue@latest init my-agent` ([docs](https://flueframework.com))
 
-### 2. Install Dependencies
+Each recipe declares its framework package (`eve` or `@flue/runtime`) as a
+dependency, so the shadcn CLI will prompt to install it if it is missing.
 
-```bash
-pnpm install
-```
+## Add a Recipe
 
-### 3. Create Your Component
-
-Replace the placeholder at `registry/new-york/your-component.tsx`:
-
-```tsx
-import { forwardRef, HTMLAttributes } from "react";
-import { cn } from "@/lib/utils";
-
-export interface MyButtonProps extends HTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "outline";
-}
-
-const MyButton = forwardRef<HTMLButtonElement, MyButtonProps>(
-  ({ className, variant = "default", ...props }, ref) => {
-    return (
-      <button
-        ref={ref}
-        className={cn(
-          "rounded-md px-4 py-2 font-medium",
-          variant === "default" && "bg-primary text-primary-foreground",
-          variant === "outline" && "border border-input",
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
-
-MyButton.displayName = "MyButton";
-
-export { MyButton };
-```
-
-### 4. Update registry.json
-
-```json
-{
-  "name": "your-name/your-registry",
-  "homepage": "https://your-site.com",
-  "items": [
-    {
-      "name": "my-button",
-      "type": "registry:ui",
-      "title": "My Button",
-      "description": "A custom button component.",
-      "files": [
-        {
-          "path": "registry/new-york/my-button.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/my-button.tsx"
-        }
-      ]
-    }
-  ]
-}
-```
-
-### 5. Build & Deploy
+From your project root, run the install command shown on the recipe's page. For
+example, the [Competitor Intelligence](/docs/agents/competitor-intel) agent:
 
 ```bash
-pnpm registry:build
-pnpm build
+# Eve
+npx shadcn@latest add https://agentcn.sh/r/eve/competitor-intel
 ```
-
-Deploy your app and your component is live!
-
----
-
-## Installing Components
-
-To install a component from any registry built with this template:
 
 ```bash
-npx shadcn@latest add https://example.com/r/my-button.json
+# Flue
+npx shadcn@latest add https://agentcn.sh/r/flue/competitor-intel
 ```
 
-Then use it:
+The CLI writes the recipe's files into your project at their target paths — for
+Eve, under `agent/`; for Flue, under `agents/`, `workflows/`, `tools/`, and
+`skills/`. Your framework discovers them automatically.
 
-```tsx
-import { MyButton } from "@/components/ui/my-button";
+## Customize
 
-export function Demo() {
-  return <MyButton variant="outline">Click me</MyButton>;
-}
-```
+The installed files are plain source — you own them. Common changes:
+
+- **Swap the model** in the agent definition.
+- **Extend the tools** by adding files alongside the installed ones.
+- **Reshape the output** schema to capture the fields you care about.
+
+See each recipe's **Customization** section for specifics.
+
+## Run It
+
+Start your project's dev server (for example `pnpm dev`) and invoke the agent
+through your framework. You can also try a recipe before installing it using the
+**live preview** embedded in its docs page.

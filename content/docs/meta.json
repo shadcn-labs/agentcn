@@ -1,4 +1,4 @@
 {
   "root": true,
-  "pages": ["(root)", "components"]
+  "pages": ["(root)", "agents"]
 }
