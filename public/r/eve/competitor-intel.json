@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that scrapes and analyzes competitor pages, returns a structured report.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-haiku-4-5',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a competitive intelligence agent.\n\nFor each competitor URL provided, use scrape_url to fetch their page and analyze\npositioning, pricing, and key features. When all URLs are analyzed, call\nsynthesize_report with the complete findings.\n\nWork through each URL sequentially. Only report what you found on the page — do not hallucinate.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { z } from 'zod'\n\nexport default defineTool({\n  description: 'Scrapes a URL and returns the page content as markdown.',\n  inputSchema: z.object({\n    url: z.string().url(),\n  }),\n  async execute({ url }) {\n    const res = await fetch(`https://r.jina.ai/${url}`)\n    return res.text()\n  },\n})\n",
+      "path": "agent/tools/scrape_url.ts",
+      "target": "agent/tools/scrape_url.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { z } from 'zod'\n\nexport default defineTool({\n  description: 'Saves the final synthesized competitor report. Call this once all URLs have been analyzed.',\n  inputSchema: z.object({\n    competitors: z.array(z.object({\n      url: z.string(),\n      positioning: z.string(),\n      pricing: z.string(),\n      keyFeatures: z.array(z.string()),\n    })),\n    summary: z.string(),\n  }),\n  async execute(report) {\n    return JSON.stringify(report, null, 2)\n  },\n})\n",
+      "path": "agent/tools/synthesize_report.ts",
+      "target": "agent/tools/synthesize_report.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "---\nname: research\ndescription: Deep web research process. Use when gathering information about companies, products, or markets from URLs.\n---\n\n## Research Process\n\n1. Fetch the URL using scrape_url\n2. Extract: positioning, pricing tiers, key features, target audience\n3. Only report what was found on the page — do not hallucinate\n4. Note gaps where information was unavailable\n",
+      "path": "agent/skills/research/SKILL.md",
+      "target": "agent/skills/research/SKILL.md",
+      "type": "registry:file"
+    }
+  ],
+  "name": "competitor-intel",
+  "title": "Competitor Intelligence Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

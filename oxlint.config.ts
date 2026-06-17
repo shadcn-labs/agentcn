@@ -8,6 +8,8 @@ export default defineConfig({
   extends: [core, react, next, vitest],
   ignorePatterns: [
     "public/r/**",
+    "registry/eve/**",
+    "registry/flue/**",
     ".agents/**",
     ".cursor/**",
     ".changeset/**",

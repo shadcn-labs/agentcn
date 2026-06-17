@@ -7,7 +7,7 @@
     "build": "pnpm registry:build && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "registry:build": "shadcn build registry.json --output ./public/r",
+    "registry:build": "node --experimental-strip-types scripts/build-registry.mts",
     "postinstall": "fumadocs-mdx",
     "check": "ultracite check",
     "fix": "ultracite fix",
