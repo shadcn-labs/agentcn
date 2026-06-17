@@ -1,19 +1,20 @@
 {
-  "name": "shadcn/registry-kit",
-  "homepage": "https://shadcn-registry-kit.vercel.app",
+  "homepage": "https://agentcn.sh",
   "items": [
     {
-      "name": "your-component",
-      "type": "registry:ui",
-      "title": "Your Component",
-      "description": "A placeholder component. Replace this with your custom shadcn component.",
-      "files": [
-        {
-          "path": "registry/new-york/your-component.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/your-component.tsx"
-        }
-      ]
+      "description": "Eve agent that scrapes and analyzes competitor pages, returns a structured report.",
+      "framework": "eve",
+      "name": "eve/competitor-intel",
+      "title": "Competitor Intelligence Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that scrapes and analyzes competitor pages using a subagent pattern, returns a structured report.",
+      "framework": "flue",
+      "name": "flue/competitor-intel",
+      "title": "Competitor Intelligence Agent",
+      "type": "registry:block"
     }
-  ]
+  ],
+  "name": "agentcn"
 }

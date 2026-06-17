@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover";
 import { ROUTES } from "@/constants/routes";
 import { useFeedback } from "@/hooks/use-feedback";
-import { EXCLUDED_SECTIONS, isComponentsFolder } from "@/lib/docs";
+import { EXCLUDED_SECTIONS, isAgentsFolder } from "@/lib/docs";
 import { getAllPagesFromFolder, getPagesFromFolder } from "@/lib/page-tree";
 import { cn } from "@/lib/utils";
 
@@ -154,9 +154,9 @@ export const MobileNav = ({
               return null;
             }
 
-            const pages = isComponentsFolder(item)
+            const pages = isAgentsFolder(item)
               ? getAllPagesFromFolder(item).filter(
-                  (page) => page.url !== ROUTES.DOCS_COMPONENTS
+                  (page) => page.url !== ROUTES.DOCS_AGENTS
                 )
               : getPagesFromFolder(item);
 

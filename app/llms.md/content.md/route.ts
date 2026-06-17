@@ -18,7 +18,7 @@ ${AGENT_DOCS_DIRECTIVE_MARKDOWN}
 ## Quick links
 
 - [Get started](${base}${ROUTES.DOCS_INSTALLATION}.md)
-- [Browse components](${base}${ROUTES.DOCS_COMPONENTS}.md)
+- [Browse agents](${base}${ROUTES.DOCS_AGENTS}.md)
 - [Documentation](${base}${ROUTES.DOCS}.md)
 - [LLM index (llms.txt)](${base}${ROUTES.LLMS})
 - [API catalog](${base}${ROUTES.API_CATALOG})

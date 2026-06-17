@@ -1,0 +1,14 @@
+{
+  "name": "competitor-intel",
+  "type": "registry:block",
+  "title": "Competitor Intelligence Agent",
+  "description": "Flue agent that scrapes and analyzes competitor pages using a subagent pattern, returns a structured report.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/competitor-intel.ts", "type": "registry:file" },
+    { "path": "workflows/competitor-intel.ts", "type": "registry:file" },
+    { "path": "tools/scrape.ts", "type": "registry:file" },
+    { "path": "skills/research/SKILL.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

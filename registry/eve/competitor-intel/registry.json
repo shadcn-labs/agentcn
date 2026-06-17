@@ -1,0 +1,15 @@
+{
+  "name": "competitor-intel",
+  "type": "registry:block",
+  "title": "Competitor Intelligence Agent",
+  "description": "Eve agent that scrapes and analyzes competitor pages, returns a structured report.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" },
+    { "path": "agent/tools/scrape_url.ts", "type": "registry:file" },
+    { "path": "agent/tools/synthesize_report.ts", "type": "registry:file" },
+    { "path": "agent/skills/research/SKILL.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

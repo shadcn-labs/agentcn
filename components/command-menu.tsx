@@ -4,7 +4,6 @@ import type { Root as PageTreeRoot } from "fumadocs-core/page-tree";
 import {
   ArrowRightIcon,
   CornerDownLeftIcon,
-  CircleDashedIcon,
   SquareDashedIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -36,14 +35,13 @@ import { useFeedback } from "@/hooks/use-feedback";
 import { useIsMac } from "@/hooks/use-is-mac";
 import { useMutationObserver } from "@/hooks/use-mutation-observer";
 import { usePackageManager } from "@/hooks/use-package-manager";
-import { EXCLUDED_SECTIONS, isComponentsFolder } from "@/lib/docs";
+import { EXCLUDED_SECTIONS, isAgentsFolder } from "@/lib/docs";
 import { trackEvent } from "@/lib/events";
 import { getAllPagesFromFolder, getPagesFromFolder } from "@/lib/page-tree";
 import { cn } from "@/lib/utils";
 
 type DocUrlKind =
   | { kind: "theme"; slug: string }
-  | { kind: "component"; slug: string }
   | { kind: "template"; slug: string }
   | { kind: "page" };
 
@@ -55,10 +53,6 @@ const parseDocPageUrl = (url: string): DocUrlKind => {
   const themesIdx = parts.indexOf("themes");
   if (themesIdx !== -1 && parts[themesIdx + 1]) {
     return { kind: "theme", slug: parts[themesIdx + 1] };
-  }
-  const componentsIdx = parts.indexOf("components");
-  if (componentsIdx !== -1 && parts[componentsIdx + 1]) {
-    return { kind: "component", slug: parts.at(-1) ?? "" };
   }
   const templatesIdx = parts.indexOf("templates");
   if (templatesIdx !== -1 && parts[templatesIdx + 1]) {
@@ -95,9 +89,6 @@ const DocPageLeadingIcon = ({ parsed }: { parsed: DocUrlKind }) => {
   //     />
   //   );
   // }
-  if (parsed.kind === "component") {
-    return <CircleDashedIcon />;
-  }
   if (parsed.kind === "template") {
     return <SquareDashedIcon />;
   }
@@ -183,9 +174,9 @@ export const CommandMenu = ({
       }
 
       const pages = (
-        isComponentsFolder(item)
+        isAgentsFolder(item)
           ? getAllPagesFromFolder(item).filter(
-              (page) => page.url !== ROUTES.DOCS_COMPONENTS
+              (page) => page.url !== ROUTES.DOCS_AGENTS
             )
           : getPagesFromFolder(item)
       ).map((p) => ({
@@ -212,7 +203,7 @@ export const CommandMenu = ({
         );
         return;
       }
-      if (parsed.kind === "component" || parsed.kind === "template") {
+      if (parsed.kind === "template") {
         setCopyPayload(
           `${packageManager} dlx shadcn@latest add ${SITE.REGISTRY}/${parsed.slug}`
         );

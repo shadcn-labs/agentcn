@@ -1,4 +1,4 @@
-export const FALLBACK_SITE_ORIGIN = "https://startercn.vercel.app" as const;
+export const FALLBACK_SITE_ORIGIN = "https://agentcn.sh" as const;
 
 const getBaseUrl = () => {
   if (process.env.NODE_ENV !== "production") {
@@ -20,19 +20,19 @@ export const SITE = {
     TWITTER: "@alaymanguy",
   },
   DESCRIPTION: {
-    LONG: "A starter kit for building and publishing your own shadcn registry components.",
-    SHORT: "Build your own shadcn registry",
+    LONG: "A shadcn-style registry of complete agent recipes for Eve and Flue. Copy, paste, ship production-ready agent patterns.",
+    SHORT: "Agent recipes for Eve and Flue",
   },
   KEYWORDS: [
-    "shadcn",
+    "ai agents",
+    "agent registry",
+    "eve framework",
+    "flue framework",
+    "vercel eve",
     "shadcn registry",
-    "component registry",
-    "shadcn components",
-    "next.js",
-    "tailwindcss",
     "npx shadcn add",
   ] as const,
-  NAME: "startercn",
+  NAME: "agentcn",
   OG_IMAGE: `${baseUrl}/og`,
   REGISTRY: baseUrl,
   URL: baseUrl,

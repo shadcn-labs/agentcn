@@ -13,7 +13,7 @@ import { createPageMetadata } from "@/seo/metadata";
 
 export const metadata: Metadata = createPageMetadata({
   description:
-    "Support startercn — a template for building your own shadcn/ui registry. Sponsor tiers, stargazers, and how to contribute.",
+    "Support agentcn — a registry of complete agent recipes for Eve and Flue. Sponsor tiers, stargazers, and how to contribute.",
   path: ROUTES.SPONSOR,
   title: "Sponsor",
 });
@@ -29,12 +29,12 @@ const SponsorPage = async () => {
             Support the project
           </h1>
           <p className="text-base text-muted-foreground text-balance">
-            startercn is a template for building your own shadcn/ui registry.
-            Every component is free and that&apos;s not changing.
+            agentcn is a registry of complete agent recipes for Eve and Flue.
+            Every recipe is free and that&apos;s not changing.
           </p>
           <p className="text-sm text-muted-foreground text-balance">
-            I&apos;m not going to paywall features or gate components behind a
-            sponsorship tier. But if startercn made your project better, or you
+            I&apos;m not going to paywall features or gate recipes behind a
+            sponsorship tier. But if agentcn made your project better, or you
             just like that this exists in the open, sponsoring is a nice way to
             say so. It helps me justify spending real time on it instead of
             treating it like a side-of-desk thing.

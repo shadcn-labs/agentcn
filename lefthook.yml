@@ -9,4 +9,9 @@ pre-commit:
         - "**/*.json"
         - "**/*.jsonc"
         - "**/*.css"
+      exclude:
+        # Generated registry output and vendored recipe templates — never reformat.
+        - "public/r/**"
+        - "registry/eve/**"
+        - "registry/flue/**"
       stage_fixed: true

@@ -15,6 +15,8 @@ export default defineConfig({
   extends: [ultracite],
   ignorePatterns: [
     "public/r/**",
+    "registry/eve/**",
+    "registry/flue/**",
     ".agents/**",
     ".cursor/**",
     ".changeset/**",
