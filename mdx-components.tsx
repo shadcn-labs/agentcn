@@ -7,6 +7,7 @@ import { Callout } from "@/components/callout";
 import { CodeBlockCommand } from "@/components/code-block-command";
 import { CodeTabs } from "@/components/code-tabs";
 import { CopyButton } from "@/components/copy-button";
+import { FrameworkDocTabs } from "@/components/framework-doc-tabs";
 import { getIconForLanguageExtension } from "@/components/icons";
 import {
   Accordion,
@@ -63,6 +64,7 @@ export const mdxComponents = {
       </CardContent>
     </Card>
   ),
+  FrameworkDocTabs,
   Image: ({
     src,
     className,
