@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that answers questions about libraries and APIs by searching the live web and citing sources.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { webSearch } from '../tools/search.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You are a docs expert. Answer questions about libraries and APIs by calling\n    web_search, preferring official documentation. Cite every claim with a source\n    URL and include a short code example for usage questions. If the answer isn't\n    found, say so rather than guessing.\n  `,\n  tools: [webSearch],\n}))\n",
+      "path": "agents/docs-expert.ts",
+      "target": "agents/docs-expert.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nexport const webSearch = defineTool({\n  name: 'web_search',\n  description:\n    'Searches the web for documentation and returns ranked results with titles, URLs, and text snippets.',\n  parameters: v.object({\n    query: v.string(),\n    numResults: v.optional(v.number(), 5),\n  }),\n  execute: async ({ query, numResults }) => {\n    const res = await fetch('https://api.exa.ai/search', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        'x-api-key': process.env.EXA_API_KEY ?? '',\n      },\n      body: JSON.stringify({ query, numResults, contents: { text: true } }),\n    })\n    return res.text()\n  },\n})\n",
+      "path": "tools/search.ts",
+      "target": "tools/search.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "docs-expert",
+  "title": "Docs Expert Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}

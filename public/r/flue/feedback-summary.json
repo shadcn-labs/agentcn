@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that retrieves, categorizes, and summarizes customer feedback into an executive report with recommendations.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { getFeedback } from '../tools/get-feedback.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: `\n    You analyze customer feedback and produce actionable summaries.\n    Use get_feedback to retrieve entries (paginate as needed), categorize them\n    by theme and segment, and produce an executive summary with representative\n    quotes and concrete recommendations. Only summarize feedback you retrieved.\n  `,\n  tools: [getFeedback],\n}))\n",
+      "path": "agents/feedback-summary.ts",
+      "target": "agents/feedback-summary.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nexport const getFeedback = defineTool({\n  name: 'get_feedback',\n  description: 'Retrieves a page of customer feedback entries from the feedback data source.',\n  parameters: v.object({\n    page: v.optional(v.number(), 1),\n    pageSize: v.optional(v.number(), 50),\n    segment: v.optional(v.string()),\n  }),\n  execute: async ({ page, pageSize, segment }) => {\n    const url = new URL(process.env.FEEDBACK_API_URL ?? 'http://localhost:4111/feedback')\n    url.searchParams.set('page', String(page))\n    url.searchParams.set('pageSize', String(pageSize))\n    if (segment) {\n      url.searchParams.set('segment', segment)\n    }\n    const res = await fetch(url)\n    return res.text()\n  },\n})\n",
+      "path": "tools/get-feedback.ts",
+      "target": "tools/get-feedback.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "feedback-summary",
+  "title": "Customer Feedback Summary Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}

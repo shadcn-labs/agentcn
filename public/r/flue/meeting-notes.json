@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that runs a transcript through a workflow to return a structured summary, decisions, and action items.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: `\n    You turn a raw meeting transcript into structured notes:\n    a short summary, the key decisions, action items as owner/task pairs\n    (mark \"unassigned\" when no owner is named), and open questions.\n    Only include items grounded in the transcript.\n  `,\n}))\n",
+      "path": "agents/meeting-notes.ts",
+      "target": "agents/meeting-notes.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createAgent, type FlueContext } from '@flue/runtime'\nimport * as v from 'valibot'\n\nconst notetaker = createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: 'Extract structured notes from a meeting transcript. Only include items grounded in the transcript.',\n}))\n\nconst Notes = v.object({\n  summary: v.string(),\n  decisions: v.array(v.string()),\n  actionItems: v.array(v.object({\n    owner: v.string(),\n    task: v.string(),\n  })),\n  openQuestions: v.array(v.string()),\n})\n\nexport async function run({ init, payload }: FlueContext<{ transcript: string }>) {\n  const harness = await init(notetaker)\n  const session = await harness.session()\n\n  const response = await session.prompt(\n    `Produce structured meeting notes from this transcript:\\n\\n${payload.transcript}`,\n    { result: Notes }\n  )\n\n  return response.data\n}\n",
+      "path": "workflows/meeting-notes.ts",
+      "target": "workflows/meeting-notes.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "meeting-notes",
+  "title": "Meeting Notes Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}

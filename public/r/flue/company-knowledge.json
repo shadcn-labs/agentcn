@@ -1,0 +1,51 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that indexes internal documents into a vector store and answers questions over them, with a scheduled re-index workflow and PII redaction.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { indexDocument } from '../tools/index-document.ts'\nimport { searchKnowledge } from '../tools/search-knowledge.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You are a company knowledge assistant. Always call search_knowledge first —\n    the corpus is the source of truth — and answer from retrieved passages, citing\n    sources. Use index_document to add documents the user shares. If the corpus\n    doesn't cover the question, say so. Never reveal redacted PII.\n  `,\n  tools: [searchKnowledge, indexDocument],\n}))\n",
+      "path": "agents/company-knowledge.ts",
+      "target": "agents/company-knowledge.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import type { FlueContext } from '@flue/runtime'\nimport { indexDoc } from '../lib/vector-store.ts'\n\n/**\n * Scheduled re-index: feed it the documents pulled from your sources (Linear,\n * Notion, wiki) and it embeds them into the corpus. Run on a cron (e.g. every 6h).\n */\nexport async function run({\n  payload,\n}: FlueContext<{ documents: { source: string; content: string }[] }>) {\n  let indexed = 0\n  for (const doc of payload.documents) {\n    indexed += await indexDoc(doc)\n  }\n  return { documents: payload.documents.length, chunks: indexed }\n}\n",
+      "path": "workflows/index-knowledge.ts",
+      "target": "workflows/index-knowledge.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { redactPii } from '../lib/pii.ts'\nimport { searchDocs } from '../lib/vector-store.ts'\n\nexport const searchKnowledge = defineTool({\n  name: 'search_knowledge',\n  description:\n    'Searches the company knowledge corpus and returns the most relevant passages (with PII redacted) and their sources.',\n  parameters: v.object({\n    query: v.string(),\n    topK: v.optional(v.number(), 5),\n  }),\n  execute: async ({ query, topK }) => {\n    const hits = await searchDocs(query, topK)\n    const safe = hits.map((row) => ({\n      source: row.source,\n      content: redactPii(String(row.content)),\n    }))\n    return JSON.stringify(safe, null, 2)\n  },\n})\n",
+      "path": "tools/search-knowledge.ts",
+      "target": "tools/search-knowledge.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { indexDoc } from '../lib/vector-store.ts'\n\nexport const indexDocument = defineTool({\n  name: 'index_document',\n  description: 'Adds a document to the knowledge corpus by chunking and embedding it.',\n  parameters: v.object({\n    source: v.string(),\n    content: v.string(),\n  }),\n  execute: async ({ source, content }) => {\n    const chunks = await indexDoc({ source, content })\n    return `Indexed ${chunks} chunks from \"${source}\".`\n  },\n})\n",
+      "path": "tools/index-document.ts",
+      "target": "tools/index-document.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { openai } from '@ai-sdk/openai'\nimport { createClient } from '@libsql/client'\nimport { embed, embedMany } from 'ai'\n\n/**\n * Minimal libSQL-backed vector store for the knowledge corpus. Swap for\n * pgvector/Neon, Pinecone, or Qdrant behind the same functions.\n */\nconst db = createClient({ url: process.env.LIBSQL_URL ?? 'file:knowledge.db' })\nconst embeddingModel = openai.embedding('text-embedding-3-small')\n\nexport interface Doc {\n  source: string\n  content: string\n}\n\nexport function chunkText(text: string, size = 1000, overlap = 200): string[] {\n  const out: string[] = []\n  for (let i = 0; i < text.length; i += size - overlap) {\n    const slice = text.slice(i, i + size).trim()\n    if (slice) {\n      out.push(slice)\n    }\n  }\n  return out\n}\n\nasync function ensureSchema(): Promise<void> {\n  await db.execute(\n    'CREATE TABLE IF NOT EXISTS docs (id INTEGER PRIMARY KEY AUTOINCREMENT, source TEXT, content TEXT, embedding F32_BLOB(1536))'\n  )\n}\n\nexport async function indexDoc(doc: Doc): Promise<number> {\n  await ensureSchema()\n  const chunks = chunkText(doc.content)\n  const { embeddings } = await embedMany({ model: embeddingModel, values: chunks })\n  for (let i = 0; i < chunks.length; i++) {\n    await db.execute({\n      sql: 'INSERT INTO docs (source, content, embedding) VALUES (?, ?, vector32(?))',\n      args: [doc.source, chunks[i], JSON.stringify(embeddings[i])],\n    })\n  }\n  return chunks.length\n}\n\nexport async function searchDocs(query: string, topK: number) {\n  await ensureSchema()\n  const { embedding } = await embed({ model: embeddingModel, value: query })\n  const result = await db.execute({\n    sql: 'SELECT source, content, vector_distance_cos(embedding, vector32(?)) AS distance FROM docs ORDER BY distance ASC LIMIT ?',\n    args: [JSON.stringify(embedding), topK],\n  })\n  return result.rows\n}\n",
+      "path": "lib/vector-store.ts",
+      "target": "lib/vector-store.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "/** Redacts common PII from text before it reaches the user. */\nconst PATTERNS: [RegExp, string][] = [\n  [/[\\w.+-]+@[\\w-]+\\.[\\w.-]+/g, '[redacted-email]'],\n  [/\\b(?:\\+?\\d{1,2}[\\s-]?)?(?:\\(\\d{3}\\)|\\d{3})[\\s-]?\\d{3}[\\s-]?\\d{4}\\b/g, '[redacted-phone]'],\n  [/\\b\\d{3}-\\d{2}-\\d{4}\\b/g, '[redacted-ssn]'],\n  [/\\b(?:\\d[ -]?){13,16}\\b/g, '[redacted-card]'],\n  [/\\b(?:sk|pk|api|key)[-_][A-Za-z0-9]{16,}\\b/g, '[redacted-key]'],\n]\n\nexport function redactPii(text: string): string {\n  return PATTERNS.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), text)\n}\n",
+      "path": "lib/pii.ts",
+      "target": "lib/pii.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "company-knowledge",
+  "title": "Company Knowledge Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime",
+    "@libsql/client",
+    "@ai-sdk/openai",
+    "ai"
+  ]
+}

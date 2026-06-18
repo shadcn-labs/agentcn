@@ -2,17 +2,241 @@
   "homepage": "https://agentcn.sh",
   "items": [
     {
-      "description": "Eve agent that scrapes and analyzes competitor pages, returns a structured report.",
+      "description": "Eve agent that drives a real browser with Playwright using a snapshot-and-selector pattern to complete web tasks.",
       "framework": "eve",
-      "name": "eve/competitor-intel",
-      "title": "Competitor Intelligence Agent",
+      "name": "eve/browser-agent",
+      "title": "Browser Agent",
       "type": "registry:block"
     },
     {
-      "description": "Flue agent that scrapes and analyzes competitor pages using a subagent pattern, returns a structured report.",
+      "description": "Eve agent that indexes a PDF into a vector store and answers questions over it with page-cited retrieval.",
+      "framework": "eve",
+      "name": "eve/chat-with-pdf",
+      "title": "Chat with PDF Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that fetches a video's metadata and transcript, then answers questions with clickable timestamp citations.",
+      "framework": "eve",
+      "name": "eve/chat-with-youtube",
+      "title": "Chat with YouTube Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that operates a sandboxed workspace — read/write files and run shell commands — to finish multi-step tasks.",
+      "framework": "eve",
+      "name": "eve/claw",
+      "title": "Claw Autonomous Assistant",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that indexes internal documents into a vector store and answers questions over them, with PII redaction.",
+      "framework": "eve",
+      "name": "eve/company-knowledge",
+      "title": "Company Knowledge Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that summarizes a CSV dataset to stay within token limits, then generates focused analytical questions.",
+      "framework": "eve",
+      "name": "eve/csv-to-questions",
+      "title": "CSV to Questions Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that researches a question, evaluates its own findings, and iterates until the answer is complete and cited.",
+      "framework": "eve",
+      "name": "eve/deep-search",
+      "title": "Deep Search Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that answers questions about a library's functions by looking up structured documentation.",
+      "framework": "eve",
+      "name": "eve/docs-chatbot",
+      "title": "Docs Chatbot Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that answers questions about libraries and APIs by searching the live web and citing sources.",
+      "framework": "eve",
+      "name": "eve/docs-expert",
+      "title": "Docs Expert Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that retrieves, categorizes, and summarizes customer feedback into an executive report with recommendations.",
+      "framework": "eve",
+      "name": "eve/feedback-summary",
+      "title": "Customer Feedback Summary Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that turns a PDF into study flash cards, with optional AI-generated images per concept.",
+      "framework": "eve",
+      "name": "eve/flashcards-pdf",
+      "title": "Flash Cards from PDF Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that fetches a GitHub pull request and returns adaptive, file-by-file code review feedback.",
+      "framework": "eve",
+      "name": "eve/github-review",
+      "title": "GitHub PR Code Review Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that reads, analyzes, and edits Google Sheets via the Sheets API.",
+      "framework": "eve",
+      "name": "eve/google-sheets",
+      "title": "Google Sheets Analysis Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that turns a raw meeting transcript into a structured summary, decisions, and action items.",
+      "framework": "eve",
+      "name": "eve/meeting-notes",
+      "title": "Meeting Notes Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that replies to Slack mentions and DMs, threaded, via the Slack Web API.",
+      "framework": "eve",
+      "name": "eve/slack-agent",
+      "title": "Slack Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that introspects a database schema, converts questions to SQL, and runs read-only queries.",
+      "framework": "eve",
+      "name": "eve/text-to-sql",
+      "title": "Chat with Database Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Eve agent that looks up current weather for a location via the Open-Meteo API.",
+      "framework": "eve",
+      "name": "eve/weather",
+      "title": "Weather Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that drives a real browser with Playwright using a snapshot-and-selector pattern to complete web tasks.",
       "framework": "flue",
-      "name": "flue/competitor-intel",
-      "title": "Competitor Intelligence Agent",
+      "name": "flue/browser-agent",
+      "title": "Browser Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that indexes a PDF into a vector store and answers questions over it with page-cited retrieval.",
+      "framework": "flue",
+      "name": "flue/chat-with-pdf",
+      "title": "Chat with PDF Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that fetches a video's metadata and transcript, then answers questions with clickable timestamp citations.",
+      "framework": "flue",
+      "name": "flue/chat-with-youtube",
+      "title": "Chat with YouTube Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that operates a sandboxed workspace — read/write files and run shell commands — to finish multi-step tasks.",
+      "framework": "flue",
+      "name": "flue/claw",
+      "title": "Claw Autonomous Assistant",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that indexes internal documents into a vector store and answers questions over them, with a scheduled re-index workflow and PII redaction.",
+      "framework": "flue",
+      "name": "flue/company-knowledge",
+      "title": "Company Knowledge Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that chains a summarizer and a question-generator through a workflow to turn a CSV into analytical questions.",
+      "framework": "flue",
+      "name": "flue/csv-to-questions",
+      "title": "CSV to Questions Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that fans research out to searcher and evaluator subagents, iterating through a bounded workflow until the answer is cited and complete.",
+      "framework": "flue",
+      "name": "flue/deep-search",
+      "title": "Deep Search Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that answers questions about a library's functions by looking up structured documentation.",
+      "framework": "flue",
+      "name": "flue/docs-chatbot",
+      "title": "Docs Chatbot Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that answers questions about libraries and APIs by searching the live web and citing sources.",
+      "framework": "flue",
+      "name": "flue/docs-expert",
+      "title": "Docs Expert Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that retrieves, categorizes, and summarizes customer feedback into an executive report with recommendations.",
+      "framework": "flue",
+      "name": "flue/feedback-summary",
+      "title": "Customer Feedback Summary Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that turns a PDF into study flash cards through a workflow, with optional AI-generated images per concept.",
+      "framework": "flue",
+      "name": "flue/flashcards-pdf",
+      "title": "Flash Cards from PDF Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that fetches a GitHub pull request and returns adaptive review feedback, with a workflow that emits a typed review.",
+      "framework": "flue",
+      "name": "flue/github-review",
+      "title": "GitHub PR Code Review Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that reads, analyzes, and edits Google Sheets via the Sheets API.",
+      "framework": "flue",
+      "name": "flue/google-sheets",
+      "title": "Google Sheets Analysis Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that runs a transcript through a workflow to return a structured summary, decisions, and action items.",
+      "framework": "flue",
+      "name": "flue/meeting-notes",
+      "title": "Meeting Notes Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that replies to Slack mentions and DMs, threaded, via the Slack Web API.",
+      "framework": "flue",
+      "name": "flue/slack-agent",
+      "title": "Slack Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that introspects a database schema, converts questions to SQL, and runs read-only queries.",
+      "framework": "flue",
+      "name": "flue/text-to-sql",
+      "title": "Chat with Database Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that looks up current weather for a location via the Open-Meteo API.",
+      "framework": "flue",
+      "name": "flue/weather",
+      "title": "Weather Agent",
       "type": "registry:block"
     }
   ],

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that answers questions about libraries and APIs by searching the live web and citing sources.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a docs expert: you answer questions about libraries, APIs, and tools by\nsearching the live web and citing your sources.\n\n1. Call `web_search` with a precise query (include the library name and version\n   when relevant).\n2. Answer from the results, preferring official documentation over blog posts.\n3. Cite every claim with a source URL. Include a short code example when the\n   question is about usage.\n4. If the docs are ambiguous or the answer isn't found, say so rather than\n   guessing.\n\nKeep answers practical and copy-pasteable.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Searches the web for documentation and returns ranked results with titles, URLs, and text snippets.',\n  inputSchema: z.object({\n    query: z.string(),\n    numResults: z.number().min(1).max(10).default(5),\n  }),\n  async execute({ query, numResults }) {\n    const res = await fetch('https://api.exa.ai/search', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        'x-api-key': process.env.EXA_API_KEY ?? '',\n      },\n      body: JSON.stringify({\n        query,\n        numResults,\n        contents: { text: true },\n      }),\n    })\n    return res.json()\n  },\n})\n",
+      "path": "agent/tools/web_search.ts",
+      "target": "agent/tools/web_search.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "docs-expert",
+  "title": "Docs Expert Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

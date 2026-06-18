@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that fetches a video's metadata and transcript, then answers questions with clickable timestamp citations.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You answer questions about YouTube videos from their transcripts.\n\n1. Call `video_metadata` to get the title, author, and video id for context.\n2. Call `get_transcript` to fetch the timestamped transcript.\n3. Answer the user's question, generate chapter summaries, or produce a TL;DR —\n   grounded only in the transcript.\n4. Cite specific moments as clickable links:\n   `https://youtu.be/<id>?t=<seconds>`.\n\nIf the transcript doesn't cover something, say so. Don't invent quotes or times.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: never(),\n  description: 'Fetches a YouTube video\\'s title, author, and id from its URL.',\n  inputSchema: z.object({\n    url: z.string().url(),\n  }),\n  async execute({ url }) {\n    const res = await fetch(\n      `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`\n    )\n    const meta = (await res.json()) as { title?: string; author_name?: string }\n    const id = new URL(url).searchParams.get('v') ?? url.split('/').pop()\n    return { author: meta.author_name, id, title: meta.title }\n  },\n})\n",
+      "path": "agent/tools/video_metadata.ts",
+      "target": "agent/tools/video_metadata.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { YoutubeTranscript } from 'youtube-transcript'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Fetches the timestamped transcript of a YouTube video as an array of { text, seconds } segments.',\n  inputSchema: z.object({\n    url: z.string().url(),\n  }),\n  async execute({ url }) {\n    const segments = await YoutubeTranscript.fetchTranscript(url)\n    return {\n      segments: segments.map((s) => ({\n        seconds: Math.floor(s.offset / 1000),\n        text: s.text,\n      })),\n    }\n  },\n})\n",
+      "path": "agent/tools/get_transcript.ts",
+      "target": "agent/tools/get_transcript.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "chat-with-youtube",
+  "title": "Chat with YouTube Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve",
+    "youtube-transcript"
+  ]
+}

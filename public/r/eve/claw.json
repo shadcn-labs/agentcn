@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that operates a sandboxed workspace — read/write files and run shell commands — to finish multi-step tasks.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are Claw, an autonomous assistant that operates a sandboxed workspace to\nfinish multi-step tasks.\n\nYou can:\n\n- Read and write files in the workspace with `read_file` and `write_file`.\n- Run shell commands with `run_shell` (scoped to the workspace directory).\n- Follow reusable procedures checked into `skills/`.\n\nHow to work:\n\n1. Make a short plan, then execute it step by step.\n2. Inspect before you act — read a file or list a directory before editing.\n3. Keep all paths inside the workspace. Never touch files outside it.\n4. After each step, check the result and adjust. Stop when the task is done and\n   summarize what you changed.\n\nBe careful with `run_shell` — prefer non-destructive commands and explain\nanything risky before running it.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import path from 'node:path'\n\n/** Root of the sandbox. Everything the agent reads/writes stays under here. */\nexport const WORKSPACE = path.resolve(process.env.WORKSPACE_DIR ?? 'workspace')\n\n/** Resolves a user-supplied path and refuses anything that escapes the sandbox. */\nexport function resolveInWorkspace(relativePath: string): string {\n  const resolved = path.resolve(WORKSPACE, relativePath)\n  if (resolved !== WORKSPACE && !resolved.startsWith(WORKSPACE + path.sep)) {\n    throw new Error(`Path escapes the workspace: ${relativePath}`)\n  }\n  return resolved\n}\n",
+      "path": "agent/lib/workspace.ts",
+      "target": "agent/lib/workspace.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { readFile } from 'node:fs/promises'\nimport { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { resolveInWorkspace } from '../lib/workspace'\n\nexport default defineTool({\n  needsApproval: never(),\n  description: 'Reads a UTF-8 file from the workspace.',\n  inputSchema: z.object({\n    path: z.string(),\n  }),\n  async execute({ path }) {\n    const content = await readFile(resolveInWorkspace(path), 'utf-8')\n    return { content, path }\n  },\n})\n",
+      "path": "agent/tools/read_file.ts",
+      "target": "agent/tools/read_file.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { mkdir, writeFile } from 'node:fs/promises'\nimport { dirname } from 'node:path'\nimport { defineTool } from 'eve/tools'\nimport { always } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { resolveInWorkspace } from '../lib/workspace'\n\nexport default defineTool({\n  needsApproval: always(),\n  description: 'Writes (or overwrites) a UTF-8 file in the workspace.',\n  inputSchema: z.object({\n    path: z.string(),\n    content: z.string(),\n  }),\n  async execute({ path, content }) {\n    const target = resolveInWorkspace(path)\n    await mkdir(dirname(target), { recursive: true })\n    await writeFile(target, content, 'utf-8')\n    return { bytes: content.length, path }\n  },\n})\n",
+      "path": "agent/tools/write_file.ts",
+      "target": "agent/tools/write_file.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { exec } from 'node:child_process'\nimport { promisify } from 'node:util'\nimport { defineTool } from 'eve/tools'\nimport { always } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { WORKSPACE } from '../lib/workspace'\n\nconst run = promisify(exec)\n\nexport default defineTool({\n  needsApproval: always(),\n  description:\n    'Runs a shell command inside the workspace directory and returns its stdout/stderr.',\n  inputSchema: z.object({\n    command: z.string(),\n  }),\n  async execute({ command }) {\n    try {\n      const { stdout, stderr } = await run(command, {\n        cwd: WORKSPACE,\n        timeout: 60_000,\n      })\n      return { stderr, stdout }\n    } catch (error) {\n      return { error: String(error) }\n    }\n  },\n})\n",
+      "path": "agent/tools/run_shell.ts",
+      "target": "agent/tools/run_shell.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "---\nname: workspace\ndescription: How to safely operate the sandboxed workspace. Use for any multi-step task involving files or shell commands.\n---\n\n## Working in the Workspace\n\n1. Plan the task as a short ordered checklist.\n2. Inspect first: read files or `ls` a directory before changing anything.\n3. Make the smallest change that advances the task; re-check after each step.\n4. Keep every path inside the workspace.\n5. Prefer reversible, non-destructive commands. Explain risky ones before running.\n6. Finish by summarizing exactly what you created or changed.\n",
+      "path": "agent/skills/workspace/SKILL.md",
+      "target": "agent/skills/workspace/SKILL.md",
+      "type": "registry:file"
+    }
+  ],
+  "name": "claw",
+  "title": "Claw Autonomous Assistant",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

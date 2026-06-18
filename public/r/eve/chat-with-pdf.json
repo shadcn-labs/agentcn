@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that indexes a PDF into a vector store and answers questions over it with page-cited retrieval.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You answer questions about PDF documents using retrieval.\n\n1. If the user provides a PDF URL that hasn't been indexed yet, call `index_pdf`\n   to chunk and embed it.\n2. To answer a question, call `search_docs` to retrieve the most relevant chunks,\n   then answer using only those chunks.\n3. Cite the page number for every claim, e.g. \"(p. 12)\". If the retrieved chunks\n   don't contain the answer, say so — do not guess.\n4. If asked for a quiz, generate questions from the retrieved passages and\n   include the page each answer comes from.\n\nNever answer from memory; always ground answers in retrieved chunks.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { openai } from '@ai-sdk/openai'\nimport { createClient } from '@libsql/client'\nimport { embed, embedMany } from 'ai'\n\n/**\n * Minimal libSQL-backed vector store for PDF chunks. Swap the client URL for a\n * remote Turso database, or replace libSQL with Pinecone/Qdrant/pgvector.\n */\nconst db = createClient({ url: process.env.LIBSQL_URL ?? 'file:pdf-index.db' })\nconst embeddingModel = openai.embedding('text-embedding-3-small')\n\nexport interface Chunk {\n  doc: string\n  page: number\n  content: string\n}\n\nexport function chunkText(text: string, size = 1000, overlap = 200): string[] {\n  const out: string[] = []\n  for (let i = 0; i < text.length; i += size - overlap) {\n    const slice = text.slice(i, i + size).trim()\n    if (slice) {\n      out.push(slice)\n    }\n  }\n  return out\n}\n\nasync function ensureSchema(): Promise<void> {\n  await db.execute(\n    'CREATE TABLE IF NOT EXISTS chunks (id INTEGER PRIMARY KEY AUTOINCREMENT, doc TEXT, page INTEGER, content TEXT, embedding F32_BLOB(1536))'\n  )\n}\n\nexport async function upsertChunks(chunks: Chunk[]): Promise<void> {\n  await ensureSchema()\n  const { embeddings } = await embedMany({\n    model: embeddingModel,\n    values: chunks.map((c) => c.content),\n  })\n  for (let i = 0; i < chunks.length; i++) {\n    const c = chunks[i]\n    await db.execute({\n      sql: 'INSERT INTO chunks (doc, page, content, embedding) VALUES (?, ?, ?, vector32(?))',\n      args: [c.doc, c.page, c.content, JSON.stringify(embeddings[i])],\n    })\n  }\n}\n\nexport async function search(query: string, topK: number) {\n  await ensureSchema()\n  const { embedding } = await embed({ model: embeddingModel, value: query })\n  const result = await db.execute({\n    sql: 'SELECT doc, page, content, vector_distance_cos(embedding, vector32(?)) AS distance FROM chunks ORDER BY distance ASC LIMIT ?',\n    args: [JSON.stringify(embedding), topK],\n  })\n  return result.rows\n}\n",
+      "path": "agent/lib/vector-store.ts",
+      "target": "agent/lib/vector-store.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { extractText, getDocumentProxy } from 'unpdf'\nimport { z } from 'zod'\nimport { chunkText, upsertChunks } from '../lib/vector-store'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Downloads a PDF, splits each page into chunks, embeds them, and stores them for retrieval.',\n  inputSchema: z.object({\n    url: z.string().url(),\n    doc: z.string().optional(),\n  }),\n  async execute({ url, doc }) {\n    const buffer = await fetch(url).then((r) => r.arrayBuffer())\n    const pdf = await getDocumentProxy(new Uint8Array(buffer))\n    const { text } = await extractText(pdf, { mergePages: false })\n\n    const chunks = text.flatMap((pageText, i) =>\n      chunkText(pageText).map((content) => ({\n        doc: doc ?? url,\n        page: i + 1,\n        content,\n      }))\n    )\n\n    await upsertChunks(chunks)\n    return { chunks: chunks.length, doc: doc ?? url, pages: text.length }\n  },\n})\n",
+      "path": "agent/tools/index_pdf.ts",
+      "target": "agent/tools/index_pdf.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { search } from '../lib/vector-store'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Retrieves the most relevant PDF chunks for a question, including the page number of each chunk for citation.',\n  inputSchema: z.object({\n    query: z.string(),\n    topK: z.number().min(1).max(10).default(5),\n  }),\n  async execute({ query, topK }) {\n    const hits = await search(query, topK)\n    return { hits }\n  },\n})\n",
+      "path": "agent/tools/search_docs.ts",
+      "target": "agent/tools/search_docs.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "chat-with-pdf",
+  "title": "Chat with PDF Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve",
+    "@libsql/client",
+    "@ai-sdk/openai",
+    "ai",
+    "unpdf"
+  ]
+}

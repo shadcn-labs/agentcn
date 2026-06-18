@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that reads, analyzes, and edits Google Sheets via the Sheets API.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You analyze and edit Google Sheets on the user's behalf.\n\n1. Call `read_range` to load the cells you need (use A1 notation, e.g.\n   `Sheet1!A1:F100`). Read before you write.\n2. Analyze the data to answer the question — totals, trends, outliers, joins\n   across columns.\n3. Only when the user asks you to change the sheet, call `update_range` with the\n   new values. Confirm what you're about to write before doing it.\n\nBe explicit about which ranges you read and wrote. Never overwrite cells you\nweren't asked to change.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nconst SHEETS_API = 'https://sheets.googleapis.com/v4/spreadsheets'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Reads a range of cells from a Google Sheet using A1 notation (e.g. \"Sheet1!A1:F100\").',\n  inputSchema: z.object({\n    spreadsheetId: z.string(),\n    range: z.string(),\n  }),\n  async execute({ spreadsheetId, range }) {\n    const res = await fetch(\n      `${SHEETS_API}/${spreadsheetId}/values/${encodeURIComponent(range)}`,\n      {\n        headers: {\n          Authorization: `Bearer ${process.env.GOOGLE_ACCESS_TOKEN ?? ''}`,\n        },\n      }\n    )\n    return res.json()\n  },\n})\n",
+      "path": "agent/tools/read_range.ts",
+      "target": "agent/tools/read_range.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { always } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nconst SHEETS_API = 'https://sheets.googleapis.com/v4/spreadsheets'\n\nexport default defineTool({\n  needsApproval: always(),\n  description:\n    'Writes a 2D array of values to a range in a Google Sheet using A1 notation.',\n  inputSchema: z.object({\n    spreadsheetId: z.string(),\n    range: z.string(),\n    values: z.array(z.array(z.union([z.string(), z.number()]))),\n  }),\n  async execute({ spreadsheetId, range, values }) {\n    const res = await fetch(\n      `${SHEETS_API}/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`,\n      {\n        method: 'PUT',\n        headers: {\n          'Content-Type': 'application/json',\n          Authorization: `Bearer ${process.env.GOOGLE_ACCESS_TOKEN ?? ''}`,\n        },\n        body: JSON.stringify({ range, values }),\n      }\n    )\n    return res.json()\n  },\n})\n",
+      "path": "agent/tools/update_range.ts",
+      "target": "agent/tools/update_range.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "google-sheets",
+  "title": "Google Sheets Analysis Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that retrieves, categorizes, and summarizes customer feedback into an executive report with recommendations.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-haiku-4-5',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You analyze customer feedback and produce actionable summaries.\n\nWhen asked about feedback:\n\n1. Use `get_feedback` to retrieve entries, paginating until you have enough to\n   answer the question (or the user pastes feedback directly).\n2. Categorize entries — bugs, feature requests, praise, churn risk — and group\n   by segment (e.g. enterprise, pro, free) when that metadata is present.\n3. Produce an executive summary: the top themes by volume and severity,\n   representative quotes, and concrete recommendations.\n\nOnly summarize feedback you actually retrieved. Quote verbatim; do not invent.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Retrieves a page of customer feedback entries from the feedback data source.',\n  inputSchema: z.object({\n    page: z.number().min(1).default(1),\n    pageSize: z.number().min(1).max(100).default(50),\n    segment: z.string().optional(),\n  }),\n  async execute({ page, pageSize, segment }) {\n    const url = new URL(process.env.FEEDBACK_API_URL ?? 'http://localhost:4111/feedback')\n    url.searchParams.set('page', String(page))\n    url.searchParams.set('pageSize', String(pageSize))\n    if (segment) {\n      url.searchParams.set('segment', segment)\n    }\n    const res = await fetch(url)\n    return { entries: await res.json() }\n  },\n})\n",
+      "path": "agent/tools/get_feedback.ts",
+      "target": "agent/tools/get_feedback.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "feedback-summary",
+  "title": "Customer Feedback Summary Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

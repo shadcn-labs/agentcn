@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that fetches a GitHub pull request and returns adaptive review feedback, with a workflow that emits a typed review.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { fetchPr } from '../tools/fetch-pr.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You review GitHub pull requests. Call fetch_pr for the PR's files and patches,\n    adapt depth to PR size, skip generated/lock/vendored files, and give feedback\n    grouped by file (correctness, then security, then style/tests). End with a\n    summary and an approve / request-changes recommendation. Comment only on the diff.\n  `,\n  tools: [fetchPr],\n}))\n",
+      "path": "agents/github-review.ts",
+      "target": "agents/github-review.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createAgent, type FlueContext } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { fetchPr } from '../tools/fetch-pr.ts'\n\nconst reviewer = createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: 'Fetch the PR and review it. Comment only on the diff, grouped by file.',\n  tools: [fetchPr],\n}))\n\nconst Review = v.object({\n  summary: v.string(),\n  recommendation: v.picklist(['approve', 'request_changes', 'comment']),\n  comments: v.array(v.object({\n    file: v.string(),\n    severity: v.picklist(['bug', 'security', 'style', 'nit']),\n    comment: v.string(),\n  })),\n})\n\nexport async function run({\n  init,\n  payload,\n}: FlueContext<{ owner: string; repo: string; pullNumber: number }>) {\n  const harness = await init(reviewer)\n  const session = await harness.session()\n\n  const response = await session.prompt(\n    `Review pull request ${payload.owner}/${payload.repo}#${payload.pullNumber}.`,\n    { result: Review }\n  )\n\n  return response.data\n}\n",
+      "path": "workflows/github-review.ts",
+      "target": "workflows/github-review.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nconst GITHUB_API = 'https://api.github.com'\n\nconst headers = () => ({\n  Accept: 'application/vnd.github+json',\n  Authorization: `Bearer ${process.env.GITHUB_TOKEN ?? ''}`,\n  'X-GitHub-Api-Version': '2022-11-28',\n})\n\nexport const fetchPr = defineTool({\n  name: 'fetch_pr',\n  description:\n    'Fetches a GitHub pull request — its metadata and the list of changed files with patches.',\n  parameters: v.object({\n    owner: v.string(),\n    repo: v.string(),\n    pullNumber: v.number(),\n  }),\n  execute: async ({ owner, repo, pullNumber }) => {\n    const base = `${GITHUB_API}/repos/${owner}/${repo}/pulls/${pullNumber}`\n    const [pr, files] = await Promise.all([\n      fetch(base, { headers: headers() }).then((r) => r.json()),\n      fetch(`${base}/files?per_page=100`, { headers: headers() }).then((r) =>\n        r.json()\n      ),\n    ])\n    return JSON.stringify({ pr, files }, null, 2)\n  },\n})\n",
+      "path": "tools/fetch-pr.ts",
+      "target": "tools/fetch-pr.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "github-review",
+  "title": "GitHub PR Code Review Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}

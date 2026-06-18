@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that fetches a video's metadata and transcript, then answers questions with clickable timestamp citations.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { videoMetadata } from '../tools/metadata.ts'\nimport { getTranscript } from '../tools/transcript.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You answer questions about YouTube videos from their transcripts.\n    Call video_metadata for context, then get_transcript, and answer grounded\n    only in the transcript. Cite moments as clickable links:\n    https://youtu.be/<id>?t=<seconds>.\n  `,\n  tools: [videoMetadata, getTranscript],\n}))\n",
+      "path": "agents/chat-with-youtube.ts",
+      "target": "agents/chat-with-youtube.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nexport const videoMetadata = defineTool({\n  name: 'video_metadata',\n  description: \"Fetches a YouTube video's title, author, and id from its URL.\",\n  parameters: v.object({\n    url: v.string(),\n  }),\n  execute: async ({ url }) => {\n    const res = await fetch(\n      `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`\n    )\n    const meta = (await res.json()) as { title?: string; author_name?: string }\n    const id = new URL(url).searchParams.get('v') ?? url.split('/').pop()\n    return JSON.stringify({ id, title: meta.title, author: meta.author_name })\n  },\n})\n",
+      "path": "tools/metadata.ts",
+      "target": "tools/metadata.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { YoutubeTranscript } from 'youtube-transcript'\n\nexport const getTranscript = defineTool({\n  name: 'get_transcript',\n  description:\n    'Fetches the timestamped transcript of a YouTube video as an array of { text, seconds } segments.',\n  parameters: v.object({\n    url: v.string(),\n  }),\n  execute: async ({ url }) => {\n    const segments = await YoutubeTranscript.fetchTranscript(url)\n    return JSON.stringify(\n      segments.map((s) => ({ text: s.text, seconds: Math.floor(s.offset / 1000) }))\n    )\n  },\n})\n",
+      "path": "tools/transcript.ts",
+      "target": "tools/transcript.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "chat-with-youtube",
+  "title": "Chat with YouTube Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime",
+    "youtube-transcript"
+  ]
+}

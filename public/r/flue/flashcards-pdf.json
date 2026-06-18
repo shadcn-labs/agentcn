@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that turns a PDF into study flash cards through a workflow, with optional AI-generated images per concept.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { generateImage } from '../tools/generate-image.ts'\nimport { parsePdf } from '../tools/parse-pdf.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You generate study flash cards from a PDF.\n    Call parse_pdf to get the text, then produce concise front/back card pairs\n    grounded in the document. Only call generate_image when the user asks for\n    images, attaching the returned URL to the relevant card.\n  `,\n  tools: [parsePdf, generateImage],\n}))\n",
+      "path": "agents/flashcards-pdf.ts",
+      "target": "agents/flashcards-pdf.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createAgent, type FlueContext } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { generateImage } from '../tools/generate-image.ts'\nimport { parsePdf } from '../tools/parse-pdf.ts'\n\nconst agent = createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: 'Parse the PDF and produce concise flash cards grounded in the document. Add an image per card only when requested.',\n  tools: [parsePdf, generateImage],\n}))\n\nconst Flashcards = v.object({\n  cards: v.array(v.object({\n    front: v.string(),\n    back: v.string(),\n    imageUrl: v.optional(v.string()),\n  })),\n})\n\nexport async function run({ init, payload }: FlueContext<{ url: string; withImages?: boolean }>) {\n  const harness = await init(agent)\n  const session = await harness.session()\n\n  const response = await session.prompt(\n    `Create flash cards from ${payload.url}${payload.withImages ? ' with an image per card' : ''}.`,\n    { result: Flashcards }\n  )\n\n  return response.data\n}\n",
+      "path": "workflows/flashcards-pdf.ts",
+      "target": "workflows/flashcards-pdf.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport { extractText, getDocumentProxy } from 'unpdf'\nimport * as v from 'valibot'\n\nexport const parsePdf = defineTool({\n  name: 'parse_pdf',\n  description: 'Extracts the full text content from a PDF at the given URL.',\n  parameters: v.object({\n    url: v.string(),\n  }),\n  execute: async ({ url }) => {\n    const buffer = await fetch(url).then((r) => r.arrayBuffer())\n    const pdf = await getDocumentProxy(new Uint8Array(buffer))\n    const { text } = await extractText(pdf, { mergePages: true })\n    return text\n  },\n})\n",
+      "path": "tools/parse-pdf.ts",
+      "target": "tools/parse-pdf.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nexport const generateImage = defineTool({\n  name: 'generate_image',\n  description: 'Generates an illustrative image for a flash-card concept and returns its URL.',\n  parameters: v.object({\n    prompt: v.string(),\n  }),\n  execute: async ({ prompt }) => {\n    const res = await fetch('https://api.openai.com/v1/images/generations', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`,\n      },\n      body: JSON.stringify({ model: 'gpt-image-1', prompt, size: '1024x1024' }),\n    })\n    const data = (await res.json()) as { data?: { url?: string }[] }\n    return data.data?.[0]?.url ?? ''\n  },\n})\n",
+      "path": "tools/generate-image.ts",
+      "target": "tools/generate-image.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "flashcards-pdf",
+  "title": "Flash Cards from PDF Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime",
+    "unpdf"
+  ]
+}

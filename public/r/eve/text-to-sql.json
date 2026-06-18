@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that introspects a database schema, converts questions to SQL, and runs read-only queries.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You answer questions about a database by writing and running SQL.\n\n1. Call `introspect_schema` first to learn the tables and columns. Never assume a\n   schema you haven't inspected.\n2. Write a single, correct SQL query for the user's question.\n3. Call `run_query` to execute it (read-only — only `SELECT` is allowed).\n4. Summarize the results in plain language, and show the SQL you ran.\n\nIf a question can't be answered from the available tables, say so. Never invent\ncolumns or tables.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createClient } from '@libsql/client'\n\n/**\n * Database client. Defaults to a local SQLite file; point DATABASE_URL at a\n * remote Turso/libSQL database, or swap the client for Postgres/MySQL.\n */\nexport const db = createClient({\n  url: process.env.DATABASE_URL ?? 'file:data.db',\n})\n",
+      "path": "agent/lib/db.ts",
+      "target": "agent/lib/db.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { db } from '../lib/db'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Lists the database tables and their columns so you can write correct SQL.',\n  inputSchema: z.object({}),\n  async execute() {\n    const tables = await db.execute(\n      \"SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'\"\n    )\n    const schema: Record<string, unknown> = {}\n    for (const row of tables.rows) {\n      const name = String(row.name)\n      const info = await db.execute(`PRAGMA table_info(${name})`)\n      schema[name] = info.rows.map((c) => ({ name: c.name, type: c.type }))\n    }\n    return { schema }\n  },\n})\n",
+      "path": "agent/tools/introspect_schema.ts",
+      "target": "agent/tools/introspect_schema.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { db } from '../lib/db'\n\nexport default defineTool({\n  needsApproval: never(),\n  description: 'Executes a read-only SELECT query and returns the rows as JSON.',\n  inputSchema: z.object({\n    sql: z.string(),\n  }),\n  async execute({ sql }) {\n    if (!/^\\s*select/i.test(sql)) {\n      return { error: 'Refused: only read-only SELECT queries are allowed.' }\n    }\n    const result = await db.execute(sql)\n    return { rows: result.rows }\n  },\n})\n",
+      "path": "agent/tools/run_query.ts",
+      "target": "agent/tools/run_query.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "text-to-sql",
+  "title": "Chat with Database Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve",
+    "@libsql/client"
+  ]
+}

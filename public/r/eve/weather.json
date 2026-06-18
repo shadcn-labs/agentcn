@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that looks up current weather for a location via the Open-Meteo API.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-haiku-4-5',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a helpful weather assistant.\n\nWhen asked about the weather:\n\n1. Call `get_weather` with the location name.\n2. Report the current conditions plainly — temperature, what it feels like,\n   wind, and a short description.\n3. If the location is ambiguous, ask which one the user means.\n\nKeep answers brief and conversational.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: never(),\n  description: 'Gets the current weather for a named location.',\n  inputSchema: z.object({\n    location: z.string(),\n  }),\n  async execute({ location }) {\n    const geo = (await fetch(\n      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1`\n    ).then((r) => r.json())) as {\n      results?: { latitude: number; longitude: number; name: string }[]\n    }\n    const place = geo.results?.[0]\n    if (!place) {\n      return { error: `No location found for \"${location}\".` }\n    }\n    const weather = await fetch(\n      `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,apparent_temperature,wind_speed_10m,weather_code`\n    ).then((r) => r.json())\n    return { place: place.name, weather }\n  },\n})\n",
+      "path": "agent/tools/get_weather.ts",
+      "target": "agent/tools/get_weather.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "weather",
+  "title": "Weather Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

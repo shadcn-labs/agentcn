@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that introspects a database schema, converts questions to SQL, and runs read-only queries.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { introspectSchema } from '../tools/introspect-schema.ts'\nimport { runQuery } from '../tools/run-query.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You answer questions about a database by writing and running SQL.\n    Always call introspect_schema first, then write one correct SELECT query and\n    run it with run_query (read-only). Summarize results and show the SQL.\n    Never invent tables or columns.\n  `,\n  tools: [introspectSchema, runQuery],\n}))\n",
+      "path": "agents/text-to-sql.ts",
+      "target": "agents/text-to-sql.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { db } from '../lib/db.ts'\n\nexport const introspectSchema = defineTool({\n  name: 'introspect_schema',\n  description:\n    'Lists the database tables and their columns so you can write correct SQL.',\n  parameters: v.object({}),\n  execute: async () => {\n    const tables = await db.execute(\n      \"SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'\"\n    )\n    const schema: Record<string, unknown> = {}\n    for (const row of tables.rows) {\n      const name = String(row.name)\n      const info = await db.execute(`PRAGMA table_info(${name})`)\n      schema[name] = info.rows.map((c) => ({ name: c.name, type: c.type }))\n    }\n    return JSON.stringify(schema, null, 2)\n  },\n})\n",
+      "path": "tools/introspect-schema.ts",
+      "target": "tools/introspect-schema.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { db } from '../lib/db.ts'\n\nexport const runQuery = defineTool({\n  name: 'run_query',\n  description: 'Executes a read-only SELECT query and returns the rows as JSON.',\n  parameters: v.object({\n    sql: v.string(),\n  }),\n  execute: async ({ sql }) => {\n    if (!/^\\s*select/i.test(sql)) {\n      return 'Refused: only read-only SELECT queries are allowed.'\n    }\n    const result = await db.execute(sql)\n    return JSON.stringify(result.rows, null, 2)\n  },\n})\n",
+      "path": "tools/run-query.ts",
+      "target": "tools/run-query.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createClient } from '@libsql/client'\n\n/**\n * Database client. Defaults to a local SQLite file; point DATABASE_URL at a\n * remote Turso/libSQL database, or swap the client for Postgres/MySQL.\n */\nexport const db = createClient({\n  url: process.env.DATABASE_URL ?? 'file:data.db',\n})\n",
+      "path": "lib/db.ts",
+      "target": "lib/db.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "text-to-sql",
+  "title": "Chat with Database Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime",
+    "@libsql/client"
+  ]
+}

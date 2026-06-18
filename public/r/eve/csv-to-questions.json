@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that summarizes a CSV dataset to stay within token limits, then generates focused analytical questions.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-haiku-4-5',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You turn a CSV dataset into a set of insightful analytical questions.\n\n1. Use `fetch_csv` to load the dataset from the provided URL.\n2. Summarize the data first — columns, types, ranges, and notable patterns —\n   to compress it and avoid token-limit errors on large files.\n3. From that summary, generate focused, answerable questions a data analyst\n   would ask of this dataset. Cover trends, comparisons, outliers, and\n   relationships between columns.\n\nGround every question in columns that actually exist. Do not invent fields.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: never(),\n  description: 'Fetches a CSV file from a URL and returns its raw text content.',\n  inputSchema: z.object({\n    url: z.string().url(),\n  }),\n  async execute({ url }) {\n    const content = await fetch(url).then((r) => r.text())\n    return { content, url }\n  },\n})\n",
+      "path": "agent/tools/fetch_csv.ts",
+      "target": "agent/tools/fetch_csv.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "csv-to-questions",
+  "title": "CSV to Questions Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

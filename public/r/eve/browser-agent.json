@@ -1,0 +1,55 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that drives a real browser with Playwright using a snapshot-and-selector pattern to complete web tasks.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a browser-using agent. You complete tasks on the live web by driving a\nreal browser.\n\nLoop:\n\n1. `browser_goto` to open a page.\n2. `browser_snapshot` to see the page — it returns the title, URL, visible text,\n   and a numbered list of interactive elements (links, buttons, inputs) with a\n   `selector` for each.\n3. Act on an element with `browser_click` or `browser_type`, using the selector\n   from the latest snapshot. Re-snapshot after navigation or any change.\n4. Repeat until the task is done, then report the result.\n\nAlways snapshot before acting — the page may have changed. Don't guess selectors.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { type Browser, chromium, type Page } from 'playwright'\n\nlet browser: Browser | null = null\nlet page: Page | null = null\n\n/** Returns a shared page, launching a browser on first use. */\nexport async function getPage(): Promise<Page> {\n  if (!browser) {\n    const cdpUrl = process.env.BROWSER_CDP_URL\n    browser = cdpUrl\n      ? await chromium.connectOverCDP(cdpUrl)\n      : await chromium.launch({ headless: process.env.BROWSER_HEADLESS !== 'false' })\n  }\n  if (!page) {\n    page = await browser.newPage()\n  }\n  return page\n}\n\n/** Captures a lightweight snapshot: page text plus interactive elements + selectors. */\nexport async function snapshot(page: Page) {\n  const elements = await page.$$eval(\n    'a, button, input, textarea, select, [role=\"button\"]',\n    (nodes) =>\n      nodes.slice(0, 60).map((node, index) => {\n        const el = node as HTMLElement\n        const tag = el.tagName.toLowerCase()\n        const label =\n          el.getAttribute('aria-label') ||\n          el.getAttribute('placeholder') ||\n          el.textContent?.trim().slice(0, 80) ||\n          el.getAttribute('name') ||\n          ''\n        return { index, tag, label, selector: `${tag}:nth-of-type(${index + 1})` }\n      })\n  )\n  return {\n    url: page.url(),\n    title: await page.title(),\n    text: (await page.evaluate(() => document.body.innerText)).slice(0, 4000),\n    elements,\n  }\n}\n",
+      "path": "agent/lib/browser.ts",
+      "target": "agent/lib/browser.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { getPage, snapshot } from '../lib/browser'\n\nexport default defineTool({\n  needsApproval: never(),\n  description: 'Navigates the browser to a URL and returns a snapshot of the page.',\n  inputSchema: z.object({\n    url: z.string().url(),\n  }),\n  async execute({ url }) {\n    const page = await getPage()\n    await page.goto(url, { waitUntil: 'domcontentloaded' })\n    return snapshot(page)\n  },\n})\n",
+      "path": "agent/tools/browser_goto.ts",
+      "target": "agent/tools/browser_goto.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { getPage, snapshot } from '../lib/browser'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Returns the current page snapshot: title, URL, visible text, and interactive elements with selectors.',\n  inputSchema: z.object({}),\n  async execute() {\n    const page = await getPage()\n    return snapshot(page)\n  },\n})\n",
+      "path": "agent/tools/browser_snapshot.ts",
+      "target": "agent/tools/browser_snapshot.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { getPage, snapshot } from '../lib/browser'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Clicks the element matching the given selector (from a snapshot) and returns the resulting page snapshot.',\n  inputSchema: z.object({\n    selector: z.string(),\n  }),\n  async execute({ selector }) {\n    const page = await getPage()\n    await page.click(selector)\n    await page.waitForLoadState('domcontentloaded').catch(() => {})\n    return snapshot(page)\n  },\n})\n",
+      "path": "agent/tools/browser_click.ts",
+      "target": "agent/tools/browser_click.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { getPage, snapshot } from '../lib/browser'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Types text into the input matching the selector (optionally pressing Enter), then returns a snapshot.',\n  inputSchema: z.object({\n    selector: z.string(),\n    text: z.string(),\n    submit: z.boolean().default(false),\n  }),\n  async execute({ selector, text, submit }) {\n    const page = await getPage()\n    await page.fill(selector, text)\n    if (submit) {\n      await page.press(selector, 'Enter')\n      await page.waitForLoadState('domcontentloaded').catch(() => {})\n    }\n    return snapshot(page)\n  },\n})\n",
+      "path": "agent/tools/browser_type.ts",
+      "target": "agent/tools/browser_type.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "browser-agent",
+  "title": "Browser Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve",
+    "playwright"
+  ]
+}

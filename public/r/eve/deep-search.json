@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that researches a question, evaluates its own findings, and iterates until the answer is complete and cited.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a deep research assistant that evaluates its own work.\n\nGiven a research question:\n\n1. Break it into the specific sub-questions you need to answer.\n2. Use `web_search` to find sources for each sub-question.\n3. After each round, critique your own findings: what is still missing,\n   unsupported, or contradictory? If gaps remain, search again with sharper\n   queries. Iterate until the question is fully answered.\n4. Write a final answer grounded only in what you found. Cite every claim with\n   its source URL. If something could not be verified, say so explicitly.\n\nNever fabricate sources or facts. Prefer primary sources and recent results.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Searches the web and returns ranked results with titles, URLs, and text snippets.',\n  inputSchema: z.object({\n    query: z.string(),\n    numResults: z.number().min(1).max(10).default(5),\n  }),\n  async execute({ query, numResults }) {\n    const res = await fetch('https://api.exa.ai/search', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        'x-api-key': process.env.EXA_API_KEY ?? '',\n      },\n      body: JSON.stringify({\n        query,\n        numResults,\n        contents: { text: true },\n      }),\n    })\n    return res.json()\n  },\n})\n",
+      "path": "agent/tools/web_search.ts",
+      "target": "agent/tools/web_search.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "---\nname: research\ndescription: Iterative, self-evaluating web research. Use when answering open-ended questions that require gathering and verifying information from multiple sources.\n---\n\n## Research Process\n\n1. Decompose the question into concrete sub-questions.\n2. Search each sub-question with `web_search`; collect URLs and snippets.\n3. Self-evaluate: list gaps, weak evidence, and contradictions.\n4. Re-search to close gaps until coverage is sufficient.\n5. Synthesize an answer citing every source. Flag anything unverified.\n",
+      "path": "agent/skills/research/SKILL.md",
+      "target": "agent/skills/research/SKILL.md",
+      "type": "registry:file"
+    }
+  ],
+  "name": "deep-search",
+  "title": "Deep Search Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

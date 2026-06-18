@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that answers questions about a library's functions by looking up structured documentation.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { lookupDocs } from '../tools/lookup-docs.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: `\n    You are a documentation assistant for a code library.\n    Call lookup_docs to retrieve a function's signature, description, and example,\n    then answer using only the returned documentation. If nothing matches, say so\n    and suggest the closest function names. Never invent functions or parameters.\n  `,\n  tools: [lookupDocs],\n}))\n",
+      "path": "agents/docs-chatbot.ts",
+      "target": "agents/docs-chatbot.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { readFile } from 'node:fs/promises'\nimport { fileURLToPath } from 'node:url'\nimport { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\ninterface FunctionDoc {\n  name: string\n  signature: string\n  description: string\n}\n\nconst DATA_URL = new URL('../data/functions.json', import.meta.url)\n\nexport const lookupDocs = defineTool({\n  name: 'lookup_docs',\n  description:\n    'Looks up library functions matching a name or keyword and returns their documentation.',\n  parameters: v.object({\n    query: v.string(),\n  }),\n  execute: async ({ query }) => {\n    const docs = JSON.parse(\n      await readFile(fileURLToPath(DATA_URL), 'utf-8')\n    ) as FunctionDoc[]\n    const q = query.toLowerCase()\n    const matches = docs.filter(\n      (d) =>\n        d.name.toLowerCase().includes(q) ||\n        d.description.toLowerCase().includes(q)\n    )\n    return JSON.stringify(matches.length ? matches : docs.map((d) => d.name))\n  },\n})\n",
+      "path": "tools/lookup-docs.ts",
+      "target": "tools/lookup-docs.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "[\n  {\n    \"name\": \"getPlanetaryData\",\n    \"signature\": \"getPlanetaryData(planet: string): Promise<PlanetaryData>\",\n    \"description\": \"Fetches orbital and physical data for a planet in the solar system.\",\n    \"parameters\": [\n      { \"name\": \"planet\", \"type\": \"string\", \"description\": \"Planet name, e.g. \\\"mars\\\".\" }\n    ],\n    \"example\": \"const data = await getPlanetaryData('mars')\"\n  },\n  {\n    \"name\": \"computeOrbit\",\n    \"signature\": \"computeOrbit(body: string, days: number): Orbit\",\n    \"description\": \"Computes the projected orbit of a body over a number of days.\",\n    \"parameters\": [\n      { \"name\": \"body\", \"type\": \"string\", \"description\": \"Body identifier.\" },\n      { \"name\": \"days\", \"type\": \"number\", \"description\": \"Projection window in days.\" }\n    ],\n    \"example\": \"const orbit = computeOrbit('halley', 365)\"\n  }\n]\n",
+      "path": "data/functions.json",
+      "target": "data/functions.json",
+      "type": "registry:file"
+    }
+  ],
+  "name": "docs-chatbot",
+  "title": "Docs Chatbot Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}

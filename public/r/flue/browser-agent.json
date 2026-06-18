@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that drives a real browser with Playwright using a snapshot-and-selector pattern to complete web tasks.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport {\n  browserClick,\n  browserGoto,\n  browserSnapshot,\n  browserType,\n} from '../tools/browser.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You are a browser-using agent. Open pages with browser_goto, see them with\n    browser_snapshot, and act with browser_click / browser_type using selectors\n    from the latest snapshot. Always re-snapshot after navigation or a change,\n    and never guess selectors. Report the result when the task is done.\n  `,\n  tools: [browserGoto, browserSnapshot, browserClick, browserType],\n}))\n",
+      "path": "agents/browser-agent.ts",
+      "target": "agents/browser-agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { getPage, snapshot } from '../lib/browser.ts'\n\nexport const browserGoto = defineTool({\n  name: 'browser_goto',\n  description: 'Navigates the browser to a URL and returns a snapshot of the page.',\n  parameters: v.object({ url: v.string() }),\n  execute: async ({ url }) => {\n    const page = await getPage()\n    await page.goto(url, { waitUntil: 'domcontentloaded' })\n    return JSON.stringify(await snapshot(page))\n  },\n})\n\nexport const browserSnapshot = defineTool({\n  name: 'browser_snapshot',\n  description:\n    'Returns the current page snapshot: title, URL, visible text, and interactive elements with selectors.',\n  parameters: v.object({}),\n  execute: async () => {\n    const page = await getPage()\n    return JSON.stringify(await snapshot(page))\n  },\n})\n\nexport const browserClick = defineTool({\n  name: 'browser_click',\n  description:\n    'Clicks the element matching the selector (from a snapshot) and returns the resulting page snapshot.',\n  parameters: v.object({ selector: v.string() }),\n  execute: async ({ selector }) => {\n    const page = await getPage()\n    await page.click(selector)\n    await page.waitForLoadState('domcontentloaded').catch(() => {})\n    return JSON.stringify(await snapshot(page))\n  },\n})\n\nexport const browserType = defineTool({\n  name: 'browser_type',\n  description:\n    'Types text into the input matching the selector (optionally pressing Enter), then returns a snapshot.',\n  parameters: v.object({\n    selector: v.string(),\n    text: v.string(),\n    submit: v.optional(v.boolean(), false),\n  }),\n  execute: async ({ selector, text, submit }) => {\n    const page = await getPage()\n    await page.fill(selector, text)\n    if (submit) {\n      await page.press(selector, 'Enter')\n      await page.waitForLoadState('domcontentloaded').catch(() => {})\n    }\n    return JSON.stringify(await snapshot(page))\n  },\n})\n",
+      "path": "tools/browser.ts",
+      "target": "tools/browser.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { type Browser, chromium, type Page } from 'playwright'\n\nlet browser: Browser | null = null\nlet page: Page | null = null\n\n/** Returns a shared page, launching a browser on first use. */\nexport async function getPage(): Promise<Page> {\n  if (!browser) {\n    const cdpUrl = process.env.BROWSER_CDP_URL\n    browser = cdpUrl\n      ? await chromium.connectOverCDP(cdpUrl)\n      : await chromium.launch({ headless: process.env.BROWSER_HEADLESS !== 'false' })\n  }\n  if (!page) {\n    page = await browser.newPage()\n  }\n  return page\n}\n\n/** Captures a lightweight snapshot: page text plus interactive elements + selectors. */\nexport async function snapshot(page: Page) {\n  const elements = await page.$$eval(\n    'a, button, input, textarea, select, [role=\"button\"]',\n    (nodes) =>\n      nodes.slice(0, 60).map((node, index) => {\n        const el = node as HTMLElement\n        const tag = el.tagName.toLowerCase()\n        const label =\n          el.getAttribute('aria-label') ||\n          el.getAttribute('placeholder') ||\n          el.textContent?.trim().slice(0, 80) ||\n          el.getAttribute('name') ||\n          ''\n        return { index, tag, label, selector: `${tag}:nth-of-type(${index + 1})` }\n      })\n  )\n  return {\n    url: page.url(),\n    title: await page.title(),\n    text: (await page.evaluate(() => document.body.innerText)).slice(0, 4000),\n    elements,\n  }\n}\n",
+      "path": "lib/browser.ts",
+      "target": "lib/browser.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "browser-agent",
+  "title": "Browser Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime",
+    "playwright"
+  ]
+}

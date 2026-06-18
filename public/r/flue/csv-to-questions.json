@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that chains a summarizer and a question-generator through a workflow to turn a CSV into analytical questions.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { fetchCsv } from '../tools/fetch-csv.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: `\n    You turn a CSV dataset into insightful analytical questions.\n    Use fetch_csv to load the data, summarize it to compress large files,\n    then generate focused, answerable questions grounded in real columns.\n  `,\n  tools: [fetchCsv],\n}))\n",
+      "path": "agents/csv-to-questions.ts",
+      "target": "agents/csv-to-questions.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createAgent, type FlueContext } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { fetchCsv } from '../tools/fetch-csv.ts'\n\nconst summarizer = createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: 'Load the CSV with fetch_csv and produce a compact summary: columns, types, ranges, and notable patterns.',\n  tools: [fetchCsv],\n}))\n\nconst questioner = createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: 'Given a dataset summary, generate focused analytical questions grounded in the listed columns.',\n}))\n\nconst Questions = v.object({\n  summary: v.string(),\n  questions: v.array(v.string()),\n})\n\nexport async function run({ init, payload }: FlueContext<{ url: string }>) {\n  const summarySession = await (await init(summarizer)).session()\n  const summary = await summarySession.prompt(`Summarize the CSV at ${payload.url}`)\n\n  const questionSession = await (await init(questioner)).session()\n  const response = await questionSession.prompt(\n    `Generate analytical questions for this dataset:\\n${summary.text}`,\n    { result: Questions }\n  )\n\n  return response.data\n}\n",
+      "path": "workflows/csv-to-questions.ts",
+      "target": "workflows/csv-to-questions.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nexport const fetchCsv = defineTool({\n  name: 'fetch_csv',\n  description: 'Fetches a CSV file from a URL and returns its raw text content.',\n  parameters: v.object({\n    url: v.string(),\n  }),\n  execute: async ({ url }) => {\n    const res = await fetch(url)\n    return res.text()\n  },\n})\n",
+      "path": "tools/fetch-csv.ts",
+      "target": "tools/fetch-csv.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "csv-to-questions",
+  "title": "CSV to Questions Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}

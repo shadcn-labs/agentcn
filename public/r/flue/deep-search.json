@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that fans research out to searcher and evaluator subagents, iterating through a bounded workflow until the answer is cited and complete.",
+  "files": [
+    {
+      "content": "import { createAgent, defineAgentProfile } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport research from '../skills/research/SKILL.md' with { type: 'skill' }\nimport { webSearch } from '../tools/search.ts'\n\nconst searcher = defineAgentProfile({\n  name: 'searcher',\n  description: 'Runs web searches for a single sub-question and returns sourced findings.',\n  instructions: 'Search the web for the given sub-question and return concise findings with source URLs. Report only what the sources support.',\n})\n\nconst evaluator = defineAgentProfile({\n  name: 'evaluator',\n  description: 'Critiques the current findings and decides whether more research is needed.',\n  instructions: 'Given the question and findings so far, list remaining gaps, weak evidence, and contradictions. Decide if another search round is required.',\n})\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You are a deep research orchestrator.\n    Break the question into sub-questions and dispatch the searcher subagent for each.\n    Send the findings to the evaluator subagent and search again until it reports no gaps.\n    Produce a final cited answer grounded only in the sources.\n  `,\n  skills: [research],\n  tools: [webSearch],\n  subagents: [searcher, evaluator],\n}))\n",
+      "path": "agents/deep-search.ts",
+      "target": "agents/deep-search.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createAgent, defineAgentProfile, type FlueContext } from '@flue/runtime'\nimport * as v from 'valibot'\nimport research from '../skills/research/SKILL.md' with { type: 'skill' }\nimport { webSearch } from '../tools/search.ts'\n\nconst searcher = defineAgentProfile({\n  name: 'searcher',\n  description: 'Runs web searches for a single sub-question.',\n  instructions: 'Search the web for the sub-question and return findings with source URLs.',\n})\n\nconst evaluator = defineAgentProfile({\n  name: 'evaluator',\n  description: 'Decides whether the findings answer the question.',\n  instructions: 'List remaining gaps and decide if another round is needed.',\n})\n\nconst orchestrator = createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  skills: [research],\n  tools: [webSearch],\n  subagents: [searcher, evaluator],\n}))\n\nconst Answer = v.object({\n  answer: v.string(),\n  citations: v.array(v.object({\n    claim: v.string(),\n    url: v.string(),\n  })),\n  unverified: v.array(v.string()),\n})\n\nexport async function run({ init, payload }: FlueContext<{ question: string; maxRounds?: number }>) {\n  const harness = await init(orchestrator)\n  const session = await harness.session()\n\n  const response = await session.prompt(\n    `Research this question and iterate until it is fully answered (max ${payload.maxRounds ?? 3} rounds): ${payload.question}`,\n    { result: Answer }\n  )\n\n  return response.data\n}\n",
+      "path": "workflows/deep-search.ts",
+      "target": "workflows/deep-search.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nexport const webSearch = defineTool({\n  name: 'web_search',\n  description:\n    'Searches the web and returns ranked results with titles, URLs, and text snippets.',\n  parameters: v.object({\n    query: v.string(),\n    numResults: v.optional(v.number(), 5),\n  }),\n  execute: async ({ query, numResults }) => {\n    const res = await fetch('https://api.exa.ai/search', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        'x-api-key': process.env.EXA_API_KEY ?? '',\n      },\n      body: JSON.stringify({ query, numResults, contents: { text: true } }),\n    })\n    return res.text()\n  },\n})\n",
+      "path": "tools/search.ts",
+      "target": "tools/search.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "---\nname: research\ndescription: Iterative, self-evaluating web research. Use when answering open-ended questions that require gathering and verifying information from multiple sources.\n---\n\n## Research Process\n\n1. Decompose the question into concrete sub-questions.\n2. Search each sub-question with `web_search`; collect URLs and snippets.\n3. Self-evaluate: list gaps, weak evidence, and contradictions.\n4. Re-search to close gaps until coverage is sufficient.\n5. Synthesize an answer citing every source. Flag anything unverified.\n",
+      "path": "skills/research/SKILL.md",
+      "target": "skills/research/SKILL.md",
+      "type": "registry:file"
+    }
+  ],
+  "name": "deep-search",
+  "title": "Deep Search Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}

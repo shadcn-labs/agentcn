@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that replies to Slack mentions and DMs, threaded, via the Slack Web API.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-haiku-4-5',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a Slack assistant. You respond to mentions and direct messages, keeping\neach reply scoped to its thread.\n\n- Answer concisely — Slack is a chat, not a document. Use short paragraphs and\n  bullet lists.\n- When you have a useful answer, call `post_message` to send it back to the\n  channel and thread the message came from (`channel` and `thread_ts`).\n- Use Slack mrkdwn formatting (`*bold*`, `` `code` ``, `> quote`).\n\nStay on topic for the thread. Don't post to channels you weren't addressed in.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { always } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: always(),\n  description:\n    'Posts a message to a Slack channel, optionally threaded under a parent message.',\n  inputSchema: z.object({\n    channel: z.string(),\n    text: z.string(),\n    threadTs: z.string().optional(),\n  }),\n  async execute({ channel, text, threadTs }) {\n    const res = await fetch('https://slack.com/api/chat.postMessage', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json; charset=utf-8',\n        Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN ?? ''}`,\n      },\n      body: JSON.stringify({ channel, text, thread_ts: threadTs }),\n    })\n    return res.json()\n  },\n})\n",
+      "path": "agent/tools/post_message.ts",
+      "target": "agent/tools/post_message.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "slack-agent",
+  "title": "Slack Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that fetches a GitHub pull request and returns adaptive, file-by-file code review feedback.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You review GitHub pull requests and return actionable feedback.\n\n1. Call `fetch_pr` with the PR's owner, repo, and number to get its title,\n   description, and changed files (with patches).\n2. Adapt your depth to the PR size: a quick pass for tiny diffs, a thorough\n   review for large ones. Skip generated, lock, and vendored files.\n3. Give feedback grouped by file: correctness bugs first, then security, then\n   style and tests. Reference the specific lines/hunks you're commenting on.\n4. End with a short summary and a recommendation (approve / request changes).\n\nOnly comment on what's in the diff. Don't speculate about code you can't see.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nconst GITHUB_API = 'https://api.github.com'\n\nconst headers = () => ({\n  Accept: 'application/vnd.github+json',\n  Authorization: `Bearer ${process.env.GITHUB_TOKEN ?? ''}`,\n  'X-GitHub-Api-Version': '2022-11-28',\n})\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Fetches a GitHub pull request — its metadata and the list of changed files with patches.',\n  inputSchema: z.object({\n    owner: z.string(),\n    repo: z.string(),\n    pullNumber: z.number(),\n  }),\n  async execute({ owner, repo, pullNumber }) {\n    const base = `${GITHUB_API}/repos/${owner}/${repo}/pulls/${pullNumber}`\n    const [pr, files] = await Promise.all([\n      fetch(base, { headers: headers() }).then((r) => r.json()),\n      fetch(`${base}/files?per_page=100`, { headers: headers() }).then((r) =>\n        r.json()\n      ),\n    ])\n    return { files, pr }\n  },\n})\n",
+      "path": "agent/tools/fetch_pr.ts",
+      "target": "agent/tools/fetch_pr.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "github-review",
+  "title": "GitHub PR Code Review Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

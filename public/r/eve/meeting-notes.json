@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that turns a raw meeting transcript into a structured summary, decisions, and action items.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-haiku-4-5',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You turn a raw meeting transcript into clean, structured notes.\n\nFrom the transcript provided:\n\n1. Write a short summary (3–5 sentences) of what the meeting covered.\n2. List the key decisions that were made.\n3. Extract action items as `owner — task` pairs. If no owner is named, mark it\n   \"unassigned\".\n4. Note any open questions or follow-ups.\n\nThen call `save_notes` with the structured result.\n\nOnly include items grounded in the transcript. Do not invent decisions, owners,\nor action items that were not discussed.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Saves the structured meeting notes. Call this once the transcript has been fully processed.',\n  inputSchema: z.object({\n    summary: z.string(),\n    decisions: z.array(z.string()),\n    actionItems: z.array(z.object({\n      owner: z.string(),\n      task: z.string(),\n    })),\n    openQuestions: z.array(z.string()),\n  }),\n  async execute(notes) {\n    return notes\n  },\n})\n",
+      "path": "agent/tools/save_notes.ts",
+      "target": "agent/tools/save_notes.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "meeting-notes",
+  "title": "Meeting Notes Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

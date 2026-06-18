@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that turns a PDF into study flash cards, with optional AI-generated images per concept.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You generate study flash cards from a PDF document.\n\n1. Call `parse_pdf` to extract the document text.\n2. Identify the key concepts, terms, and facts worth memorizing.\n3. Produce flash cards as `front` (question or term) / `back` (answer or\n   definition) pairs. Keep each side concise and self-contained.\n4. Only when the user asks for images, call `generate_image` for a concept and\n   attach the resulting URL to that card.\n\nBase every card on the document — do not invent facts that aren't in the PDF.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { extractText, getDocumentProxy } from 'unpdf'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: never(),\n  description: 'Extracts the full text content from a PDF at the given URL.',\n  inputSchema: z.object({\n    url: z.string().url(),\n  }),\n  async execute({ url }) {\n    const buffer = await fetch(url).then((r) => r.arrayBuffer())\n    const pdf = await getDocumentProxy(new Uint8Array(buffer))\n    const { text } = await extractText(pdf, { mergePages: true })\n    return { text }\n  },\n})\n",
+      "path": "agent/tools/parse_pdf.ts",
+      "target": "agent/tools/parse_pdf.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { always } from 'eve/tools/approval'\nimport { z } from 'zod'\n\nexport default defineTool({\n  needsApproval: always(),\n  description:\n    'Generates an illustrative image for a flash-card concept and returns its URL.',\n  inputSchema: z.object({\n    prompt: z.string(),\n  }),\n  async execute({ prompt }) {\n    const res = await fetch('https://api.openai.com/v1/images/generations', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`,\n      },\n      body: JSON.stringify({ model: 'gpt-image-1', prompt, size: '1024x1024' }),\n    })\n    const data = (await res.json()) as { data?: { url?: string }[] }\n    return { url: data.data?.[0]?.url ?? '' }\n  },\n})\n",
+      "path": "agent/tools/generate_image.ts",
+      "target": "agent/tools/generate_image.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "flashcards-pdf",
+  "title": "Flash Cards from PDF Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve",
+    "unpdf"
+  ]
+}

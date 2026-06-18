@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that indexes a PDF into a vector store and answers questions over it with page-cited retrieval.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { indexPdf } from '../tools/index-pdf.ts'\nimport { searchDocs } from '../tools/search-docs.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You answer questions about PDF documents using retrieval.\n    Call index_pdf for any PDF URL that has not been indexed yet.\n    Answer questions by calling search_docs and using only the retrieved chunks,\n    citing the page number for every claim. Never answer from memory.\n  `,\n  tools: [indexPdf, searchDocs],\n}))\n",
+      "path": "agents/chat-with-pdf.ts",
+      "target": "agents/chat-with-pdf.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createAgent, type FlueContext } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { indexPdf } from '../tools/index-pdf.ts'\nimport { searchDocs } from '../tools/search-docs.ts'\n\nconst agent = createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: 'Index the PDF if needed, then answer the question using only retrieved chunks. Cite page numbers.',\n  tools: [indexPdf, searchDocs],\n}))\n\nconst Answer = v.object({\n  answer: v.string(),\n  citations: v.array(v.object({\n    page: v.number(),\n    quote: v.string(),\n  })),\n})\n\nexport async function run({ init, payload }: FlueContext<{ url: string; question: string }>) {\n  const harness = await init(agent)\n  const session = await harness.session()\n\n  const response = await session.prompt(\n    `Index ${payload.url} if needed, then answer: ${payload.question}`,\n    { result: Answer }\n  )\n\n  return response.data\n}\n",
+      "path": "workflows/chat-with-pdf.ts",
+      "target": "workflows/chat-with-pdf.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport { extractText, getDocumentProxy } from 'unpdf'\nimport * as v from 'valibot'\nimport { chunkText, upsertChunks } from '../lib/vector-store.ts'\n\nexport const indexPdf = defineTool({\n  name: 'index_pdf',\n  description:\n    'Downloads a PDF, splits each page into chunks, embeds them, and stores them for retrieval.',\n  parameters: v.object({\n    url: v.string(),\n    doc: v.optional(v.string()),\n  }),\n  execute: async ({ url, doc }) => {\n    const buffer = await fetch(url).then((r) => r.arrayBuffer())\n    const pdf = await getDocumentProxy(new Uint8Array(buffer))\n    const { text } = await extractText(pdf, { mergePages: false })\n\n    const chunks = text.flatMap((pageText, i) =>\n      chunkText(pageText).map((content) => ({\n        doc: doc ?? url,\n        page: i + 1,\n        content,\n      }))\n    )\n\n    await upsertChunks(chunks)\n    return `Indexed ${chunks.length} chunks across ${text.length} pages.`\n  },\n})\n",
+      "path": "tools/index-pdf.ts",
+      "target": "tools/index-pdf.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { search } from '../lib/vector-store.ts'\n\nexport const searchDocs = defineTool({\n  name: 'search_docs',\n  description:\n    'Retrieves the most relevant PDF chunks for a question, including the page number of each chunk for citation.',\n  parameters: v.object({\n    query: v.string(),\n    topK: v.optional(v.number(), 5),\n  }),\n  execute: async ({ query, topK }) => {\n    const hits = await search(query, topK)\n    return JSON.stringify(hits, null, 2)\n  },\n})\n",
+      "path": "tools/search-docs.ts",
+      "target": "tools/search-docs.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { openai } from '@ai-sdk/openai'\nimport { createClient } from '@libsql/client'\nimport { embed, embedMany } from 'ai'\n\n/**\n * Minimal libSQL-backed vector store for PDF chunks. Swap the client URL for a\n * remote Turso database, or replace libSQL with Pinecone/Qdrant/pgvector.\n */\nconst db = createClient({ url: process.env.LIBSQL_URL ?? 'file:pdf-index.db' })\nconst embeddingModel = openai.embedding('text-embedding-3-small')\n\nexport interface Chunk {\n  doc: string\n  page: number\n  content: string\n}\n\nexport function chunkText(text: string, size = 1000, overlap = 200): string[] {\n  const out: string[] = []\n  for (let i = 0; i < text.length; i += size - overlap) {\n    const slice = text.slice(i, i + size).trim()\n    if (slice) {\n      out.push(slice)\n    }\n  }\n  return out\n}\n\nasync function ensureSchema(): Promise<void> {\n  await db.execute(\n    'CREATE TABLE IF NOT EXISTS chunks (id INTEGER PRIMARY KEY AUTOINCREMENT, doc TEXT, page INTEGER, content TEXT, embedding F32_BLOB(1536))'\n  )\n}\n\nexport async function upsertChunks(chunks: Chunk[]): Promise<void> {\n  await ensureSchema()\n  const { embeddings } = await embedMany({\n    model: embeddingModel,\n    values: chunks.map((c) => c.content),\n  })\n  for (let i = 0; i < chunks.length; i++) {\n    const c = chunks[i]\n    await db.execute({\n      sql: 'INSERT INTO chunks (doc, page, content, embedding) VALUES (?, ?, ?, vector32(?))',\n      args: [c.doc, c.page, c.content, JSON.stringify(embeddings[i])],\n    })\n  }\n}\n\nexport async function search(query: string, topK: number) {\n  await ensureSchema()\n  const { embedding } = await embed({ model: embeddingModel, value: query })\n  const result = await db.execute({\n    sql: 'SELECT doc, page, content, vector_distance_cos(embedding, vector32(?)) AS distance FROM chunks ORDER BY distance ASC LIMIT ?',\n    args: [JSON.stringify(embedding), topK],\n  })\n  return result.rows\n}\n",
+      "path": "lib/vector-store.ts",
+      "target": "lib/vector-store.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "chat-with-pdf",
+  "title": "Chat with PDF Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime",
+    "@libsql/client",
+    "@ai-sdk/openai",
+    "ai",
+    "unpdf"
+  ]
+}

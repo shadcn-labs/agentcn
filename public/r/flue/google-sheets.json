@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that reads, analyzes, and edits Google Sheets via the Sheets API.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { readRange } from '../tools/read-range.ts'\nimport { updateRange } from '../tools/update-range.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You analyze and edit Google Sheets. Always read with read_range before\n    writing. Analyze the data to answer questions, and only call update_range when\n    asked to change the sheet — confirming the target range first. Never overwrite\n    cells you weren't asked to change.\n  `,\n  tools: [readRange, updateRange],\n}))\n",
+      "path": "agents/google-sheets.ts",
+      "target": "agents/google-sheets.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nconst SHEETS_API = 'https://sheets.googleapis.com/v4/spreadsheets'\n\nexport const readRange = defineTool({\n  name: 'read_range',\n  description:\n    'Reads a range of cells from a Google Sheet using A1 notation (e.g. \"Sheet1!A1:F100\").',\n  parameters: v.object({\n    spreadsheetId: v.string(),\n    range: v.string(),\n  }),\n  execute: async ({ spreadsheetId, range }) => {\n    const res = await fetch(\n      `${SHEETS_API}/${spreadsheetId}/values/${encodeURIComponent(range)}`,\n      {\n        headers: {\n          Authorization: `Bearer ${process.env.GOOGLE_ACCESS_TOKEN ?? ''}`,\n        },\n      }\n    )\n    return res.text()\n  },\n})\n",
+      "path": "tools/read-range.ts",
+      "target": "tools/read-range.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nconst SHEETS_API = 'https://sheets.googleapis.com/v4/spreadsheets'\n\nexport const updateRange = defineTool({\n  name: 'update_range',\n  description:\n    'Writes a 2D array of values to a range in a Google Sheet using A1 notation.',\n  parameters: v.object({\n    spreadsheetId: v.string(),\n    range: v.string(),\n    values: v.array(v.array(v.union([v.string(), v.number()]))),\n  }),\n  execute: async ({ spreadsheetId, range, values }) => {\n    const res = await fetch(\n      `${SHEETS_API}/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`,\n      {\n        method: 'PUT',\n        headers: {\n          'Content-Type': 'application/json',\n          Authorization: `Bearer ${process.env.GOOGLE_ACCESS_TOKEN ?? ''}`,\n        },\n        body: JSON.stringify({ range, values }),\n      }\n    )\n    return res.text()\n  },\n})\n",
+      "path": "tools/update-range.ts",
+      "target": "tools/update-range.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "google-sheets",
+  "title": "Google Sheets Analysis Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}

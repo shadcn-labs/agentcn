@@ -1,0 +1,51 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that indexes internal documents into a vector store and answers questions over them, with PII redaction.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a company knowledge assistant. You answer questions over an indexed\ncorpus of internal documents (e.g. issues, wiki/Notion pages).\n\n1. Call `search_knowledge` first — the corpus is the source of truth. Answer from\n   the retrieved passages and cite each source.\n2. Use `index_document` to add a new document to the corpus when the user shares\n   one.\n3. If the corpus doesn't cover the question, say so plainly instead of guessing.\n\nNever reveal personal data (emails, phone numbers, SSNs, card numbers, API keys)\nin your answers — the retrieval layer redacts it, so don't reconstruct it.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "/** Redacts common PII from text before it reaches the user. */\nconst PATTERNS: [RegExp, string][] = [\n  [/[\\w.+-]+@[\\w-]+\\.[\\w.-]+/g, '[redacted-email]'],\n  [/\\b(?:\\+?\\d{1,2}[\\s-]?)?(?:\\(\\d{3}\\)|\\d{3})[\\s-]?\\d{3}[\\s-]?\\d{4}\\b/g, '[redacted-phone]'],\n  [/\\b\\d{3}-\\d{2}-\\d{4}\\b/g, '[redacted-ssn]'],\n  [/\\b(?:\\d[ -]?){13,16}\\b/g, '[redacted-card]'],\n  [/\\b(?:sk|pk|api|key)[-_][A-Za-z0-9]{16,}\\b/g, '[redacted-key]'],\n]\n\nexport function redactPii(text: string): string {\n  return PATTERNS.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), text)\n}\n",
+      "path": "agent/lib/pii.ts",
+      "target": "agent/lib/pii.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { openai } from '@ai-sdk/openai'\nimport { createClient } from '@libsql/client'\nimport { embed, embedMany } from 'ai'\n\n/**\n * Minimal libSQL-backed vector store for the knowledge corpus. Swap for\n * pgvector/Neon, Pinecone, or Qdrant behind the same functions.\n */\nconst db = createClient({ url: process.env.LIBSQL_URL ?? 'file:knowledge.db' })\nconst embeddingModel = openai.embedding('text-embedding-3-small')\n\nexport interface Doc {\n  source: string\n  content: string\n}\n\nexport function chunkText(text: string, size = 1000, overlap = 200): string[] {\n  const out: string[] = []\n  for (let i = 0; i < text.length; i += size - overlap) {\n    const slice = text.slice(i, i + size).trim()\n    if (slice) {\n      out.push(slice)\n    }\n  }\n  return out\n}\n\nasync function ensureSchema(): Promise<void> {\n  await db.execute(\n    'CREATE TABLE IF NOT EXISTS docs (id INTEGER PRIMARY KEY AUTOINCREMENT, source TEXT, content TEXT, embedding F32_BLOB(1536))'\n  )\n}\n\nexport async function indexDoc(doc: Doc): Promise<number> {\n  await ensureSchema()\n  const chunks = chunkText(doc.content)\n  const { embeddings } = await embedMany({ model: embeddingModel, values: chunks })\n  for (let i = 0; i < chunks.length; i++) {\n    await db.execute({\n      sql: 'INSERT INTO docs (source, content, embedding) VALUES (?, ?, vector32(?))',\n      args: [doc.source, chunks[i], JSON.stringify(embeddings[i])],\n    })\n  }\n  return chunks.length\n}\n\nexport async function searchDocs(query: string, topK: number) {\n  await ensureSchema()\n  const { embedding } = await embed({ model: embeddingModel, value: query })\n  const result = await db.execute({\n    sql: 'SELECT source, content, vector_distance_cos(embedding, vector32(?)) AS distance FROM docs ORDER BY distance ASC LIMIT ?',\n    args: [JSON.stringify(embedding), topK],\n  })\n  return result.rows\n}\n",
+      "path": "agent/lib/vector-store.ts",
+      "target": "agent/lib/vector-store.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { indexDoc } from '../lib/vector-store'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Adds a document to the knowledge corpus by chunking and embedding it.',\n  inputSchema: z.object({\n    source: z.string(),\n    content: z.string(),\n  }),\n  async execute({ source, content }) {\n    const chunks = await indexDoc({ source, content })\n    return { chunks, source }\n  },\n})\n",
+      "path": "agent/tools/index_document.ts",
+      "target": "agent/tools/index_document.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { redactPii } from '../lib/pii'\nimport { searchDocs } from '../lib/vector-store'\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Searches the company knowledge corpus and returns the most relevant passages (with PII redacted) and their sources.',\n  inputSchema: z.object({\n    query: z.string(),\n    topK: z.number().min(1).max(10).default(5),\n  }),\n  async execute({ query, topK }) {\n    const hits = await searchDocs(query, topK)\n    const results = hits.map((row) => ({\n      content: redactPii(String(row.content)),\n      source: row.source,\n    }))\n    return { results }\n  },\n})\n",
+      "path": "agent/tools/search_knowledge.ts",
+      "target": "agent/tools/search_knowledge.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "company-knowledge",
+  "title": "Company Knowledge Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve",
+    "@libsql/client",
+    "@ai-sdk/openai",
+    "ai"
+  ]
+}

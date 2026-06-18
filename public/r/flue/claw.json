@@ -1,0 +1,48 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that operates a sandboxed workspace — read/write files and run shell commands — to finish multi-step tasks.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport workspace from '../skills/workspace/SKILL.md' with { type: 'skill' }\nimport { readFileTool } from '../tools/read-file.ts'\nimport { runShell } from '../tools/run-shell.ts'\nimport { writeFileTool } from '../tools/write-file.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You are Claw, an autonomous assistant operating a sandboxed workspace.\n    Plan, then execute step by step. Inspect before acting, keep all paths inside\n    the workspace, and prefer non-destructive shell commands — explaining risky\n    ones first. Summarize what you changed when done.\n  `,\n  skills: [workspace],\n  tools: [readFileTool, writeFileTool, runShell],\n}))\n",
+      "path": "agents/claw.ts",
+      "target": "agents/claw.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { readFile } from 'node:fs/promises'\nimport { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { resolveInWorkspace } from '../lib/workspace.ts'\n\nexport const readFileTool = defineTool({\n  name: 'read_file',\n  description: 'Reads a UTF-8 file from the workspace.',\n  parameters: v.object({\n    path: v.string(),\n  }),\n  execute: async ({ path }) => readFile(resolveInWorkspace(path), 'utf-8'),\n})\n",
+      "path": "tools/read-file.ts",
+      "target": "tools/read-file.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { mkdir, writeFile } from 'node:fs/promises'\nimport { dirname } from 'node:path'\nimport { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { resolveInWorkspace } from '../lib/workspace.ts'\n\nexport const writeFileTool = defineTool({\n  name: 'write_file',\n  description: 'Writes (or overwrites) a UTF-8 file in the workspace.',\n  parameters: v.object({\n    path: v.string(),\n    content: v.string(),\n  }),\n  execute: async ({ path, content }) => {\n    const target = resolveInWorkspace(path)\n    await mkdir(dirname(target), { recursive: true })\n    await writeFile(target, content, 'utf-8')\n    return `Wrote ${content.length} bytes to ${path}.`\n  },\n})\n",
+      "path": "tools/write-file.ts",
+      "target": "tools/write-file.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { exec } from 'node:child_process'\nimport { promisify } from 'node:util'\nimport { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { WORKSPACE } from '../lib/workspace.ts'\n\nconst run = promisify(exec)\n\nexport const runShell = defineTool({\n  name: 'run_shell',\n  description:\n    'Runs a shell command inside the workspace directory and returns its stdout/stderr.',\n  parameters: v.object({\n    command: v.string(),\n  }),\n  execute: async ({ command }) => {\n    try {\n      const { stdout, stderr } = await run(command, {\n        cwd: WORKSPACE,\n        timeout: 60_000,\n      })\n      return JSON.stringify({ stdout, stderr })\n    } catch (error) {\n      return JSON.stringify({ error: String(error) })\n    }\n  },\n})\n",
+      "path": "tools/run-shell.ts",
+      "target": "tools/run-shell.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import path from 'node:path'\n\n/** Root of the sandbox. Everything the agent reads/writes stays under here. */\nexport const WORKSPACE = path.resolve(process.env.WORKSPACE_DIR ?? 'workspace')\n\n/** Resolves a user-supplied path and refuses anything that escapes the sandbox. */\nexport function resolveInWorkspace(relativePath: string): string {\n  const resolved = path.resolve(WORKSPACE, relativePath)\n  if (resolved !== WORKSPACE && !resolved.startsWith(WORKSPACE + path.sep)) {\n    throw new Error(`Path escapes the workspace: ${relativePath}`)\n  }\n  return resolved\n}\n",
+      "path": "lib/workspace.ts",
+      "target": "lib/workspace.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "---\nname: workspace\ndescription: How to safely operate the sandboxed workspace. Use for any multi-step task involving files or shell commands.\n---\n\n## Working in the Workspace\n\n1. Plan the task as a short ordered checklist.\n2. Inspect first: read files or `ls` a directory before changing anything.\n3. Make the smallest change that advances the task; re-check after each step.\n4. Keep every path inside the workspace.\n5. Prefer reversible, non-destructive commands. Explain risky ones before running.\n6. Finish by summarizing exactly what you created or changed.\n",
+      "path": "skills/workspace/SKILL.md",
+      "target": "skills/workspace/SKILL.md",
+      "type": "registry:file"
+    }
+  ],
+  "name": "claw",
+  "title": "Claw Autonomous Assistant",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}

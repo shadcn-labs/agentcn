@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that answers questions about a library's functions by looking up structured documentation.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-haiku-4-5',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a documentation assistant for a code library.\n\nWhen a user asks about a function:\n\n1. Call `lookup_docs` with the function name (or a keyword) to retrieve its\n   signature, description, parameters, and example.\n2. Answer using only the returned documentation. Show the signature and a short\n   usage example.\n3. If no matching function is found, say so and suggest the closest matches by\n   name.\n\nNever invent functions, parameters, or behavior that isn't in the docs.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "[\n  {\n    \"name\": \"getPlanetaryData\",\n    \"signature\": \"getPlanetaryData(planet: string): Promise<PlanetaryData>\",\n    \"description\": \"Fetches orbital and physical data for a planet in the solar system.\",\n    \"parameters\": [\n      { \"name\": \"planet\", \"type\": \"string\", \"description\": \"Planet name, e.g. \\\"mars\\\".\" }\n    ],\n    \"example\": \"const data = await getPlanetaryData('mars')\"\n  },\n  {\n    \"name\": \"computeOrbit\",\n    \"signature\": \"computeOrbit(body: string, days: number): Orbit\",\n    \"description\": \"Computes the projected orbit of a body over a number of days.\",\n    \"parameters\": [\n      { \"name\": \"body\", \"type\": \"string\", \"description\": \"Body identifier.\" },\n      { \"name\": \"days\", \"type\": \"number\", \"description\": \"Projection window in days.\" }\n    ],\n    \"example\": \"const orbit = computeOrbit('halley', 365)\"\n  }\n]\n",
+      "path": "agent/data/functions.json",
+      "target": "agent/data/functions.json",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { readFile } from 'node:fs/promises'\nimport { fileURLToPath } from 'node:url'\nimport { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\n\ninterface FunctionDoc {\n  name: string\n  signature: string\n  description: string\n}\n\nconst DATA_URL = new URL('../data/functions.json', import.meta.url)\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Looks up library functions matching a name or keyword and returns their documentation.',\n  inputSchema: z.object({\n    query: z.string(),\n  }),\n  async execute({ query }) {\n    const docs = JSON.parse(\n      await readFile(fileURLToPath(DATA_URL), 'utf-8')\n    ) as FunctionDoc[]\n    const q = query.toLowerCase()\n    const matches = docs.filter(\n      (d) =>\n        d.name.toLowerCase().includes(q) ||\n        d.description.toLowerCase().includes(q)\n    )\n    return matches.length\n      ? { matches }\n      : { suggestions: docs.map((d) => d.name) }\n  },\n})\n",
+      "path": "agent/tools/lookup_docs.ts",
+      "target": "agent/tools/lookup_docs.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "docs-chatbot",
+  "title": "Docs Chatbot Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}
