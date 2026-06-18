@@ -1,5 +1,5 @@
 import type { EmitEvent, PreviewEvent } from "@/lib/preview/events";
-import { runCompetitorIntel } from "@/lib/preview/flue-runner";
+import { runPreview } from "@/lib/preview/runner";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -43,53 +43,6 @@ const SSE_HEADERS = {
 
 const sseFrame = (payload: string): Uint8Array =>
   new TextEncoder().encode(`data: ${payload}\n\n`);
-
-const toUrls = (input: Record<string, string>): string[] =>
-  Object.values(input)
-    .join("\n")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-/** Streams the in-process Flue runner as structured preview events. */
-const flueStream = (urls: string[]): ReadableStream<Uint8Array> => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-
-  return new ReadableStream<Uint8Array>({
-    async start(controller) {
-      const emit: EmitEvent = (event) => {
-        controller.enqueue(sseFrame(JSON.stringify(event)));
-      };
-
-      try {
-        if (!apiKey) {
-          emit({
-            message:
-              "ANTHROPIC_API_KEY is not set. Add it to .env.local to run the Flue preview in-process.",
-            type: "error",
-          });
-          return;
-        }
-        if (urls.length === 0) {
-          emit({
-            message: "Provide at least one competitor URL.",
-            type: "error",
-          });
-          return;
-        }
-
-        await runCompetitorIntel({ apiKey, emit, urls });
-      } catch (error) {
-        emit({
-          message: error instanceof Error ? error.message : "Unknown error.",
-          type: "error",
-        });
-      } finally {
-        controller.close();
-      }
-    },
-  });
-};
 
 /**
  * Proxies a durable Eve session: opens the session, attaches to its NDJSON
@@ -172,6 +125,46 @@ const eveStream = (message: string): ReadableStream<Uint8Array> => {
   });
 };
 
+/**
+ * Runs any catalogued agent in-process against the Anthropic Messages API,
+ * streaming structured preview events. Safe, key-free tools run for real;
+ * the rest degrade with a clear note. Used for Flue and for Eve when no
+ * durable Eve backend (EVE_PREVIEW_URL) is configured.
+ */
+const genericStream = (
+  slug: string,
+  input: Record<string, string>
+): ReadableStream<Uint8Array> => {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+
+  return new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const emit: EmitEvent = (event) => {
+        controller.enqueue(sseFrame(JSON.stringify(event)));
+      };
+
+      try {
+        if (!apiKey) {
+          emit({
+            message:
+              "ANTHROPIC_API_KEY is not set. Add it to .env.local to run the live preview in-process.",
+            type: "error",
+          });
+          return;
+        }
+        await runPreview({ apiKey, emit, input, slug });
+      } catch (error) {
+        emit({
+          message: error instanceof Error ? error.message : "Unknown error.",
+          type: "error",
+        });
+      } finally {
+        controller.close();
+      }
+    },
+  });
+};
+
 export const POST = async (
   request: Request,
   { params }: { params: Promise<{ framework: string; agent: string }> }
@@ -198,16 +191,12 @@ export const POST = async (
     return Response.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  if (framework === "flue") {
-    if (agent !== "competitor-intel") {
-      return Response.json(
-        { error: `No in-process Flue preview for "${agent}".` },
-        { status: 404 }
-      );
-    }
-    return new Response(flueStream(toUrls(input)), { headers: SSE_HEADERS });
+  // Eve: proxy a durable session when a deployed backend is configured;
+  // otherwise fall back to the in-process runner so the preview still works.
+  if (framework === "eve" && process.env.EVE_PREVIEW_URL) {
+    const message = Object.values(input).join("\n\n").trim();
+    return new Response(eveStream(message), { headers: SSE_HEADERS });
   }
 
-  const message = Object.values(input).join("\n\n").trim();
-  return new Response(eveStream(message), { headers: SSE_HEADERS });
+  return new Response(genericStream(agent, input), { headers: SSE_HEADERS });
 };
