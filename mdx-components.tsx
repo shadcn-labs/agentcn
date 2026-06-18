@@ -7,6 +7,7 @@ import { Callout } from "@/components/callout";
 import { CodeBlockCommand } from "@/components/code-block-command";
 import { CodeTabs } from "@/components/code-tabs";
 import { CopyButton } from "@/components/copy-button";
+import { DocsBaseSwitcher } from "@/components/docs-base-switcher";
 import { getIconForLanguageExtension } from "@/components/icons";
 import {
   Accordion,
@@ -36,6 +37,7 @@ export const mdxComponents = {
   Button,
   Callout,
   CodeTabs,
+  DocsBaseSwitcher,
   FeatureCard: ({
     icon: Icon,
     title,

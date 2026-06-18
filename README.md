@@ -5,8 +5,8 @@
 <h1 align="center">agentcn</h1>
 
 <p align="center">
-Free & open-source, ready-to-use, customizable agent recipes for <a href="https://vercel.com/docs/eve">Eve</a> and <a href="https://flueframework.com">Flue</a>.<br/>
-Not a UI registry — these are complete backend agents (instructions, tools, skills, workflows) you install with the <a href="https://ui.shadcn.com/">shadcn</a> CLI.
+Free & open-source, customizable and production-ready AI agent recipes.<br/>
+Zero config. One command setup. Built on <a href="https://vercel.com/docs/eve">Eve</a> and <a href="https://flueframework.com">Flue</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn</a> CLI.
 </p>
 
 <p align="center">
