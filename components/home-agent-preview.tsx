@@ -4,12 +4,10 @@ import { SearchIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { CopyButton } from "@/components/copy-button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { ChatMessage, FrameworkId } from "@/constants/agents";
 import {
   AGENTS,
-  FRAMEWORK_LABEL,
   FRAMEWORKS,
   getAgent,
   installCommand,
@@ -87,6 +85,7 @@ export const HomeAgentPreview = ({ className }: { className?: string }) => {
   );
 
   const transcript = agent.transcript[framework];
+  const command = installCommand(framework, agent.slug);
 
   return (
     <div
@@ -95,15 +94,12 @@ export const HomeAgentPreview = ({ className }: { className?: string }) => {
         className
       )}
     >
-      {/* Navbar: agent header (left) + framework switcher and copy command (right) */}
+      {/* Navbar: agent header (left) + framework switcher and install command (right) */}
       <div className="flex flex-col gap-3 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold">{agent.title}</span>
-          <Badge variant="secondary">{FRAMEWORK_LABEL[framework]}</Badge>
-        </div>
+        <span className="truncate text-sm font-semibold">{agent.title}</span>
 
-        <div className="flex items-center gap-2">
-          <div className="bg-muted flex items-center gap-0.5 rounded-md p-0.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="bg-muted flex shrink-0 items-center gap-0.5 rounded-md p-0.5">
             {availableFrameworks.map((item) => (
               <button
                 className={cn(
@@ -121,13 +117,18 @@ export const HomeAgentPreview = ({ className }: { className?: string }) => {
             ))}
           </div>
 
-          <CopyButton
-            aria-label="Copy install command"
-            event="copy_npm_command"
-            showTooltip
-            value={installCommand(framework, agent.slug)}
-            variant="outline"
-          />
+          <div className="bg-muted flex min-w-0 items-center gap-1 rounded-md py-1 pr-1 pl-2.5">
+            <code className="text-muted-foreground truncate font-mono text-xs">
+              {command}
+            </code>
+            <CopyButton
+              aria-label="Copy install command"
+              className="size-6 shrink-0"
+              event="copy_npm_command"
+              value={command}
+              variant="ghost"
+            />
+          </div>
         </div>
       </div>
 

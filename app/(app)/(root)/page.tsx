@@ -27,7 +27,7 @@ export default function IndexPage() {
 
             <HomeCtas className="mt-4" />
 
-            <HomeAgentPreview className="mt-12 w-full max-w-4xl" />
+            <HomeAgentPreview className="mt-12 w-full" />
           </div>
         </section>
       </PageTransition>
