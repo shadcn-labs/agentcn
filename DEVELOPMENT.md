@@ -8,10 +8,10 @@ Install a recipe into your Eve or Flue project:
 
 ```bash
 # Eve
-npx shadcn@latest add https://agentcn.sh/r/eve/competitor-intel
+npx shadcn@latest add https://agentcn.sh/r/eve/deep-search
 
 # Flue
-npx shadcn@latest add https://agentcn.sh/r/flue/competitor-intel
+npx shadcn@latest add https://agentcn.sh/r/flue/deep-search
 ```
 
 To develop the registry itself:
@@ -28,8 +28,8 @@ Add or edit recipes under `registry/eve/<name>/` or `registry/flue/<name>/`, eac
 
 The docs ship a live `<AgentPreview>` for each recipe. The two frameworks are previewed differently:
 
-- **Eve** preview requires a separately deployed Eve app. Deploy `registry/eve/competitor-intel` as an Eve project on Vercel, then set `EVE_PREVIEW_URL` to its origin. The preview route opens a durable session against `EVE_PREVIEW_URL/eve/v1/session`, attaches to the stream, and forwards the raw NDJSON events to the browser.
-- **Flue** preview runs **in-process** in the Next.js API route (`app/api/preview/[framework]/[agent]/route.ts`). It mirrors the recipe against the Anthropic Messages API, so it only needs `ANTHROPIC_API_KEY` — no separate deployment.
+- **Eve** preview requires a separately deployed Eve app. Deploy a recipe (e.g. `registry/eve/deep-search`) as an Eve project on Vercel, then set `EVE_PREVIEW_URL` to its origin. The preview route opens a durable session against `EVE_PREVIEW_URL/eve/v1/session`, attaches to the stream, and forwards the raw NDJSON events to the browser.
+- **Flue** preview has no in-process runner bundled. The route (`app/api/preview/[framework]/[agent]/route.ts`) returns a 404 for Flue agents until you add a recipe-specific runner that mirrors the recipe against the Anthropic Messages API (needing only `ANTHROPIC_API_KEY`).
 
 Both routes are rate limited to 10 requests per IP per hour (in-memory, resets on restart). Copy `.env.local.example` to `.env.local` and fill in:
 
