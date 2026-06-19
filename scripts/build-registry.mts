@@ -6,7 +6,7 @@
  * `registry:block`. We read every referenced file, inline its content, and emit
  * a shadcn registry-item document to `public/r/<framework>/<name>.json` so it
  * can be installed with
- * `npx shadcn@latest add https://agentcn.sh/r/<framework>/<name>`.
+ * `npx shadcn@latest add https://agentcn.vercel.app/r/<framework>/<name>`.
  *
  * We also write the published manifest at `public/r/registry.json` so it
  * references every block across both frameworks.
@@ -114,7 +114,7 @@ const buildAgent = async (
 
 const writeManifest = async (agentItems: ManifestItem[]): Promise<void> => {
   const manifest = {
-    homepage: "https://agentcn.sh",
+    homepage: "https://agentcn.vercel.app",
     items: agentItems,
     name: "agentcn",
   };

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://agentcn.sh/og" alt="agentcn banner" />
+  <img src="https://agentcn.vercel.app/og" alt="agentcn banner" />
 </p>
 
 <h1 align="center">agentcn</h1>
@@ -17,9 +17,9 @@ Zero config. One command setup. Built on <a href="https://vercel.com/docs/eve">E
 </p>
 
 <p align="center">
-<a href="https://agentcn.sh/docs">Get Started</a> ·
-<a href="https://agentcn.sh/docs/installation">Installation</a> ·
-<a href="https://agentcn.sh/docs/agents">Agents</a>
+<a href="https://agentcn.vercel.app/docs">Get Started</a> ·
+<a href="https://agentcn.vercel.app/docs/installation">Installation</a> ·
+<a href="https://agentcn.vercel.app/docs/agents">Agents</a>
 </p>
 
 ## Features
