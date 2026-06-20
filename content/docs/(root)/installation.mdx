@@ -5,13 +5,29 @@ description: Install an agent recipe into your Eve or Flue project.
 
 ## Prerequisites
 
-Start from an existing agent project (or scaffold one):
+Complete these before running the install command.
 
-- **Eve** — `npx eve@latest init my-agent` ([docs](https://vercel.com/docs/eve))
-- **Flue** — `npx flue@latest init my-agent` ([docs](https://flueframework.com))
+**1. An agent project.** Start from an existing one or scaffold a new project:
 
-Each recipe declares its framework package (`eve` or `@flue/runtime`) as a
-dependency, so the shadcn CLI will prompt to install it if it is missing.
+- **Eve** — `npx eve@latest init my-agent` ([docs](https://vercel.com/docs/eve)).
+  Recipes install under `agent/`, which Eve discovers automatically.
+- **Flue** — `npx flue@latest init my-agent` ([docs](https://flueframework.com)).
+  Recipes install under `agents/`, `workflows/`, `tools/`, and `skills/`.
+
+**2. The framework package.** Each recipe declares its framework package (`eve`
+or `@flue/runtime`) as a dependency, so the shadcn CLI prompts to install it if
+it is missing.
+
+**3. Environment variables.** Some recipes call external services and need
+secrets set in your project's environment — for example `EXA_API_KEY` for web
+search, `WORKSPACE_DIR` for the sandboxed assistant, or a database URL for the
+SQL recipe. The required keys are documented in each recipe's tools and
+instructions; add them to your `.env` before invoking the agent.
+
+**4. Live preview (optional).** To run a recipe's preview from this docs site,
+set `ANTHROPIC_API_KEY`. The Eve preview can additionally proxy a deployed Eve
+instance via `EVE_PREVIEW_URL` — see the
+[Preview Backend](https://github.com/shadcn-labs/agentcn#preview-backend) notes.
 
 ## Add a Recipe
 
@@ -20,17 +36,20 @@ example, the [Deep Search](/docs/agents/eve/deep-search) agent:
 
 ```bash
 # Eve
-npx shadcn@latest add https://agentcn.vercel.app/r/eve/deep-search
+npx shadcn@latest add https://agentcn.vercel.app/r/eve/deep-search.json
 ```
 
 ```bash
 # Flue
-npx shadcn@latest add https://agentcn.vercel.app/r/flue/deep-search
+npx shadcn@latest add https://agentcn.vercel.app/r/flue/deep-search.json
 ```
 
 The CLI writes the recipe's files into your project at their target paths — for
 Eve, under `agent/`; for Flue, under `agents/`, `workflows/`, `tools/`, and
 `skills/`. Your framework discovers them automatically.
+
+Prefer short names like `@agentcn/eve/deep-search`? Register the namespace once —
+see [Registry](/docs/registry).
 
 ## Customize
 
@@ -42,8 +61,9 @@ The installed files are plain source — you own them. Common changes:
 
 See each recipe's **Customization** section for specifics.
 
-## Run It
+## Usage
 
 Start your project's dev server (for example `pnpm dev`) and invoke the agent
-through your framework. You can also try a recipe before installing it using the
+through your framework — Eve exposes it through a durable session, Flue through
+its route handler. You can also try any recipe before installing it using the
 **live preview** embedded in its docs page.

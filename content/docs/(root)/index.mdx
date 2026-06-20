@@ -1,54 +1,84 @@
 ---
 title: Introduction
-description: A shadcn-style registry of complete agent recipes for Eve and Flue.
+description: A shadcn-style registry of complete, production-ready AI agent recipes for Eve and Flue. Copy, paste, ship.
 ---
 
 **agentcn** is a registry of complete, production-ready agent recipes for the
 [Eve](https://vercel.com/docs/eve) and [Flue](https://flueframework.com)
 frameworks. It is **not** a UI component registry — each recipe distributes the
 backend agent files (instructions, tools, skills, workflows) that you copy
-straight into your Eve or Flue project with the shadcn CLI.
+straight into your project with the [shadcn CLI](https://ui.shadcn.com).
 
-## How It Works
+## Philosophy
 
-Browse the [Agents](/docs/agents) section, pick a recipe, and run its install
-command:
+agentcn follows the shadcn model for backend agents: copy-paste recipes you can
+own, with zero lock-in and sensible defaults that work immediately.
 
-```bash
-npx shadcn@latest add https://agentcn.vercel.app/r/eve/deep-search
-```
+Agents are too often shipped as opaque packages — you import a black box and
+fight its constraints the moment you need something different. agentcn takes the
+opposite approach. You get the full source of each agent and stay close to your
+framework's primitives, so you can read every line, swap the model, extend the
+tools, or reshape the output without working around a library.
 
-The CLI writes the recipe's files into your project at their target paths. From
-there the code is yours — swap the model, extend the tools, or reshape the
-output to fit your use case.
+## Why agentcn?
 
-## Why Recipes Instead of Packages
+Most agent setups are either too opinionated or too scattered. agentcn is built
+for teams that want to ship quickly without giving up control:
 
-The shadcn philosophy gives you **ownership** of the code. Instead of importing
-an opaque agent from a package, you get the full source — agent definition,
-instructions, tools, and skills — and can customize every part without fighting
-library constraints.
+- **Own Your Code:** Copy recipes into your project and customize everything.
+- **Start Fast:** Run one command and get a working agent with production-ready
+  defaults.
+- **Scale Safely:** Build on Eve or Flue directly, then drop to the raw
+  framework APIs whenever you need more control.
 
 ## Frameworks
+
+Every recipe ships in both flavors where it makes sense, so you can adopt the
+pattern in whichever framework you already use:
 
 - **[Eve](https://vercel.com/docs/eve)** — a filesystem-first framework for
   durable backend AI agents that run on Vercel Functions.
 - **[Flue](https://flueframework.com)** — an agent runtime with first-class
   subagents, skills, and bounded workflows.
 
-Every recipe ships in both flavors where it makes sense, so you can adopt the
-pattern in whichever framework you already use.
+## Features
 
-## What's Included
+<div className="not-prose grid gap-4 sm:grid-cols-2 mt-4">
+  <FeatureCard
+    icon={BlocksIcon}
+    title="Own Your Code"
+    description="Copy the agent files into your project and customize every part."
+  />
+  <FeatureCard
+    icon={ClipboardCopyIcon}
+    title="Copy & Paste"
+    description="Install with npx shadcn add — no opaque runtime dependency."
+  />
+  <FeatureCard
+    icon={LayersIcon}
+    title="Two Frameworks"
+    description="Each recipe ships for both Eve and Flue, side by side."
+  />
+  <FeatureCard
+    icon={PlayIcon}
+    title="Live Previews"
+    description="Run each agent right from its docs page before installing."
+  />
+  <FeatureCard
+    icon={BotIcon}
+    title="Agent Ready"
+    description="Ships with llms.txt, an API catalog, and skill discovery endpoints."
+  />
+  <FeatureCard
+    icon={ShieldCheckIcon}
+    title="Production Ready"
+    description="Approval-gated tools and structured outputs, ready to extend."
+  />
+</div>
 
-- 📦 **Copy-paste recipes** — install with `npx shadcn add`
-- 🧪 **Live previews** — run each agent right from its docs page
-- 📚 **Documentation site** — powered by Fumadocs
-- 🤖 **Agent ready** — ships with `llms.txt`, `llms-full.txt`, API catalog
-  routes, and agent skill discovery endpoints
-- 🔊 **[Web audio feedback](https://audio.raphaelsalaja.com/)** — built-in
-  interaction sounds powered by `@web-kits/audio`
-- 📳 **[Web haptics](https://haptics.lochie.me/)** — optional haptic feedback via
-  `web-haptics`
-- ✨ **[Motion animations](https://motion.dev/)** — animated UI states and
-  transitions
+import { BlocksIcon } from "lucide-react";
+import { BotIcon } from "lucide-react";
+import { ClipboardCopyIcon } from "lucide-react";
+import { LayersIcon } from "lucide-react";
+import { PlayIcon } from "lucide-react";
+import { ShieldCheckIcon } from "lucide-react";

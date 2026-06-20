@@ -1,0 +1,39 @@
+---
+title: MCP
+description: Use the shadcn MCP server to discover and install agentcn recipes from your editor.
+---
+
+[MCP](https://modelcontextprotocol.io/) is an open protocol that standardizes how
+applications provide context to LLMs. The shadcn CLI can register an MCP server
+so your editor can discover registry items — including the agent recipes you
+install from **agentcn** via the same CLI.
+
+## Configure MCP
+
+Run:
+
+```bash
+npx shadcn@latest mcp init
+```
+
+Choose your MCP client when prompted, then enable the MCP server in that client
+to finish setup.
+
+To resolve recipes by short name (`@agentcn/eve/deep-search`), add the namespace
+to `components.json` first — see [Registry](/docs/registry).
+
+## Usage
+
+With MCP enabled, ask your editor to scaffold and install agent recipes, then
+wire them into your project. Example prompts:
+
+- Add the **Deep Search** recipe for Eve and set up the `EXA_API_KEY` it needs.
+- Install the **Chat with PDF** recipe for Flue and show me how to call it.
+- Build a Slack bot from the **Slack Agent** recipe and explain the approval flow.
+- Set up the **Chat with Database** recipe and point it at my Postgres schema.
+- Compare the Eve and Flue versions of the **GitHub PR Review** recipe.
+
+Install recipes with `npx shadcn@latest add` and the JSON URL from each recipe
+page, then invoke them through your Eve or Flue project as usual. This site also
+exposes [`llms.txt`](/llms.txt) and an [API catalog](/.well-known/api-catalog)
+for agents that prefer to browse the registry directly.

@@ -1,0 +1,60 @@
+---
+title: Registry
+description: Use the agentcn registry with the shadcn CLI.
+---
+
+The **agentcn** registry ships complete Eve and Flue agent recipes in the
+[shadcn registry format](https://ui.shadcn.com/docs/registry). Each item bundles
+everything one recipe needs — the agent definition, instructions, tools, skills,
+and workflows. Register the namespace once in `components.json`, then pull
+recipes by name with the CLI.
+
+## Setup
+
+Add a **registries** entry pointing at this site. See the
+[shadcn registry documentation](https://ui.shadcn.com/docs/registry) for every
+`components.json` field and behavior.
+
+```json
+{
+  "registries": {
+    "@agentcn": "https://agentcn.vercel.app/r/{name}.json"
+  }
+}
+```
+
+You can replace `@agentcn` with another namespace; it only needs to match what
+you pass to `shadcn add`.
+
+## Usage
+
+Recipe names are `<framework>/<slug>` — the same path as the JSON file under
+`/r/` (without the `.json` extension). Install with the namespace and the recipe
+name:
+
+```bash
+# Eve
+npx shadcn@latest add @agentcn/eve/deep-search
+```
+
+```bash
+# Flue
+npx shadcn@latest add @agentcn/flue/deep-search
+```
+
+Without a registry alias, use the full URL shown on each recipe page:
+
+```bash
+npx shadcn@latest add https://agentcn.vercel.app/r/eve/deep-search.json
+```
+
+## Browse the registry
+
+The registry index lists every recipe and the framework it ships for:
+
+```bash
+curl https://agentcn.vercel.app/r/registry.json
+```
+
+Browse the catalog in the [Agents](/docs/agents) section, or follow the
+[Installation](/docs/installation) guide for the one-time project setup.

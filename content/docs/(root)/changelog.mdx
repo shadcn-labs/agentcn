@@ -1,0 +1,33 @@
+---
+title: Changelog
+description: Latest updates and announcements for agentcn.
+---
+
+## 0.1.0 – 20 June 2026
+
+**Features**
+
+- **17 agent recipes** ported from the Mastra template catalog and reimplemented
+  natively for both **[Eve](/docs/agents/eve)** and **[Flue](/docs/agents/flue)**
+  — no framework runtime lock-in, Apache-2.0 attribution kept.
+- **Live previews** on every recipe page: an embedded `AgentPreview` runs the
+  agent in-process against the Anthropic Messages API, executing key-free tools
+  for real and gracefully degrading the rest.
+- Eve recipes retrofitted to the official Eve API (`defineAgent`, `defineTool`,
+  `needsApproval`, structured object returns).
+- New **[Registry](/docs/registry)** and **[MCP](/docs/mcp)** pages covering the
+  `components.json` namespace and the shadcn MCP server.
+- Recipe pages restructured for clarity: **preview → summary → install →
+  composition → customization**, with a single setup flow on
+  **[Installation](/docs/installation)**.
+
+**Fixes**
+
+- Install commands now point at the `.json` registry URL
+  (`/r/<framework>/<slug>.json`) so `shadcn add` resolves each recipe.
+- Flue recipe pages keep their previous/next navigation, mirroring the Eve view.
+
+## Earlier releases
+
+- Follow **[agentcn on GitHub](https://github.com/shadcn-labs/agentcn)** for
+  source history and future tagged releases.
