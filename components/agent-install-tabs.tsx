@@ -95,6 +95,8 @@ export const AgentInstallTabs = ({ className }: { className?: string }) => {
             >
               {registryItemNames}
             </TextFlip>
+
+            <span>.json</span>
           </code>
         </pre>
       </Tabs>
@@ -110,7 +112,7 @@ export const AgentInstallTabs = ({ className }: { className?: string }) => {
         className="absolute top-2 right-2 z-10 size-7 opacity-70 hover:opacity-100 focus-visible:opacity-100"
         event="copy_npm_command"
         value={() =>
-          `${pmCommands[packageManager]} shadcn@latest add ${SITE.REGISTRY}/r/${currentItemRef.current}`
+          `${pmCommands[packageManager]} shadcn@latest add ${SITE.REGISTRY}/r/${currentItemRef.current}.json`
         }
       />
     </div>

@@ -999,4 +999,4 @@ export const getAgent = (slug: string): Agent | undefined =>
 
 /** `npx shadcn@latest add` command for a recipe in a given framework. */
 export const installCommand = (framework: FrameworkId, slug: string): string =>
-  `npx shadcn@latest add ${SITE.REGISTRY}/r/${framework}/${slug}`;
+  `npx shadcn@latest add ${SITE.REGISTRY}/r/${framework}/${slug}.json`;
