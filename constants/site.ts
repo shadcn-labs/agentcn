@@ -33,7 +33,7 @@ export const SITE = {
     "npx shadcn add",
   ] as const,
   NAME: "agentcn",
-  OG_IMAGE: `${baseUrl}/og`,
+  OG_IMAGE: `${baseUrl}/og.png`,
   REGISTRY: baseUrl,
   URL: baseUrl,
 };
