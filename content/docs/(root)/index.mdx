@@ -1,11 +1,9 @@
 ---
 title: Introduction
-description: A shadcn-style registry of complete, production-ready AI agent recipes for Eve and Flue. Copy, paste, ship.
+description: A shadcn-style registry of complete, production-ready AI agent recipes. Copy, paste, ship.
 ---
 
-**agentcn** is a registry of complete, production-ready agent recipes for the
-[Eve](https://vercel.com/docs/eve) and [Flue](https://flueframework.com)
-frameworks. It is **not** a UI component registry — each recipe distributes the
+**agentcn** is a registry of complete, production-ready agent recipes. It is **not** a UI component registry — each recipe distributes the
 backend agent files (instructions, tools, skills, workflows) that you copy
 straight into your project with the [shadcn CLI](https://ui.shadcn.com).
 
@@ -45,40 +43,40 @@ pattern in whichever framework you already use:
 
 <div className="not-prose grid gap-4 sm:grid-cols-2 mt-4">
   <FeatureCard
-    icon={BlocksIcon}
-    title="Own Your Code"
-    description="Copy the agent files into your project and customize every part."
+    icon={ZapIcon}
+    title="Zero Config"
+    description="Works out of the box with sensible defaults. No boilerplate needed."
+  />
+  <FeatureCard
+    icon={SunMoonIcon}
+    title="Framework Native"
+    description="Uses your framework's built-in primitives — no extra abstractions."
+  />
+  <FeatureCard
+    icon={LayoutGridIcon}
+    title="Composable"
+    description="Combine agents, tools, and workflows into complex pipelines."
+  />
+  <FeatureCard
+    icon={Code2Icon}
+    title="TypeScript"
+    description="Full type safety with comprehensive TypeScript support."
   />
   <FeatureCard
     icon={ClipboardCopyIcon}
     title="Copy & Paste"
-    description="Install with npx shadcn add — no opaque runtime dependency."
+    description="Own your code. No runtime dependencies, just install into your project."
   />
   <FeatureCard
-    icon={LayersIcon}
-    title="Two Frameworks"
-    description="Each recipe ships for both Eve and Flue, side by side."
-  />
-  <FeatureCard
-    icon={PlayIcon}
-    title="Live Previews"
-    description="Run each agent right from its docs page before installing."
-  />
-  <FeatureCard
-    icon={BotIcon}
-    title="Agent Ready"
-    description="Ships with llms.txt, an API catalog, and skill discovery endpoints."
-  />
-  <FeatureCard
-    icon={ShieldCheckIcon}
-    title="Production Ready"
-    description="Approval-gated tools and structured outputs, ready to extend."
+    icon={BlocksIcon}
+    title="shadcn Compatible"
+    description="Uses the same registry format — add components with npx shadcn add."
   />
 </div>
 
-import { BlocksIcon } from "lucide-react";
-import { BotIcon } from "lucide-react";
+import { ZapIcon } from "lucide-react";
+import { SunMoonIcon } from "lucide-react";
+import { LayoutGridIcon } from "lucide-react";
+import { Code2Icon } from "lucide-react";
 import { ClipboardCopyIcon } from "lucide-react";
-import { LayersIcon } from "lucide-react";
-import { PlayIcon } from "lucide-react";
-import { ShieldCheckIcon } from "lucide-react";
+import { BlocksIcon } from "lucide-react";
