@@ -133,7 +133,7 @@ export const HomeAgentPreview = ({ className }: { className?: string }) => {
           onClick={() => copyToClipboard(command)}
         >
           {isCopied ? <Check /> : <Terminal />}
-          <span>{command}</span>
+          <span className="truncate">{command}</span>
         </Button>
       </div>
 
