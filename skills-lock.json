@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "flue": {
+      "source": "withastro/flue",
+      "sourceType": "github",
+      "skillPath": "skills/flue/SKILL.md",
+      "computedHash": "ecd3af894e0354726ce5229071a56c49fc8de607470076386167ce2d41af8fb3"
+    },
     "launch-shadcn-registry": {
       "source": "shadcn-labs/skills",
       "sourceType": "github",
