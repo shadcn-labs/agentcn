@@ -66,8 +66,10 @@ This project is proudly supported by:
     </tr>
     <tr>
       <td>
-        <a href="https://get.brightdata.com/zdgqtwgnmhkw">
+        <a href="https://get.brightdata.com/zdgqtwgnmhkw#gh-light-mode-only">
           <img src="public/sponsors/brightdata-light.svg#gh-light-mode-only" alt="Bright Data" height="48" />
+        </a>
+        <a href="https://get.brightdata.com/zdgqtwgnmhkw#gh-dark-mode-only">
           <img src="public/sponsors/brightdata-dark.svg#gh-dark-mode-only" alt="Bright Data" height="48" />
         </a>
       </td>
