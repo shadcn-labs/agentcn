@@ -7,8 +7,9 @@
   "files": [
     { "path": "agent/agent.ts", "type": "registry:file" },
     { "path": "agent/instructions.md", "type": "registry:file" },
+    { "path": "agent/lib/brightdata.ts", "type": "registry:file" },
     { "path": "agent/tools/video_metadata.ts", "type": "registry:file" },
     { "path": "agent/tools/get_transcript.ts", "type": "registry:file" }
   ],
-  "dependencies": ["eve", "youtube-transcript"]
+  "dependencies": ["eve"]
 }

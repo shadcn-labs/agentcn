@@ -52,7 +52,7 @@ npx shadcn@latest add @agentcn/eve/chat-with-youtube
 <Step>Install the following dependencies:</Step>
 
 ```bash
-npm install eve youtube-transcript
+npm install eve
 ```
 
 <Step>Copy and paste the following code into your project.</Step>
@@ -65,6 +65,11 @@ npm install eve youtube-transcript
 <ComponentSource
   src="registry/eve/chat-with-youtube/agent/instructions.md"
   title="agent/instructions.md"
+/>
+
+<ComponentSource
+  src="registry/eve/chat-with-youtube/agent/lib/brightdata.ts"
+  title="agent/lib/brightdata.ts"
 />
 
 <ComponentSource
@@ -90,6 +95,8 @@ npm install eve youtube-transcript
 agent/
 ├── agent.ts                # Agent definition (model + config)
 ├── instructions.md         # Transcript-grounded answering instructions
+├── lib/
+│   └── brightdata.ts       # Web Unlocker fetch + YouTube parsing helpers
 └── tools/
     ├── video_metadata.ts   # Title / author / id via oEmbed
     └── get_transcript.ts   # Timestamped transcript segments
@@ -97,6 +104,10 @@ agent/
 
 ## Customization
 
+- **Reliable fetching.** Metadata and transcripts are pulled through the [Bright
+  Data Web Unlocker](https://docs.brightdata.com/scraping-automation/web-unlocker),
+  which handles YouTube at scale with no rate limits or blocks. Set
+  `BRIGHTDATA_API_KEY` (and optionally `BRIGHTDATA_UNLOCKER_ZONE`).
 - **Add chapters export.** Add a tool that writes the chapter list back as a
   YouTube description or VTT file.
 - **Handle missing transcripts.** Fall back to an STT service when a video has no

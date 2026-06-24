@@ -3,10 +3,22 @@ import { type Browser, chromium, type Page } from 'playwright'
 let browser: Browser | null = null
 let page: Page | null = null
 
+/**
+ * Resolves the CDP endpoint, preferring Bright Data's Browser API — a fully
+ * managed, anti-bot-resistant remote Chromium with no local infra to run.
+ * Set BRIGHTDATA_BROWSER_AUTH to your zone "username:password", or point
+ * BROWSER_CDP_URL at any other CDP endpoint. Falls back to local Chromium.
+ */
+function cdpEndpoint(): string | undefined {
+  if (process.env.BROWSER_CDP_URL) return process.env.BROWSER_CDP_URL
+  const auth = process.env.BRIGHTDATA_BROWSER_AUTH
+  return auth ? `wss://${auth}@brd.superproxy.io:9222` : undefined
+}
+
 /** Returns a shared page, launching a browser on first use. */
 export async function getPage(): Promise<Page> {
   if (!browser) {
-    const cdpUrl = process.env.BROWSER_CDP_URL
+    const cdpUrl = cdpEndpoint()
     browser = cdpUrl
       ? await chromium.connectOverCDP(cdpUrl)
       : await chromium.launch({ headless: process.env.BROWSER_HEADLESS !== 'false' })

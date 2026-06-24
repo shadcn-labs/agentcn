@@ -1,5 +1,6 @@
 import { defineTool } from '@flue/runtime'
 import * as v from 'valibot'
+import { unlock, videoId } from '../lib/brightdata'
 
 export const videoMetadata = defineTool({
   name: 'video_metadata',
@@ -8,11 +9,12 @@ export const videoMetadata = defineTool({
     url: v.string(),
   }),
   execute: async ({ url }) => {
-    const res = await fetch(
+    // Routed through Bright Data's Web Unlocker so metadata lookups never hit
+    // YouTube's rate limits, even at scale.
+    const raw = await unlock(
       `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`
     )
-    const meta = (await res.json()) as { title?: string; author_name?: string }
-    const id = new URL(url).searchParams.get('v') ?? url.split('/').pop()
-    return JSON.stringify({ id, title: meta.title, author: meta.author_name })
+    const meta = JSON.parse(raw) as { title?: string; author_name?: string }
+    return JSON.stringify({ id: videoId(url), title: meta.title, author: meta.author_name })
   },
 })

@@ -86,7 +86,7 @@ agent/
 ├── agent.ts              # Agent definition (model + config)
 ├── instructions.md       # Self-evaluating research instructions
 ├── tools/
-│   └── web_search.ts     # Web search via the Exa API
+│   └── web_search.ts     # Web search via the Bright Data SERP API
 └── skills/
     └── research/
         └── SKILL.md      # Iterative research procedure
@@ -94,8 +94,11 @@ agent/
 
 ## Customization
 
-- **Swap the search provider.** Edit `agent/tools/web_search.ts` to call a
-  different search API (Brave, Tavily, SerpAPI) — keep the input/output shape.
+- **Search provider.** Searches run through the [Bright Data SERP
+  API](https://docs.brightdata.com/scraping-automation/serp-api) — real-time,
+  unblocked results billed per successful request. Set `BRIGHTDATA_API_KEY` (and
+  optionally `BRIGHTDATA_SERP_ZONE`). Edit `agent/tools/web_search.ts` to point
+  at a different provider — keep the input/output shape.
 - **Bound the iterations.** Add a max-rounds guard in `instructions.md` so the
   agent stops after N search rounds.
 - **Swap the model.** Edit `agent/agent.ts` — `anthropic/claude-sonnet-4-6` for

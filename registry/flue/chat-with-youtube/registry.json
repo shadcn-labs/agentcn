@@ -6,8 +6,9 @@
   "framework": "flue",
   "files": [
     { "path": "agents/chat-with-youtube.ts", "type": "registry:file" },
+    { "path": "lib/brightdata.ts", "type": "registry:file" },
     { "path": "tools/metadata.ts", "type": "registry:file" },
     { "path": "tools/transcript.ts", "type": "registry:file" }
   ],
-  "dependencies": ["@flue/runtime", "youtube-transcript"]
+  "dependencies": ["@flue/runtime"]
 }

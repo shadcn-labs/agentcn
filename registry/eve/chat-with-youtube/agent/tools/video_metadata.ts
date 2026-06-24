@@ -1,6 +1,7 @@
 import { defineTool } from 'eve/tools'
 import { never } from 'eve/tools/approval'
 import { z } from 'zod'
+import { unlock, videoId } from '../lib/brightdata'
 
 export default defineTool({
   needsApproval: never(),
@@ -9,11 +10,12 @@ export default defineTool({
     url: z.string().url(),
   }),
   async execute({ url }) {
-    const res = await fetch(
+    // Routed through Bright Data's Web Unlocker so metadata lookups never hit
+    // YouTube's rate limits, even at scale.
+    const raw = await unlock(
       `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`
     )
-    const meta = (await res.json()) as { title?: string; author_name?: string }
-    const id = new URL(url).searchParams.get('v') ?? url.split('/').pop()
-    return { author: meta.author_name, id, title: meta.title }
+    const meta = JSON.parse(raw) as { title?: string; author_name?: string }
+    return { author: meta.author_name, id: videoId(url), title: meta.title }
   },
 })

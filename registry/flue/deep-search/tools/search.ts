@@ -1,6 +1,8 @@
 import { defineTool } from '@flue/runtime'
 import * as v from 'valibot'
 
+type SerpResult = { title?: string; link?: string; description?: string }
+
 export const webSearch = defineTool({
   name: 'web_search',
   description:
@@ -10,14 +12,32 @@ export const webSearch = defineTool({
     numResults: v.optional(v.number(), 5),
   }),
   execute: async ({ query, numResults }) => {
-    const res = await fetch('https://api.exa.ai/search', {
+    // Bright Data SERP API — real-time, unblocked search results, billed per
+    // successful request. `brd_json=1` returns parsed JSON instead of raw HTML.
+    // https://docs.brightdata.com/scraping-automation/serp-api
+    const target = new URL('https://www.google.com/search')
+    target.searchParams.set('q', query)
+    target.searchParams.set('num', String(numResults))
+    target.searchParams.set('brd_json', '1')
+
+    const res = await fetch('https://api.brightdata.com/request', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.EXA_API_KEY ?? '',
+        Authorization: `Bearer ${process.env.BRIGHTDATA_API_KEY ?? ''}`,
       },
-      body: JSON.stringify({ query, numResults, contents: { text: true } }),
+      body: JSON.stringify({
+        zone: process.env.BRIGHTDATA_SERP_ZONE ?? 'serp_api',
+        url: target.toString(),
+        format: 'raw',
+      }),
     })
-    return res.text()
+
+    const data = (await res.json()) as { organic?: SerpResult[] }
+    return JSON.stringify(
+      (data.organic ?? [])
+        .slice(0, numResults)
+        .map((r) => ({ title: r.title, url: r.link, text: r.description }))
+    )
   },
 })

@@ -87,7 +87,7 @@ agents/
 workflows/
 └── deep-search.ts        # Bounded iteration returning a cited answer
 tools/
-└── search.ts             # Web search via the Exa API
+└── search.ts             # Web search via the Bright Data SERP API
 skills/
 └── research/
     └── SKILL.md          # Iterative research procedure
@@ -95,8 +95,11 @@ skills/
 
 ## Customization
 
-- **Swap the search provider.** Edit `tools/search.ts` to call a different
-  search API — keep the parameters and return shape.
+- **Search provider.** Searches run through the [Bright Data SERP
+  API](https://docs.brightdata.com/scraping-automation/serp-api) — real-time,
+  unblocked results billed per successful request. Set `BRIGHTDATA_API_KEY` (and
+  optionally `BRIGHTDATA_SERP_ZONE`). Edit `tools/search.ts` to point at a
+  different provider — keep the parameters and return shape.
 - **Tune the loop.** Adjust `maxRounds` in `workflows/deep-search.ts` to trade
   depth for cost.
 - **Reshape the answer.** Edit the `Answer` valibot schema to add fields such as

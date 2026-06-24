@@ -52,7 +52,7 @@ npx shadcn@latest add @agentcn/flue/chat-with-youtube
 <Step>Install the following dependencies:</Step>
 
 ```bash
-npm install @flue/runtime youtube-transcript
+npm install @flue/runtime
 ```
 
 <Step>Copy and paste the following code into your project.</Step>
@@ -60,6 +60,11 @@ npm install @flue/runtime youtube-transcript
 <ComponentSource
   src="registry/flue/chat-with-youtube/agents/chat-with-youtube.ts"
   title="agents/chat-with-youtube.ts"
+/>
+
+<ComponentSource
+  src="registry/flue/chat-with-youtube/lib/brightdata.ts"
+  title="lib/brightdata.ts"
 />
 
 <ComponentSource
@@ -84,6 +89,8 @@ npm install @flue/runtime youtube-transcript
 ```text
 agents/
 └── chat-with-youtube.ts  # Agent that composes the two tools
+lib/
+└── brightdata.ts         # Web Unlocker fetch + YouTube parsing helpers
 tools/
 ├── metadata.ts           # Title / author / id via oEmbed
 └── transcript.ts         # Timestamped transcript segments
@@ -91,6 +98,10 @@ tools/
 
 ## Customization
 
+- **Reliable fetching.** Metadata and transcripts are pulled through the [Bright
+  Data Web Unlocker](https://docs.brightdata.com/scraping-automation/web-unlocker),
+  which handles YouTube at scale with no rate limits or blocks. Set
+  `BRIGHTDATA_API_KEY` (and optionally `BRIGHTDATA_UNLOCKER_ZONE`).
 - **Add chapters export.** Add a tool that writes the chapter list as a
   description or VTT file.
 - **Handle missing transcripts.** Fall back to an STT service when captions are

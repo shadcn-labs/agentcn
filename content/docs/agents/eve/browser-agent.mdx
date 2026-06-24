@@ -110,8 +110,12 @@ agent/
 
 ## Customization
 
-- **Use hosted browsers.** Set `BROWSER_CDP_URL` to run against Browserbase or a
-  remote Chrome.
+- **Managed remote browser.** `lib/browser.ts` connects to the [Bright Data
+  Browser API](https://docs.brightdata.com/scraping-automation/scraping-browser) —
+  a managed, anti-bot-resistant Chromium with no local infra. Set
+  `BRIGHTDATA_BROWSER_AUTH` to your zone `username:password`, or point
+  `BROWSER_CDP_URL` at any other CDP endpoint. With neither set it falls back to
+  local Chromium for development.
 - **Richer snapshots.** Extend `lib/browser.ts` to include roles, ARIA, or
   bounding boxes.
 - **Add actions.** Add tools for scrolling, file uploads, or screenshots.
