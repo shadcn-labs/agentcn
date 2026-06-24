@@ -9,7 +9,7 @@ export interface Sponsor {
 }
 
 const BRIGHT_DATA: Sponsor = {
-  href: "https://brightdata.com/?utm_source=agentcn&utm_medium=sponsor",
+  href: "https://get.brightdata.com/zdgqtwgnmhkw",
   logoDark: "/sponsors/brightdata-dark.svg",
   logoLight: "/sponsors/brightdata-light.svg",
   name: "Bright Data",

@@ -66,7 +66,7 @@ This project is proudly supported by:
     </tr>
     <tr>
       <td>
-        <a href="https://brightdata.com/?utm_source=agentcn&utm_medium=readme">
+        <a href="https://get.brightdata.com/zdgqtwgnmhkw">
           <img src="public/sponsors/brightdata-light.svg#gh-light-mode-only" alt="Bright Data" height="48" />
           <img src="public/sponsors/brightdata-dark.svg#gh-dark-mode-only" alt="Bright Data" height="48" />
         </a>
