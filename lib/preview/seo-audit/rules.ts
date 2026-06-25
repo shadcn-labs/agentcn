@@ -105,6 +105,106 @@ export interface CategoryDef {
   maxScore: number;
 }
 
+export const countWords = (text: string): number => {
+  if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
+    try {
+      const segmenter = new Intl.Segmenter(undefined, { granularity: "word" });
+      let count = 0;
+      for (const segment of segmenter.segment(text)) {
+        if (segment.isWordLike) {
+          count += 1;
+        }
+      }
+      return count;
+    } catch {
+      // Intl.Segmenter not supported or failed
+    }
+  }
+
+  const latin = text.match(/[A-Za-z0-9À-ɏ][A-Za-z0-9À-ɏ'-]*/g) ?? [];
+  const cjk = text.match(/[一-鿿㐀-䶿豈-﫿぀-ゟ゠-ヿ가-힯]/g);
+  return latin.length + (cjk?.length ?? 0);
+};
+
+export const countMatches = (text: string, pattern: RegExp): number =>
+  text.match(pattern)?.length ?? 0;
+
+export const escapeRegExp = (value: string): string =>
+  value.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const clip = (value: string, max: number): string =>
+  value.length <= max ? value : `${value.slice(0, max - 1)}...`;
+
+const firstUsefulParagraph = (paragraphs: string[]): string =>
+  paragraphs.find((p) => countWords(p) >= 12) ?? "";
+
+const isArticleLike = (ctx: RuleContext): boolean =>
+  /\/(blog|article|articles|guide|guides|news|post|posts|insight|insights|research)\//i.test(
+    ctx.url.pathname
+  ) || ctx.schema.hasArticle;
+
+const hasJsonLdType = (ctx: RuleContext, types: string[]): boolean =>
+  ctx.jsonLd.some((obj) => {
+    const raw = obj["@type"];
+    const actual = Array.isArray(raw) ? raw : [raw];
+    return actual.some(
+      (type) => typeof type === "string" && types.includes(type)
+    );
+  });
+
+const isCommercialOfferingLike = (ctx: RuleContext): boolean => {
+  if (isArticleLike(ctx)) {
+    return false;
+  }
+  if (
+    hasJsonLdType(ctx, [
+      "Product",
+      "SoftwareApplication",
+      "WebApplication",
+      "MobileApplication",
+      "Service",
+      "Offer",
+    ])
+  ) {
+    return true;
+  }
+  return /\b(pricing|free trial|start free|sign up|signup|sign-up|get started|request a demo|schedule a demo|book a demo|buy now|add to cart|subscribe|per (?:month|user|seat)|saas|platform|software)\b/i.test(
+    ctx.analysisText
+  );
+};
+
+const isTechnicalProductLike = (ctx: RuleContext): boolean => {
+  if (
+    hasJsonLdType(ctx, [
+      "SoftwareApplication",
+      "SoftwareSourceCode",
+      "APIReference",
+    ])
+  ) {
+    return true;
+  }
+  if (/\/(docs?|api|sdk|reference|developers?)(\/|$)/i.test(ctx.url.pathname)) {
+    return true;
+  }
+  return /\b(api|sdk|cli|library|framework|open[- ]source|developer (?:portal|docs|guide)|npm install|pip install|brew install|github\.com\/[^\s]+)\b/i.test(
+    ctx.analysisText
+  );
+};
+
+const hasDisambiguableEntity = (ctx: RuleContext): boolean =>
+  ctx.schema.hasOrganization || ctx.schema.hasPerson || ctx.schema.hasArticle;
+
+const linkPathStatus = (links: string[], pattern: RegExp): AuditStatus => {
+  const count = links.filter((l) => pattern.test(l)).length;
+  if (count >= 2) {
+    return "pass";
+  }
+  if (count === 1) {
+    return "partial";
+  }
+  return "fail";
+};
+
 export const CATEGORIES: CategoryDef[] = [
   {
     description:
@@ -171,12 +271,14 @@ export const RULES: Rule[] = [
       const { htmlWords } = ctx;
       const extracted = Math.max(ctx.words, 1);
       const ratio = htmlWords / extracted;
-      const status: AuditStatus =
-        htmlWords >= 250 && ratio >= 0.35
-          ? "pass"
-          : htmlWords >= 80
-            ? "partial"
-            : "fail";
+      let status: AuditStatus;
+      if (htmlWords >= 250 && ratio >= 0.35) {
+        status = "pass";
+      } else if (htmlWords >= 80) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence: `${htmlWords} readable words were found in raw HTML; Context.dev extracted ${ctx.words} words from the page.`,
         status,
@@ -261,12 +363,14 @@ export const RULES: Rule[] = [
     categoryId: "B",
     dependencies: ["headings"],
     evaluate: (ctx) => {
-      const status: AuditStatus =
-        ctx.h1Count === 1 && ctx.h2Count >= 2
-          ? "pass"
-          : ctx.h1Count >= 1 && ctx.h2Count >= 1
-            ? "partial"
-            : "fail";
+      let status: AuditStatus;
+      if (ctx.h1Count === 1 && ctx.h2Count >= 2) {
+        status = "pass";
+      } else if (ctx.h1Count >= 1 && ctx.h2Count >= 1) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence: `Detected ${ctx.h1Count} H1 heading(s), ${ctx.h2Count} H2 heading(s), and ${ctx.headings.length} total Markdown/HTML headings.`,
         status,
@@ -306,12 +410,14 @@ export const RULES: Rule[] = [
     categoryId: "B",
     dependencies: ["headings", "text"],
     evaluate: (ctx) => {
-      const status: AuditStatus =
-        ctx.h2Count >= 3 && ctx.words / Math.max(ctx.h2Count, 1) <= 450
-          ? "pass"
-          : ctx.h2Count >= 2
-            ? "partial"
-            : "fail";
+      let status: AuditStatus;
+      if (ctx.h2Count >= 3 && ctx.words / Math.max(ctx.h2Count, 1) <= 450) {
+        status = "pass";
+      } else if (ctx.h2Count >= 2) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence: `${ctx.words} words across ${Math.max(ctx.h2Count, 1)} H2-level section(s).`,
         status,
@@ -337,11 +443,20 @@ export const RULES: Rule[] = [
   {
     categoryId: "B",
     dependencies: ["data-points"],
-    evaluate: (ctx) => ({
-      evidence: `${ctx.dataPoints} dated specifics, percentages, money values, multipliers, or named-entity-like data points were detected.`,
-      status:
-        ctx.dataPoints >= 3 ? "pass" : ctx.dataPoints >= 1 ? "partial" : "fail",
-    }),
+    evaluate: (ctx) => {
+      let status: AuditStatus;
+      if (ctx.dataPoints >= 3) {
+        status = "pass";
+      } else if (ctx.dataPoints >= 1) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
+      return {
+        evidence: `${ctx.dataPoints} dated specifics, percentages, money values, multipliers, or named-entity-like data points were detected.`,
+        status,
+      };
+    },
     id: "B6",
     label: "The page contains concrete data points.",
     recommendation:
@@ -354,16 +469,24 @@ export const RULES: Rule[] = [
       const blockquote = /(^|\n)\s*>/.test(ctx.markdown);
       const accordingTo = /\baccording to\b/i.test(ctx.analysisText);
       const inlineQuote = /"[^"]{20,}"/.test(ctx.analysisText);
-      const status: AuditStatus =
-        blockquote || accordingTo ? "pass" : inlineQuote ? "partial" : "fail";
-      return {
-        evidence: blockquote
-          ? "Markdown blockquote syntax was found."
-          : accordingTo
-            ? 'The phrase "according to" was found.'
-            : "No obvious quotation or source-attribution pattern was found.",
-        status,
-      };
+      let status: AuditStatus;
+      if (blockquote || accordingTo) {
+        status = "pass";
+      } else if (inlineQuote) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
+      let evidence: string;
+      if (blockquote) {
+        evidence = "Markdown blockquote syntax was found.";
+      } else if (accordingTo) {
+        evidence = 'The phrase "according to" was found.';
+      } else {
+        evidence =
+          "No obvious quotation or source-attribution pattern was found.";
+      }
+      return { evidence, status };
     },
     id: "B7",
     label: "Quoted source or expert language is present.",
@@ -373,15 +496,20 @@ export const RULES: Rule[] = [
   {
     categoryId: "B",
     dependencies: ["links"],
-    evaluate: (ctx) => ({
-      evidence: `${ctx.externalLinks.length} external link(s) were detected.`,
-      status:
-        ctx.externalLinks.length >= 3
-          ? "pass"
-          : ctx.externalLinks.length >= 1
-            ? "partial"
-            : "fail",
-    }),
+    evaluate: (ctx) => {
+      let status: AuditStatus;
+      if (ctx.externalLinks.length >= 3) {
+        status = "pass";
+      } else if (ctx.externalLinks.length >= 1) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
+      return {
+        evidence: `${ctx.externalLinks.length} external link(s) were detected.`,
+        status,
+      };
+    },
     id: "B8",
     label: "External citations support major claims.",
     recommendation:
@@ -410,15 +538,20 @@ export const RULES: Rule[] = [
   {
     categoryId: "B",
     dependencies: ["links"],
-    evaluate: (ctx) => ({
-      evidence: `${ctx.sameOriginLinks.length} same-origin link(s) were detected in the page HTML or Markdown.`,
-      status:
-        ctx.sameOriginLinks.length >= 3
-          ? "pass"
-          : ctx.sameOriginLinks.length >= 1
-            ? "partial"
-            : "fail",
-    }),
+    evaluate: (ctx) => {
+      let status: AuditStatus;
+      if (ctx.sameOriginLinks.length >= 3) {
+        status = "pass";
+      } else if (ctx.sameOriginLinks.length >= 1) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
+      return {
+        evidence: `${ctx.sameOriginLinks.length} same-origin link(s) were detected in the page HTML or Markdown.`,
+        status,
+      };
+    },
     id: "B11",
     label: "Internal links create sibling-page fan-out coverage.",
     recommendation:
@@ -435,13 +568,17 @@ export const RULES: Rule[] = [
           status: "na",
         };
       }
+      let status: AuditStatus;
+      if (ctx.dateSignals.hasModifiedDate) {
+        status = "pass";
+      } else if (ctx.dateSignals.hasAnyDate) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence: ctx.dateSignals.evidence,
-        status: ctx.dateSignals.hasModifiedDate
-          ? "pass"
-          : ctx.dateSignals.hasAnyDate
-            ? "partial"
-            : "fail",
+        status,
       };
     },
     id: "B12",
@@ -454,14 +591,16 @@ export const RULES: Rule[] = [
     dependencies: ["readability"],
     evaluate: (ctx) => {
       const g = ctx.grade;
-      const status: AuditStatus =
-        g === null
-          ? "partial"
-          : g >= 10 && g <= 16
-            ? "pass"
-            : g >= 7 && g <= 20
-              ? "partial"
-              : "fail";
+      let status: AuditStatus;
+      if (g === null) {
+        status = "partial";
+      } else if (g >= 10 && g <= 16) {
+        status = "pass";
+      } else if (g >= 7 && g <= 20) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence:
           g === null
@@ -485,8 +624,14 @@ export const RULES: Rule[] = [
       const tables =
         countMatches(ctx.markdown, /^\|.+\|$/gm) +
         countMatches(ctx.html, /<table\b/gi);
-      const status: AuditStatus =
-        tables >= 1 || lists >= 6 ? "pass" : lists >= 2 ? "partial" : "fail";
+      let status: AuditStatus;
+      if (tables >= 1 || lists >= 6) {
+        status = "pass";
+      } else if (lists >= 2) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence: `${lists} list item(s) and ${tables} table signal(s) detected.`,
         status,
@@ -519,14 +664,20 @@ export const RULES: Rule[] = [
   {
     categoryId: "C",
     dependencies: ["schema-summary"],
-    evaluate: (ctx) => ({
-      evidence: ctx.schema.organizationEvidence,
-      status: ctx.schema.organizationComplete
-        ? "pass"
-        : ctx.schema.hasOrganization
-          ? "partial"
-          : "fail",
-    }),
+    evaluate: (ctx) => {
+      let status: AuditStatus;
+      if (ctx.schema.organizationComplete) {
+        status = "pass";
+      } else if (ctx.schema.hasOrganization) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
+      return {
+        evidence: ctx.schema.organizationEvidence,
+        status,
+      };
+    },
     id: "C2",
     label: "Organization schema includes name, URL, logo, and sameAs.",
     recommendation:
@@ -536,13 +687,16 @@ export const RULES: Rule[] = [
     categoryId: "C",
     dependencies: ["schema-summary", "text", "url"],
     evaluate: (ctx) => {
-      const status: AuditStatus = ctx.schema.articleComplete
-        ? "pass"
-        : ctx.schema.hasArticle
-          ? "partial"
-          : isArticleLike(ctx)
-            ? "fail"
-            : "na";
+      let status: AuditStatus;
+      if (ctx.schema.articleComplete) {
+        status = "pass";
+      } else if (ctx.schema.hasArticle) {
+        status = "partial";
+      } else if (isArticleLike(ctx)) {
+        status = "fail";
+      } else {
+        status = "na";
+      }
       return { evidence: ctx.schema.articleEvidence, status };
     },
     id: "C3",
@@ -561,18 +715,23 @@ export const RULES: Rule[] = [
           status: "na",
         };
       }
-      return {
-        evidence: ctx.schema.hasPerson
-          ? "Person schema was found."
-          : ctx.hasByline
-            ? "A byline was detected, but no Person schema was found."
-            : "No Person schema or byline signal was found.",
-        status: ctx.schema.hasPerson
-          ? "pass"
-          : ctx.hasByline
-            ? "partial"
-            : "fail",
-      };
+      let evidence: string;
+      if (ctx.schema.hasPerson) {
+        evidence = "Person schema was found.";
+      } else if (ctx.hasByline) {
+        evidence = "A byline was detected, but no Person schema was found.";
+      } else {
+        evidence = "No Person schema or byline signal was found.";
+      }
+      let status: AuditStatus;
+      if (ctx.schema.hasPerson) {
+        status = "pass";
+      } else if (ctx.hasByline) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
+      return { evidence, status };
     },
     id: "C4",
     label: "Person schema supports visible authors.",
@@ -582,13 +741,22 @@ export const RULES: Rule[] = [
   {
     categoryId: "C",
     dependencies: ["schema-summary", "text", "headings"],
-    evaluate: (ctx) => ({
-      evidence: ctx.schema.hasFaq
-        ? "FAQPage schema was found."
-        : "FAQ-like content was found without FAQPage schema.",
-      status:
-        ctx.faqStatus === "fail" ? "na" : ctx.schema.hasFaq ? "pass" : "fail",
-    }),
+    evaluate: (ctx) => {
+      let status: AuditStatus;
+      if (ctx.faqStatus === "fail") {
+        status = "na";
+      } else if (ctx.schema.hasFaq) {
+        status = "pass";
+      } else {
+        status = "fail";
+      }
+      return {
+        evidence: ctx.schema.hasFaq
+          ? "FAQPage schema was found."
+          : "FAQ-like content was found without FAQPage schema.",
+        status,
+      };
+    },
     id: "C5",
     label: "FAQPage schema exists when Q&A content exists.",
     recommendation:
@@ -658,11 +826,14 @@ export const RULES: Rule[] = [
         /\b(original research|study|survey|benchmark|dataset|methodology|proprietary data|we analyzed|we measured)\b/i.test(
           ctx.analysisText
         );
-      const status: AuditStatus = found
-        ? "pass"
-        : ctx.dataPoints >= 3
-          ? "partial"
-          : "fail";
+      let status: AuditStatus;
+      if (found) {
+        status = "pass";
+      } else if (ctx.dataPoints >= 3) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence: found
           ? "Research or methodology language was detected."
@@ -680,7 +851,7 @@ export const RULES: Rule[] = [
     categoryId: "D",
     dependencies: ["title", "description", "text"],
     evaluate: (ctx) => {
-      const brand = ctx.host.split(".")[0];
+      const [brand] = ctx.host.split(".");
       const titleHasBrand =
         !!ctx.title && new RegExp(escapeRegExp(brand), "i").test(ctx.title);
       const descHasBrand =
@@ -690,12 +861,14 @@ export const RULES: Rule[] = [
         ctx.analysisText,
         new RegExp(`\\b${escapeRegExp(brand)}\\b`, "gi")
       );
-      const status: AuditStatus =
-        titleHasBrand && descHasBrand && bodyMentions >= 2
-          ? "pass"
-          : titleHasBrand || descHasBrand || bodyMentions >= 1
-            ? "partial"
-            : "fail";
+      let status: AuditStatus;
+      if (titleHasBrand && descHasBrand && bodyMentions >= 2) {
+        status = "pass";
+      } else if (titleHasBrand || descHasBrand || bodyMentions >= 1) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence: `Brand token "${brand}" appears in title: ${ctx.title ? "yes" : "no"}, meta description: ${ctx.description ? "yes" : "no"}, body mentions: ${bodyMentions}.`,
         status,
@@ -776,14 +949,17 @@ export const RULES: Rule[] = [
           status: "na",
         };
       }
+      let status: AuditStatus;
+      if (ctx.schema.sameAsCount >= 3) {
+        status = "pass";
+      } else if (ctx.schema.sameAsCount >= 1) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence: `${ctx.schema.sameAsCount} sameAs link(s) were found in JSON-LD.`,
-        status:
-          ctx.schema.sameAsCount >= 3
-            ? "pass"
-            : ctx.schema.sameAsCount >= 1
-              ? "partial"
-              : "fail",
+        status,
       };
     },
     id: "E10",
@@ -794,15 +970,20 @@ export const RULES: Rule[] = [
   {
     categoryId: "E",
     dependencies: ["links", "data-points"],
-    evaluate: (ctx) => ({
-      evidence: `${ctx.externalLinks.length} external link(s) and ${ctx.dataPoints} data point(s) were detected.`,
-      status:
-        ctx.externalLinks.length >= 5 && ctx.dataPoints >= 3
-          ? "pass"
-          : ctx.externalLinks.length >= 2
-            ? "partial"
-            : "fail",
-    }),
+    evaluate: (ctx) => {
+      let status: AuditStatus;
+      if (ctx.externalLinks.length >= 5 && ctx.dataPoints >= 3) {
+        status = "pass";
+      } else if (ctx.externalLinks.length >= 2) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
+      return {
+        evidence: `${ctx.externalLinks.length} external link(s) and ${ctx.dataPoints} data point(s) were detected.`,
+        status,
+      };
+    },
     id: "E12",
     label: "Outbound citations place the entity near named category sources.",
     recommendation:
@@ -820,13 +1001,17 @@ export const RULES: Rule[] = [
           status: "na",
         };
       }
+      let status: AuditStatus;
+      if (ctx.dateSignals.hasModifiedDate) {
+        status = "pass";
+      } else if (ctx.dateSignals.hasAnyDate) {
+        status = "partial";
+      } else {
+        status = "fail";
+      }
       return {
         evidence: ctx.dateSignals.evidence,
-        status: ctx.dateSignals.hasModifiedDate
-          ? "pass"
-          : ctx.dateSignals.hasAnyDate
-            ? "partial"
-            : "fail",
+        status,
       };
     },
     id: "F6",
@@ -835,115 +1020,6 @@ export const RULES: Rule[] = [
       "Publish visible updated dates and refresh important pages quarterly.",
   },
 ];
-
-export function countWords(text: string): number {
-  if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
-    try {
-      const segmenter = new Intl.Segmenter(undefined, { granularity: "word" });
-      let count = 0;
-      for (const segment of segmenter.segment(text)) {
-        if (segment.isWordLike) {
-          count++;
-        }
-      }
-      return count;
-    } catch {}
-  }
-
-  const latin = text.match(/[A-Za-z0-9À-ɏ][A-Za-z0-9À-ɏ'-]*/g) ?? [];
-  const cjk = text.match(/[一-鿿㐀-䶿豈-﫿぀-ゟ゠-ヿ가-힯]/g);
-  return latin.length + (cjk?.length ?? 0);
-}
-
-export function countMatches(text: string, pattern: RegExp): number {
-  return text.match(pattern)?.length ?? 0;
-}
-
-export function escapeRegExp(value: string): string {
-  return value.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function clip(value: string, max: number): string {
-  return value.length <= max ? value : `${value.slice(0, max - 1)}...`;
-}
-
-function firstUsefulParagraph(paragraphs: string[]): string {
-  return paragraphs.find((p) => countWords(p) >= 12) ?? "";
-}
-
-function isArticleLike(ctx: RuleContext): boolean {
-  return (
-    /\/(blog|article|articles|guide|guides|news|post|posts|insight|insights|research)\//i.test(
-      ctx.url.pathname
-    ) || ctx.schema.hasArticle
-  );
-}
-
-function isCommercialOfferingLike(ctx: RuleContext): boolean {
-  if (isArticleLike(ctx)) {
-    return false;
-  }
-  if (
-    hasJsonLdType(ctx, [
-      "Product",
-      "SoftwareApplication",
-      "WebApplication",
-      "MobileApplication",
-      "Service",
-      "Offer",
-    ])
-  ) {
-    return true;
-  }
-  return /\b(pricing|free trial|start free|sign up|signup|sign-up|get started|request a demo|schedule a demo|book a demo|buy now|add to cart|subscribe|per (?:month|user|seat)|saas|platform|software)\b/i.test(
-    ctx.analysisText
-  );
-}
-
-function isTechnicalProductLike(ctx: RuleContext): boolean {
-  if (
-    hasJsonLdType(ctx, [
-      "SoftwareApplication",
-      "SoftwareSourceCode",
-      "APIReference",
-    ])
-  ) {
-    return true;
-  }
-  if (/\/(docs?|api|sdk|reference|developers?)(\/|$)/i.test(ctx.url.pathname)) {
-    return true;
-  }
-  return /\b(api|sdk|cli|library|framework|open[- ]source|developer (?:portal|docs|guide)|npm install|pip install|brew install|github\.com\/[^\s]+)\b/i.test(
-    ctx.analysisText
-  );
-}
-
-function hasDisambiguableEntity(ctx: RuleContext): boolean {
-  return (
-    ctx.schema.hasOrganization || ctx.schema.hasPerson || ctx.schema.hasArticle
-  );
-}
-
-function hasJsonLdType(ctx: RuleContext, types: string[]): boolean {
-  return ctx.jsonLd.some((obj) => {
-    const raw = obj["@type"];
-    const actual = Array.isArray(raw) ? raw : [raw];
-    return actual.some(
-      (type) => typeof type === "string" && types.includes(type)
-    );
-  });
-}
-
-function linkPathStatus(links: string[], pattern: RegExp): AuditStatus {
-  const count = links.filter((l) => pattern.test(l)).length;
-  if (count >= 2) {
-    return "pass";
-  }
-  if (count === 1) {
-    return "partial";
-  }
-  return "fail";
-}
 
 export const RULES_BY_ID: Record<string, Rule> = Object.fromEntries(
   RULES.map((rule) => [rule.id, rule])

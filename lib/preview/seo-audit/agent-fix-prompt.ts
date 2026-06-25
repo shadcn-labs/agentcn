@@ -9,35 +9,18 @@ type PromptIssue = AuditItem & {
 
 const ACTIONABLE_STATUSES = new Set(["fail", "partial"]);
 
-export function buildAgentFixPrompts(audit: PromptAudit): AgentFixPrompts {
-  const issues = audit.categories.flatMap((category) =>
-    category.items.map((item) => ({
-      ...item,
-      categoryId: category.id,
-      categoryName: category.name,
-    }))
-  );
+const formatIssue = (issue: PromptIssue): string =>
+  `- ${issue.id} ${issue.label}
+  Category: ${issue.categoryName}
+  Status: ${issue.status}
+  Score impact: ${issue.maxScore.toFixed(1)} possible points
+  Evidence: ${issue.evidence}
+  Required fix: ${issue.recommendation}`;
 
-  const actionable = issues
-    .filter((issue) => ACTIONABLE_STATUSES.has(issue.status))
-    .toSorted((a, b) => b.maxScore - a.maxScore || a.id.localeCompare(b.id));
-
-  const topIssues = actionable.slice(0, 8).map((issue) => ({
-    id: issue.id,
-    label: issue.label,
-    prompt: buildIssuePrompt(audit, issue),
-  }));
-
-  return {
-    full: buildFullPrompt(audit, actionable),
-    topIssues,
-  };
-}
-
-function buildFullPrompt(
+const buildFullPrompt = (
   audit: PromptAudit,
   actionable: PromptIssue[]
-): string {
+): string => {
   const issueLines = actionable.length
     ? actionable.map(formatIssue).join("\n\n")
     : "No failing or partial automated checks were found.";
@@ -62,10 +45,10 @@ Expected output from you:
 1. A concise summary of what changed.
 2. The files changed.
 3. The verification commands run and their results.`;
-}
+};
 
-function buildIssuePrompt(audit: PromptAudit, issue: PromptIssue): string {
-  return `You are an AI SEO implementation agent. Fix this single audit finding.
+const buildIssuePrompt = (audit: PromptAudit, issue: PromptIssue): string =>
+  `You are an AI SEO implementation agent. Fix this single audit finding.
 
 Target URL: ${audit.url}
 Finding: ${issue.id} ${issue.label}
@@ -82,13 +65,28 @@ Acceptance criteria:
 - Lint, typecheck, and build pass if this is a codebase change.
 
 Report back with files changed and verification performed.`;
-}
 
-function formatIssue(issue: PromptIssue): string {
-  return `- ${issue.id} ${issue.label}
-  Category: ${issue.categoryName}
-  Status: ${issue.status}
-  Score impact: ${issue.maxScore.toFixed(1)} possible points
-  Evidence: ${issue.evidence}
-  Required fix: ${issue.recommendation}`;
-}
+export const buildAgentFixPrompts = (audit: PromptAudit): AgentFixPrompts => {
+  const issues = audit.categories.flatMap((category) =>
+    category.items.map((item) => ({
+      ...item,
+      categoryId: category.id,
+      categoryName: category.name,
+    }))
+  );
+
+  const actionable = issues
+    .filter((issue) => ACTIONABLE_STATUSES.has(issue.status))
+    .toSorted((a, b) => b.maxScore - a.maxScore || a.id.localeCompare(b.id));
+
+  const topIssues = actionable.slice(0, 8).map((issue) => ({
+    id: issue.id,
+    label: issue.label,
+    prompt: buildIssuePrompt(audit, issue),
+  }));
+
+  return {
+    full: buildFullPrompt(audit, actionable),
+    topIssues,
+  };
+};

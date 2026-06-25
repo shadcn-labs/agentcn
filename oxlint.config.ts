@@ -10,10 +10,6 @@ export default defineConfig({
     "public/r/**",
     "registry/eve/**",
     "registry/flue/**",
-    // Verbatim context.dev ports, kept byte-faithful to upstream.
-    "lib/preview/seo-audit/**",
-    "lib/preview/design-md/derive-tokens.ts",
-    "lib/preview/design-md/prompt.ts",
     ".agents/**",
     ".cursor/**",
     ".changeset/**",

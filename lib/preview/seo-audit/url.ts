@@ -1,4 +1,4 @@
-export function normalizeAuditUrl(input: string): string | null {
+export const normalizeAuditUrl = (input: string): string | null => {
   const trimmed = input.trim();
   if (!trimmed) {
     return null;
@@ -22,9 +22,9 @@ export function normalizeAuditUrl(input: string): string | null {
   } catch {
     return null;
   }
-}
+};
 
-export function normalizeDomain(input: string): string | null {
+export const normalizeDomain = (input: string): string | null => {
   const url = normalizeAuditUrl(input);
   if (!url) {
     return null;
@@ -34,16 +34,15 @@ export function normalizeDomain(input: string): string | null {
   } catch {
     return null;
   }
-}
+};
 
-export function auditUrlFromDomain(domain: string): string {
-  return `https://${domain}/`;
-}
+export const auditUrlFromDomain = (domain: string): string =>
+  `https://${domain}/`;
 
-export function displayHost(url: string): string {
+export const displayHost = (url: string): string => {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
   } catch {
     return url;
   }
-}
+};

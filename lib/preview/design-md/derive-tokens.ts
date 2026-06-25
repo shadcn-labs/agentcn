@@ -97,7 +97,7 @@ interface RGB {
   b: number;
 }
 
-function parseHex(hex: string | null | undefined): RGB | null {
+const parseHex = (hex: string | null | undefined): RGB | null => {
   if (!hex) {
     return null;
   }
@@ -120,48 +120,47 @@ function parseHex(hex: string | null | undefined): RGB | null {
     };
   }
   return null;
-}
+};
 
-function toHex(c: RGB): string {
-  const h = (n: number) =>
-    Math.max(0, Math.min(255, Math.round(n)))
-      .toString(16)
-      .padStart(2, "0");
-  return `#${h(c.r)}${h(c.g)}${h(c.b)}`;
-}
+const toHexChannel = (n: number): string =>
+  Math.max(0, Math.min(255, Math.round(n)))
+    .toString(16)
+    .padStart(2, "0");
 
-function mix(a: RGB, b: RGB, t: number): RGB {
-  return {
-    b: a.b + (b.b - a.b) * t,
-    g: a.g + (b.g - a.g) * t,
-    r: a.r + (b.r - a.r) * t,
-  };
-}
+const toHex = (c: RGB): string =>
+  `#${toHexChannel(c.r)}${toHexChannel(c.g)}${toHexChannel(c.b)}`;
+
+const mix = (a: RGB, b: RGB, t: number): RGB => ({
+  b: a.b + (b.b - a.b) * t,
+  g: a.g + (b.g - a.g) * t,
+  r: a.r + (b.r - a.r) * t,
+});
 
 const WHITE: RGB = { b: 255, g: 255, r: 255 };
 const BLACK: RGB = { b: 0, g: 0, r: 0 };
 
-function luminance({ r, g, b }: RGB): number {
-  const f = (c: number) => {
-    const s = c / 255;
-    return s <= 0.039_28 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-  };
-  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
-}
+const luminanceComponent = (c: number): number => {
+  const s = c / 255;
+  return s <= 0.039_28 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+};
+
+const luminance = ({ r, g, b }: RGB): number =>
+  0.2126 * luminanceComponent(r) +
+  0.7152 * luminanceComponent(g) +
+  0.0722 * luminanceComponent(b);
 
 const isDark = (c: RGB) => luminance(c) < 0.5;
 const readable = (bg: RGB): string => (isDark(bg) ? "#ffffff" : "#0a0a0a");
 
-function clamp(n: number, min: number, max: number): number {
-  return Math.min(Math.max(n, min), max);
-}
+const clamp = (n: number, min: number, max: number): number =>
+  Math.min(Math.max(n, min), max);
 
-function formatNumber(n: number, decimals = 4): string {
+const formatNumber = (n: number, decimals = 4): string => {
   const fixed = n.toFixed(decimals);
   return fixed.replace(/\.?0+$/, "");
-}
+};
 
-function rgbToHslToken({ r, g, b }: RGB): string {
+const rgbToHslToken = ({ r, g, b }: RGB): string => {
   const rr = r / 255;
   const gg = g / 255;
   const bb = b / 255;
@@ -191,11 +190,16 @@ function rgbToHslToken({ r, g, b }: RGB): string {
     l * 100,
     1
   )}%)`;
-}
+};
 
-function normalizeCssColor(
+const cssColorPartToChannel = (part: string): number => {
+  const n = Number.parseFloat(part);
+  return part.endsWith("%") ? (n / 100) * 255 : n;
+};
+
+const normalizeCssColor = (
   raw: string | null | undefined
-): { color: string; opacity?: number } | null {
+): { color: string; opacity?: number } | null => {
   if (!raw) {
     return null;
   }
@@ -219,12 +223,12 @@ function normalizeCssColor(
       const h = Number.parseFloat(parts[0]);
       const s = Number.parseFloat(parts[1]);
       const l = Number.parseFloat(parts[2]);
-      const alpha =
-        alphaPart !== undefined
-          ? Number.parseFloat(alphaPart)
-          : parts[3] !== undefined
-            ? parseFloat(parts[3])
-            : undefined;
+      let alpha: number | undefined;
+      if (alphaPart !== undefined) {
+        alpha = Number.parseFloat(alphaPart);
+      } else if (parts[3] !== undefined) {
+        alpha = Number.parseFloat(parts[3]);
+      }
       if ([h, s, l].every(Number.isFinite)) {
         return {
           color: `hsl(${formatNumber(h, 1)} ${formatNumber(s, 1)}% ${formatNumber(
@@ -251,21 +255,17 @@ function normalizeCssColor(
       .map((p) => p.trim())
       .filter(Boolean);
     if (parts.length >= 3) {
-      const toChannel = (part: string) => {
-        const n = Number.parseFloat(part);
-        return part.endsWith("%") ? (n / 100) * 255 : n;
-      };
       const color = {
-        b: toChannel(parts[2]),
-        g: toChannel(parts[1]),
-        r: toChannel(parts[0]),
+        b: cssColorPartToChannel(parts[2]),
+        g: cssColorPartToChannel(parts[1]),
+        r: cssColorPartToChannel(parts[0]),
       };
-      const alpha =
-        alphaPart !== undefined
-          ? Number.parseFloat(alphaPart)
-          : parts[3] !== undefined
-            ? parseFloat(parts[3])
-            : undefined;
+      let alpha: number | undefined;
+      if (alphaPart !== undefined) {
+        alpha = Number.parseFloat(alphaPart);
+      } else if (parts[3] !== undefined) {
+        alpha = Number.parseFloat(parts[3]);
+      }
       if ([color.r, color.g, color.b].every(Number.isFinite)) {
         return {
           color: rgbToHslToken(color),
@@ -279,13 +279,13 @@ function normalizeCssColor(
   }
 
   return null;
-}
+};
 
 /* ------------------------------------------------------------ */
 /* Length utilities                                             */
 /* ------------------------------------------------------------ */
 
-function toPx(value: string | null | undefined): number | null {
+const toPx = (value: string | null | undefined): number | null => {
   if (!value) {
     return null;
   }
@@ -302,9 +302,9 @@ function toPx(value: string | null | undefined): number | null {
     return n * 16;
   }
   return n;
-}
+};
 
-function toPxList(value: string | null | undefined): number[] {
+const toPxList = (value: string | null | undefined): number[] => {
   if (!value) {
     return [];
   }
@@ -313,13 +313,13 @@ function toPxList(value: string | null | undefined): number[] {
     .split(/\s+/)
     .map((part) => toPx(part))
     .filter((part): part is number => part !== null && part > 0);
-}
+};
 
-function pxToRem(px: number): string {
+const pxToRem = (px: number): string => {
   const rem = px / 16;
   const fixed = rem.toFixed(4);
   return `${fixed.replace(/\.?0+$/, "")}rem`;
-}
+};
 
 /* ------------------------------------------------------------ */
 /* Font utilities                                               */
@@ -329,7 +329,7 @@ const SANS_FALLBACKS = ["ui-sans-serif", "system-ui", "sans-serif"];
 const SERIF_FALLBACKS = ["ui-serif", "Georgia", "serif"];
 const MONO_FALLBACKS = ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"];
 
-function quoteIfNeeded(name: string): string {
+const quoteIfNeeded = (name: string): string => {
   const trimmed = name.trim().replaceAll(/^["']|["']$/g, "");
   if (!trimmed) {
     return trimmed;
@@ -338,13 +338,13 @@ function quoteIfNeeded(name: string): string {
     return `"${trimmed}"`;
   }
   return trimmed;
-}
+};
 
-function buildFontStack(
+const buildFontStack = (
   primary: string | undefined,
   fallbacks: string[] | undefined,
   generic: string[]
-): string {
+): string => {
   const seen = new Set<string>();
   const stack: string[] = [];
   const push = (name: string | undefined) => {
@@ -363,54 +363,79 @@ function buildFontStack(
     stack.push(quoteIfNeeded(trimmed));
   };
   push(primary);
-  (fallbacks ?? []).forEach(push);
-  generic.forEach(push);
-  return stack.join(", ");
-}
-
-function classifyFamily(
-  family: string | undefined,
-  fontLinks: Record<string, LiveStyleguideFontLink> | undefined
-): "sans" | "serif" | "mono" | "unknown" {
-  if (!family) {
-    return "unknown";
+  for (const fb of fallbacks ?? []) {
+    push(fb);
   }
+  for (const g of generic) {
+    push(g);
+  }
+  return stack.join(", ");
+};
+
+const classifyByFontLinks = (
+  family: string,
+  fontLinks: Record<string, LiveStyleguideFontLink>
+): "sans" | "serif" | "mono" | null => {
   const first = family
     .split(",")[0]
     ?.trim()
     .replaceAll(/^["']|["']$/g, "");
-  if (first && fontLinks?.[first]?.category) {
-    const cat = fontLinks[first].category!.toLowerCase();
-    if (cat.includes("mono")) {
-      return "mono";
-    }
-    if (cat.includes("serif") && !cat.includes("sans")) {
-      return "serif";
-    }
-    if (
-      cat.includes("sans") ||
-      cat.includes("display") ||
-      cat.includes("hand")
-    ) {
-      return "sans";
-    }
+  if (!first || !fontLinks[first]?.category) {
+    return null;
   }
-  const stripped = family.toLowerCase().replaceAll("sans-serif", "");
-  if (/\b(monospace|mono)\b/.test(family.toLowerCase())) {
+  const cat = fontLinks[first].category?.toLowerCase();
+  if (cat?.includes("mono")) {
+    return "mono";
+  }
+  if (cat?.includes("serif") && !cat.includes("sans")) {
+    return "serif";
+  }
+  if (
+    cat?.includes("sans") ||
+    cat?.includes("display") ||
+    cat?.includes("hand")
+  ) {
+    return "sans";
+  }
+  return null;
+};
+
+const classifyByFamilyName = (
+  family: string
+): "sans" | "serif" | "mono" | null => {
+  const lower = family.toLowerCase();
+  const stripped = lower.replaceAll("sans-serif", "");
+  if (/\b(monospace|mono)\b/.test(lower)) {
     return "mono";
   }
   if (/\bserif\b/.test(stripped)) {
     return "serif";
   }
-  if (/\bsans-serif\b/.test(family.toLowerCase())) {
+  if (/\bsans-serif\b/.test(lower)) {
     return "sans";
   }
-  return "unknown";
-}
+  return null;
+};
 
-function findMonoFamily(
+const classifyFamily = (
+  family: string | undefined,
   fontLinks: Record<string, LiveStyleguideFontLink> | undefined
-): string | undefined {
+): "sans" | "serif" | "mono" | "unknown" => {
+  if (!family) {
+    return "unknown";
+  }
+  if (fontLinks) {
+    const fromLinks = classifyByFontLinks(family, fontLinks);
+    if (fromLinks) {
+      return fromLinks;
+    }
+  }
+  return classifyByFamilyName(family) ?? "unknown";
+};
+
+const findMonoFamily = (
+  fontLinks: Record<string, LiveStyleguideFontLink> | undefined
+): string | undefined => {
   if (!fontLinks) {
     return undefined;
   }
@@ -420,12 +445,12 @@ function findMonoFamily(
     }
   }
   return undefined;
-}
+};
 
-function findSerifFamily(
+const findSerifFamily = (
   fontLinks: Record<string, LiveStyleguideFontLink> | undefined,
   exclude: Set<string>
-): string | undefined {
+): string | undefined => {
   if (!fontLinks) {
     return undefined;
   }
@@ -439,7 +464,7 @@ function findSerifFamily(
     }
   }
   return undefined;
-}
+};
 
 interface FontTokens {
   sans: string;
@@ -447,10 +472,46 @@ interface FontTokens {
   mono: string;
 }
 
-function pickFonts(styleguide: LiveStyleguide | null | undefined): FontTokens {
-  const body = styleguide?.typography?.p;
-  const h1 = styleguide?.typography?.headings?.h1;
-  const links = styleguide?.fontLinks;
+const findSerifFromHeadings = (
+  headings: (LiveStyleguideText | undefined)[],
+  links: Record<string, LiveStyleguideFontLink> | undefined,
+  used: Set<string>
+): string | undefined => {
+  for (const head of headings) {
+    const fam = head?.fontFamily;
+    if (!fam || used.has(fam.toLowerCase())) {
+      continue;
+    }
+    if (classifyFamily(fam, links) === "serif") {
+      return buildFontStack(fam, head?.fontFallbacks, SERIF_FALLBACKS);
+    }
+  }
+  return undefined;
+};
+
+interface ResolvedTypography {
+  body: LiveStyleguideText | undefined;
+  headings: (LiveStyleguideText | undefined)[];
+  links: Record<string, LiveStyleguideFontLink> | undefined;
+}
+
+const resolveTypography = (
+  styleguide: LiveStyleguide | null | undefined
+): ResolvedTypography => ({
+  body: styleguide?.typography?.p,
+  headings: [
+    styleguide?.typography?.headings?.h1,
+    styleguide?.typography?.headings?.h2,
+    styleguide?.typography?.headings?.h3,
+  ],
+  links: styleguide?.fontLinks,
+});
+
+const pickFonts = (
+  styleguide: LiveStyleguide | null | undefined
+): FontTokens => {
+  const { body, headings, links } = resolveTypography(styleguide);
+  const [h1] = headings;
 
   const sansFamily = body?.fontFamily ?? h1?.fontFamily;
   const sansFallbacks = body?.fontFallbacks ?? h1?.fontFallbacks;
@@ -461,28 +522,9 @@ function pickFonts(styleguide: LiveStyleguide | null | undefined): FontTokens {
     used.add(sansFamily.toLowerCase());
   }
 
-  let serif: string | undefined;
-  const headingCandidates: (LiveStyleguideText | undefined)[] = [
-    h1,
-    styleguide?.typography?.headings?.h2,
-    styleguide?.typography?.headings?.h3,
-  ];
-  for (const head of headingCandidates) {
-    const fam = head?.fontFamily;
-    if (!fam || used.has(fam.toLowerCase())) {
-      continue;
-    }
-    if (classifyFamily(fam, links) === "serif") {
-      serif = buildFontStack(fam, head?.fontFallbacks, SERIF_FALLBACKS);
-      break;
-    }
-  }
-  if (!serif) {
-    const fromLinks = findSerifFamily(links, used);
-    if (fromLinks) {
-      serif = buildFontStack(fromLinks, undefined, SERIF_FALLBACKS);
-    }
-  }
+  const serif =
+    findSerifFromHeadings(headings, links, used) ??
+    findSerifFamily(links, used);
 
   const monoFamily = findMonoFamily(links);
   const mono = buildFontStack(monoFamily, undefined, MONO_FALLBACKS);
@@ -492,7 +534,7 @@ function pickFonts(styleguide: LiveStyleguide | null | undefined): FontTokens {
     sans,
     serif: serif ?? buildFontStack(undefined, undefined, SERIF_FALLBACKS),
   };
-}
+};
 
 /* ------------------------------------------------------------ */
 /* Radius / shadows / spacing                                   */
@@ -502,7 +544,7 @@ const MIN_SPACING_PX = 3.5;
 const DEFAULT_SPACING_PX = 4;
 const MAX_SPACING_PX = 5;
 
-function pickRadius(styleguide: LiveStyleguide | null | undefined): string {
+const pickRadius = (styleguide: LiveStyleguide | null | undefined): string => {
   const cardRadius = toPx(styleguide?.components?.card?.borderRadius);
   const buttonRadius = toPx(
     styleguide?.components?.button?.primary?.borderRadius
@@ -513,7 +555,7 @@ function pickRadius(styleguide: LiveStyleguide | null | undefined): string {
   }
   const clamped = Math.min(Math.max(px, 2), 16);
   return pxToRem(clamped);
-}
+};
 
 interface ShadowTokens {
   x: string;
@@ -541,22 +583,25 @@ interface ParsedShadow {
   opacity?: number;
 }
 
-function normalizePxToken(value: string | undefined, fallback: string): string {
+const normalizePxToken = (
+  value: string | undefined,
+  fallback: string
+): string => {
   const px = toPx(value);
   if (px === null) {
     return fallback;
   }
   return `${formatNumber(px, 2)}px`;
-}
+};
 
-function splitShadowLayers(value: string): string[] {
+const splitShadowLayers = (value: string): string[] => {
   const layers: string[] = [];
   let depth = 0;
   let start = 0;
-  for (let i = 0; i < value.length; i++) {
+  for (let i = 0; i < value.length; i += 1) {
     const ch = value[i];
     if (ch === "(") {
-      depth++;
+      depth += 1;
     }
     if (ch === ")") {
       depth = Math.max(0, depth - 1);
@@ -568,22 +613,24 @@ function splitShadowLayers(value: string): string[] {
   }
   layers.push(value.slice(start).trim());
   return layers.filter(Boolean);
-}
+};
 
-function findColorSnippet(layer: string): string | null {
+const findColorSnippet = (layer: string): string | null => {
   const functional = layer.match(/\b(?:rgba?|hsla?)\([^)]+\)/i);
   if (functional) {
     return functional[0];
   }
   const hex = layer.match(/#[0-9a-f]{3,8}\b/i);
   return hex?.[0] ?? null;
-}
+};
 
-function parseBoxShadow(value: string | null | undefined): ParsedShadow | null {
+const parseBoxShadow = (
+  value: string | null | undefined
+): ParsedShadow | null => {
   if (!value || value.trim().toLowerCase() === "none") {
     return null;
   }
-  const layer = splitShadowLayers(value)[0];
+  const [layer] = splitShadowLayers(value);
   if (!layer) {
     return null;
   }
@@ -609,9 +656,9 @@ function parseBoxShadow(value: string | null | undefined): ParsedShadow | null {
     x: normalizePxToken(lengths[0], "0px"),
     y: normalizePxToken(lengths[1], "2px"),
   };
-}
+};
 
-function colorWithOpacity(color: string, opacity: number): string {
+const colorWithOpacity = (color: string, opacity: number): string => {
   const alpha = formatNumber(clamp(opacity, 0, 1), 4);
   const hsl = color.match(/^hsl\((.+)\)$/i);
   if (hsl) {
@@ -622,9 +669,12 @@ function colorWithOpacity(color: string, opacity: number): string {
     return `rgb(${rgb[1]} / ${alpha})`;
   }
   return color;
-}
+};
 
-function fallbackShadowColor(palette: Palette, mode: "light" | "dark"): string {
+const fallbackShadowColor = (
+  palette: Palette,
+  mode: "light" | "dark"
+): string => {
   const bg = parseHex(palette.background);
   const fg = parseHex(palette.foreground);
   if (mode === "dark") {
@@ -634,16 +684,16 @@ function fallbackShadowColor(palette: Palette, mode: "light" | "dark"): string {
     return rgbToHslToken(mix(fg, bg, 0.15));
   }
   return fg ? rgbToHslToken(fg) : "hsl(0 0% 5%)";
-}
+};
 
-function buildShadowTokens(base: {
+const buildShadowTokens = (base: {
   x: string;
   y: string;
   blur: string;
   spread: string;
   color: string;
   opacity: number;
-}): ShadowTokens {
+}): ShadowTokens => {
   const half = base.opacity * 0.5;
   const heavy = Math.min(base.opacity * 2.5, 0.75);
   const main = colorWithOpacity(base.color, base.opacity);
@@ -669,15 +719,13 @@ function buildShadowTokens(base: {
     xs: `${first} ${quiet}`,
     y: base.y,
   };
-}
+};
 
-function pickShadows(
-  styleguide: LiveStyleguide | null | undefined,
-  palette: Palette,
-  mode: "light" | "dark"
-): ShadowTokens {
+const collectShadowCandidates = (
+  styleguide: LiveStyleguide | null | undefined
+): (string | undefined)[] => {
   const s = styleguide?.shadows;
-  const candidates = [
+  return [
     s?.md,
     styleguide?.components?.card?.boxShadow,
     styleguide?.components?.button?.primary?.boxShadow,
@@ -685,6 +733,14 @@ function pickShadows(
     s?.lg,
     s?.xl,
   ];
+};
+
+const pickShadows = (
+  styleguide: LiveStyleguide | null | undefined,
+  palette: Palette,
+  mode: "light" | "dark"
+): ShadowTokens => {
+  const candidates = collectShadowCandidates(styleguide);
   const parsed = candidates.map(parseBoxShadow).find(Boolean);
 
   return buildShadowTokens({
@@ -695,9 +751,9 @@ function pickShadows(
     x: parsed?.x ?? "0px",
     y: parsed?.y ?? "2px",
   });
-}
+};
 
-function median(values: number[]): number | null {
+const median = (values: number[]): number | null => {
   if (values.length === 0) {
     return null;
   }
@@ -707,17 +763,24 @@ function median(values: number[]): number | null {
     return sorted[mid];
   }
   return (sorted[mid - 1] + sorted[mid]) / 2;
-}
+};
 
-function pickSpacing(styleguide: LiveStyleguide | null | undefined): string {
+const pickSpacing = (styleguide: LiveStyleguide | null | undefined): string => {
   const sp = styleguide?.elementSpacing;
   const scaleCandidates = [
     toPx(sp?.xs),
-    toPx(sp?.sm) ? toPx(sp?.sm)! / 2 : null,
-    toPx(sp?.md) ? toPx(sp?.md)! / 4 : null,
-    toPx(sp?.lg) ? toPx(sp?.lg)! / 6 : null,
-    toPx(sp?.xl) ? toPx(sp?.xl)! / 8 : null,
-  ].filter((value): value is number => value !== null && value > 0);
+    toPx(sp?.sm),
+    toPx(sp?.md),
+    toPx(sp?.lg),
+    toPx(sp?.xl),
+  ]
+    .filter((value): value is number => value !== null && value > 0)
+    .map((value, index) => {
+      if (index === 0) {
+        return value;
+      }
+      return value / ((index + 1) * 2);
+    });
 
   const componentPadding = [
     styleguide?.components?.button?.primary?.padding,
@@ -734,11 +797,11 @@ function pickSpacing(styleguide: LiveStyleguide | null | undefined): string {
     MAX_SPACING_PX
   );
   return pxToRem(safeUnit);
-}
+};
 
-function pickTrackingNormal(
+const pickTrackingNormal = (
   styleguide: LiveStyleguide | null | undefined
-): string {
+): string => {
   const values = [
     styleguide?.typography?.p?.letterSpacing,
     styleguide?.typography?.headings?.h1?.letterSpacing,
@@ -761,7 +824,7 @@ function pickTrackingNormal(
     return `${formatNumber(n / 16, 4)}em`;
   }
   return `${formatNumber(n, 4)}em`;
-}
+};
 
 /* ------------------------------------------------------------ */
 /* Palette                                                      */
@@ -798,15 +861,24 @@ interface Palette {
   sidebarRing: string;
 }
 
-function buildPalette(
-  brand: LiveBrand | undefined,
-  styleguide: LiveStyleguide | null | undefined,
-  mode: "light" | "dark"
-): Palette {
-  const sgMode = styleguide?.mode;
-  const sourceIsLight = sgMode !== "dark";
-  const direct = mode === (sourceIsLight ? "light" : "dark");
+interface PaletteSource {
+  brandColors: RGB[];
+  sourceAccent: RGB | null;
+  sgPrimaryBg: RGB | null;
+  sgPrimaryFg: RGB | null;
+  sgSecondaryBg: RGB | null;
+  sgSecondaryFg: RGB | null;
+  sgBg: RGB | null;
+  sgFg: RGB | null;
+  sgCardBg: RGB | null;
+  sgCardFg: RGB | null;
+  sgCardBorder: RGB | null;
+  sgBtnBorder: RGB | null;
+}
 
+const parseBrandColors = (
+  brand: LiveBrand | undefined
+): { brandColors: RGB[]; namedBrandAccent: RGB | null } => {
   const brandColors = (brand?.colors ?? [])
     .map((c) => parseHex(c.hex))
     .filter((c): c is RGB => c !== null);
@@ -815,125 +887,238 @@ function buildPalette(
       /accent|secondary|highlight|support/i.test(color.name ?? "")
     )?.hex
   );
+  return { brandColors, namedBrandAccent };
+};
 
-  const sgBg = parseHex(styleguide?.colors?.background);
-  const sgFg = parseHex(styleguide?.colors?.text);
-  const sgAccent = parseHex(styleguide?.colors?.accent);
-
+const resolveStyleguideButtons = (
+  styleguide: LiveStyleguide | null | undefined
+) => {
   const btnPrimary = styleguide?.components?.button?.primary;
   const btnSecondary = styleguide?.components?.button?.secondary;
   const btnLink = styleguide?.components?.button?.link;
-  const card = styleguide?.components?.card;
+  return {
+    btnLinkAccent: parseHex(btnLink?.backgroundColor ?? btnLink?.color),
+    btnPrimary,
+    btnSecondary,
+    sgBtnBorder: parseHex(btnSecondary?.borderColor ?? btnPrimary?.borderColor),
+    sgPrimaryBg: parseHex(btnPrimary?.backgroundColor),
+    sgPrimaryFg: parseHex(btnPrimary?.color),
+    sgSecondaryBg: parseHex(btnSecondary?.backgroundColor),
+    sgSecondaryFg: parseHex(btnSecondary?.color),
+  };
+};
 
-  const sgPrimaryBg = parseHex(btnPrimary?.backgroundColor);
-  const sgPrimaryFg = parseHex(btnPrimary?.color);
-  const sgSecondaryBg = parseHex(btnSecondary?.backgroundColor);
-  const sgSecondaryFg = parseHex(btnSecondary?.color);
-  const sgLinkAccent = parseHex(btnLink?.backgroundColor ?? btnLink?.color);
-  const sgCardBg = parseHex(card?.backgroundColor);
-  const sgCardFg = parseHex(card?.textColor);
-  const sgCardBorder = parseHex(card?.borderColor);
-  const sgBtnBorder = parseHex(
-    btnSecondary?.borderColor ?? btnPrimary?.borderColor
-  );
+const resolveStyleguideCard = (
+  styleguide: LiveStyleguide | null | undefined
+) => ({
+  sgCardBg: parseHex(styleguide?.components?.card?.backgroundColor),
+  sgCardBorder: parseHex(styleguide?.components?.card?.borderColor),
+  sgCardFg: parseHex(styleguide?.components?.card?.textColor),
+});
+
+const extractPaletteSource = (
+  brand: LiveBrand | undefined,
+  styleguide: LiveStyleguide | null | undefined
+): PaletteSource => {
+  const { brandColors, namedBrandAccent } = parseBrandColors(brand);
+  const sgAccent = parseHex(styleguide?.colors?.accent);
+  const { btnLinkAccent, sgBtnBorder, ...buttons } =
+    resolveStyleguideButtons(styleguide);
+  const card = resolveStyleguideCard(styleguide);
+
   const sourceAccent =
-    sgAccent ?? sgLinkAccent ?? namedBrandAccent ?? brandColors[1] ?? null;
+    sgAccent ?? btnLinkAccent ?? namedBrandAccent ?? brandColors[1] ?? null;
 
+  return {
+    brandColors,
+    sgBg: parseHex(styleguide?.colors?.background),
+    sgBtnBorder,
+    ...card,
+    sgFg: parseHex(styleguide?.colors?.text),
+    ...buttons,
+    sourceAccent,
+  };
+};
+
+const adjustContrast = (
+  base: RGB,
+  mode: "light" | "dark",
+  amount: number,
+  darkMix: RGB,
+  lightMix: RGB
+): RGB => {
+  if (mode === "dark" && isDark(base)) {
+    return mix(base, darkMix, amount);
+  }
+  if (mode === "light" && !isDark(base)) {
+    return mix(base, lightMix, amount);
+  }
+  return base;
+};
+
+const buildDirectPalette = (
+  src: PaletteSource,
+  mode: "light" | "dark"
+): {
+  background: RGB;
+  foreground: RGB;
+  primary: RGB;
+  primaryForeground: RGB | null;
+  secondary: RGB;
+  secondaryForeground: RGB | null;
+  accent: RGB;
+  cardBg: RGB;
+  cardFg: RGB | null;
+  border: RGB | null;
+} => {
+  const background =
+    src.sgBg ?? (mode === "light" ? WHITE : { b: 21, g: 23, r: 23 });
+  const foreground =
+    src.sgFg ??
+    (mode === "light" ? { b: 10, g: 10, r: 10 } : { b: 244, g: 245, r: 245 });
+  const primary =
+    src.sgPrimaryBg ?? src.brandColors[0] ?? src.sourceAccent ?? foreground;
+  const primaryForeground = src.sgPrimaryBg ? src.sgPrimaryFg : null;
+  const accent = src.sourceAccent ?? primary;
+  const secondary =
+    src.sgSecondaryBg ??
+    (src.sourceAccent ? mix(background, src.sourceAccent, 0.16) : undefined) ??
+    mix(background, primary, 0.18);
+  const secondaryForeground = src.sgSecondaryBg ? src.sgSecondaryFg : null;
+  const cardBg = src.sgCardBg ?? mix(background, foreground, 0.03);
+  const cardFg = src.sgCardFg;
+  const border = src.sgCardBorder ?? src.sgBtnBorder;
+
+  return {
+    accent,
+    background,
+    border,
+    cardBg,
+    cardFg,
+    foreground,
+    primary,
+    primaryForeground,
+    secondary,
+    secondaryForeground,
+  };
+};
+
+const buildInvertedPalette = (
+  src: PaletteSource,
+  mode: "light" | "dark"
+): {
+  background: RGB;
+  foreground: RGB;
+  primary: RGB;
+  primaryForeground: RGB | null;
+  secondary: RGB;
+  secondaryForeground: RGB | null;
+  accent: RGB;
+  cardBg: RGB;
+  cardFg: RGB | null;
+  border: RGB | null;
+} => {
   let background: RGB;
   let foreground: RGB;
-  let primary: RGB;
-  let primaryForeground: RGB | null;
-  let secondary: RGB;
-  let secondaryForeground: RGB | null;
-  let accent: RGB;
-  let cardBg: RGB;
-  let cardFg: RGB | null;
-  let border: RGB | null;
-
-  if (direct) {
-    background = sgBg ?? (mode === "light" ? WHITE : { b: 21, g: 23, r: 23 });
-    foreground =
-      sgFg ??
-      (mode === "light" ? { b: 10, g: 10, r: 10 } : { b: 244, g: 245, r: 245 });
-    primary = sgPrimaryBg ?? brandColors[0] ?? sourceAccent ?? foreground;
-    primaryForeground = sgPrimaryBg ? sgPrimaryFg : null;
-    accent = sourceAccent ?? primary;
-    secondary =
-      sgSecondaryBg ??
-      (sourceAccent ? mix(background, sourceAccent, 0.16) : undefined) ??
-      mix(background, primary, 0.18);
-    secondaryForeground = sgSecondaryBg ? sgSecondaryFg : null;
-    cardBg = sgCardBg ?? mix(background, foreground, 0.03);
-    cardFg = sgCardFg;
-    border = sgCardBorder ?? sgBtnBorder;
+  if (mode === "light") {
+    background = WHITE;
+    foreground = { b: 10, g: 10, r: 10 };
   } else {
-    if (mode === "light") {
-      background = WHITE;
-      foreground = { b: 10, g: 10, r: 10 };
-    } else {
-      background = { b: 21, g: 23, r: 23 };
-      foreground = { b: 244, g: 245, r: 245 };
-    }
-    const basePrimary =
-      sgPrimaryBg ?? brandColors[0] ?? sourceAccent ?? foreground;
-    if (mode === "dark" && isDark(basePrimary)) {
-      primary = mix(basePrimary, WHITE, 0.3);
-    } else if (mode === "light" && !isDark(basePrimary)) {
-      primary = mix(basePrimary, BLACK, 0.15);
-    } else {
-      primary = basePrimary;
-    }
-    primaryForeground = sgPrimaryBg ? sgPrimaryFg : null;
-    const baseAccent = sourceAccent ?? primary;
-    if (mode === "dark" && isDark(baseAccent)) {
-      accent = mix(baseAccent, WHITE, 0.25);
-    } else if (mode === "light" && !isDark(baseAccent)) {
-      accent = mix(baseAccent, BLACK, 0.12);
-    } else {
-      accent = baseAccent;
-    }
-    const baseSecondary =
-      sgSecondaryBg ??
-      mix(background, accent, mode === "light" ? 0.16 : 0.24) ??
-      mix(background, primary, 0.18);
-    secondary = baseSecondary;
-    secondaryForeground = sgSecondaryBg ? sgSecondaryFg : null;
-    cardBg = mix(background, foreground, mode === "light" ? 0.03 : 0.07);
-    cardFg = null;
-    border = null;
+    background = { b: 21, g: 23, r: 23 };
+    foreground = { b: 244, g: 245, r: 245 };
   }
+
+  const basePrimary =
+    src.sgPrimaryBg ?? src.brandColors[0] ?? src.sourceAccent ?? foreground;
+  const primary = adjustContrast(basePrimary, mode, 0.3, WHITE, BLACK);
+
+  const baseAccent = src.sourceAccent ?? primary;
+  const accent = adjustContrast(baseAccent, mode, 0.25, WHITE, BLACK);
+
+  const secondary =
+    src.sgSecondaryBg ??
+    mix(background, accent, mode === "light" ? 0.16 : 0.24) ??
+    mix(background, primary, 0.18);
+  const secondaryForeground = src.sgSecondaryBg ? src.sgSecondaryFg : null;
+  const cardBg = mix(background, foreground, mode === "light" ? 0.03 : 0.07);
+
+  return {
+    accent,
+    background,
+    border: null,
+    cardBg,
+    cardFg: null,
+    foreground,
+    primary,
+    primaryForeground: src.sgPrimaryBg ? src.sgPrimaryFg : null,
+    secondary,
+    secondaryForeground,
+  };
+};
+
+const buildChartColors = (
+  accent: RGB,
+  primary: RGB,
+  secondary: RGB,
+  brandColors: RGB[]
+): [RGB, RGB, RGB, RGB, RGB] => {
+  const candidates = [accent, primary, secondary, ...brandColors];
+  const seen = new Set<string>();
+  const unique = candidates.filter((color) => {
+    const hex = toHex(color);
+    if (seen.has(hex)) {
+      return false;
+    }
+    seen.add(hex);
+    return true;
+  });
+  return [
+    unique[0] ?? primary,
+    unique[1] ?? mix(primary, WHITE, 0.3),
+    unique[2] ?? mix(primary, BLACK, 0.25),
+    unique[3] ?? mix(primary, WHITE, 0.55),
+    unique[4] ?? mix(primary, BLACK, 0.45),
+  ];
+};
+
+const buildPalette = (
+  brand: LiveBrand | undefined,
+  styleguide: LiveStyleguide | null | undefined,
+  mode: "light" | "dark"
+): Palette => {
+  const sgMode = styleguide?.mode;
+  const sourceIsLight = sgMode !== "dark";
+  const direct = mode === (sourceIsLight ? "light" : "dark");
+
+  const src = extractPaletteSource(brand, styleguide);
+
+  const palette = direct
+    ? buildDirectPalette(src, mode)
+    : buildInvertedPalette(src, mode);
+
+  const { background, foreground, primary, primaryForeground, accent } =
+    palette;
 
   const muted = mix(background, foreground, mode === "light" ? 0.05 : 0.1);
   const mutedFg = mix(foreground, background, 0.4);
   const finalBorder =
-    border ?? mix(background, foreground, mode === "light" ? 0.12 : 0.2);
+    palette.border ??
+    mix(background, foreground, mode === "light" ? 0.12 : 0.2);
   const sidebar = mix(background, foreground, mode === "light" ? 0.04 : 0.05);
-
-  const chartCandidates = [accent, primary, secondary, ...brandColors];
-  const seenChartColors = new Set<string>();
-  const uniqueChartColors = chartCandidates.filter((color) => {
-    const hex = toHex(color);
-    if (seenChartColors.has(hex)) {
-      return false;
-    }
-    seenChartColors.add(hex);
-    return true;
-  });
-  const chart: [RGB, RGB, RGB, RGB, RGB] = [
-    uniqueChartColors[0] ?? primary,
-    uniqueChartColors[1] ?? mix(primary, WHITE, 0.3),
-    uniqueChartColors[2] ?? mix(primary, BLACK, 0.25),
-    uniqueChartColors[3] ?? mix(primary, WHITE, 0.55),
-    uniqueChartColors[4] ?? mix(primary, BLACK, 0.45),
-  ];
+  const chart = buildChartColors(
+    accent,
+    primary,
+    palette.secondary,
+    src.brandColors
+  );
 
   return {
     accent: toHex(accent),
     accentForeground: readable(accent),
     background: toHex(background),
     border: toHex(finalBorder),
-    card: toHex(cardBg),
-    cardForeground: toHex(cardFg ?? foreground),
+    card: toHex(palette.cardBg),
+    cardForeground: toHex(palette.cardFg ?? foreground),
     chart: chart.map(toHex) as [string, string, string, string, string],
     destructive: mode === "light" ? "#dc2626" : "#ef4444",
     destructiveForeground: "#ffffff",
@@ -941,17 +1126,17 @@ function buildPalette(
     input: toHex(finalBorder),
     muted: toHex(muted),
     mutedForeground: toHex(mutedFg),
-    popover: toHex(cardBg),
-    popoverForeground: toHex(cardFg ?? foreground),
+    popover: toHex(palette.cardBg),
+    popoverForeground: toHex(palette.cardFg ?? foreground),
     primary: toHex(primary),
     primaryForeground: primaryForeground
       ? toHex(primaryForeground)
       : readable(primary),
     ring: toHex(accent),
-    secondary: toHex(secondary),
-    secondaryForeground: secondaryForeground
-      ? toHex(secondaryForeground)
-      : readable(secondary),
+    secondary: toHex(palette.secondary),
+    secondaryForeground: palette.secondaryForeground
+      ? toHex(palette.secondaryForeground)
+      : readable(palette.secondary),
     sidebar: toHex(sidebar),
     sidebarAccent: toHex(accent),
     sidebarAccentForeground: readable(accent),
@@ -963,75 +1148,74 @@ function buildPalette(
       : readable(primary),
     sidebarRing: toHex(accent),
   };
-}
+};
 
 /* ------------------------------------------------------------ */
 /* Output formatting                                            */
 /* ------------------------------------------------------------ */
 
-function paletteLines(p: Palette): string[] {
-  return [
-    `--background: ${p.background};`,
-    `--foreground: ${p.foreground};`,
-    `--card: ${p.card};`,
-    `--card-foreground: ${p.cardForeground};`,
-    `--popover: ${p.popover};`,
-    `--popover-foreground: ${p.popoverForeground};`,
-    `--primary: ${p.primary};`,
-    `--primary-foreground: ${p.primaryForeground};`,
-    `--secondary: ${p.secondary};`,
-    `--secondary-foreground: ${p.secondaryForeground};`,
-    `--muted: ${p.muted};`,
-    `--muted-foreground: ${p.mutedForeground};`,
-    `--accent: ${p.accent};`,
-    `--accent-foreground: ${p.accentForeground};`,
-    `--destructive: ${p.destructive};`,
-    `--destructive-foreground: ${p.destructiveForeground};`,
-    `--border: ${p.border};`,
-    `--input: ${p.input};`,
-    `--ring: ${p.ring};`,
-    `--chart-1: ${p.chart[0]};`,
-    `--chart-2: ${p.chart[1]};`,
-    `--chart-3: ${p.chart[2]};`,
-    `--chart-4: ${p.chart[3]};`,
-    `--chart-5: ${p.chart[4]};`,
-    `--sidebar: ${p.sidebar};`,
-    `--sidebar-foreground: ${p.sidebarForeground};`,
-    `--sidebar-primary: ${p.sidebarPrimary};`,
-    `--sidebar-primary-foreground: ${p.sidebarPrimaryForeground};`,
-    `--sidebar-accent: ${p.sidebarAccent};`,
-    `--sidebar-accent-foreground: ${p.sidebarAccentForeground};`,
-    `--sidebar-border: ${p.sidebarBorder};`,
-    `--sidebar-ring: ${p.sidebarRing};`,
-  ];
-}
+const paletteLines = (p: Palette): string[] => [
+  `--background: ${p.background};`,
+  `--foreground: ${p.foreground};`,
+  `--card: ${p.card};`,
+  `--card-foreground: ${p.cardForeground};`,
+  `--popover: ${p.popover};`,
+  `--popover-foreground: ${p.popoverForeground};`,
+  `--primary: ${p.primary};`,
+  `--primary-foreground: ${p.primaryForeground};`,
+  `--secondary: ${p.secondary};`,
+  `--secondary-foreground: ${p.secondaryForeground};`,
+  `--muted: ${p.muted};`,
+  `--muted-foreground: ${p.mutedForeground};`,
+  `--accent: ${p.accent};`,
+  `--accent-foreground: ${p.accentForeground};`,
+  `--destructive: ${p.destructive};`,
+  `--destructive-foreground: ${p.destructiveForeground};`,
+  `--border: ${p.border};`,
+  `--input: ${p.input};`,
+  `--ring: ${p.ring};`,
+  `--chart-1: ${p.chart[0]};`,
+  `--chart-2: ${p.chart[1]};`,
+  `--chart-3: ${p.chart[2]};`,
+  `--chart-4: ${p.chart[3]};`,
+  `--chart-5: ${p.chart[4]};`,
+  `--sidebar: ${p.sidebar};`,
+  `--sidebar-foreground: ${p.sidebarForeground};`,
+  `--sidebar-primary: ${p.sidebarPrimary};`,
+  `--sidebar-primary-foreground: ${p.sidebarPrimaryForeground};`,
+  `--sidebar-accent: ${p.sidebarAccent};`,
+  `--sidebar-accent-foreground: ${p.sidebarAccentForeground};`,
+  `--sidebar-border: ${p.sidebarBorder};`,
+  `--sidebar-ring: ${p.sidebarRing};`,
+];
 
-function nonColorLines(
+const nonColorLines = (
   fonts: FontTokens,
   radius: string,
   shadows: ShadowTokens,
   trackingNormal?: string,
   spacing?: string
-): string[] {
-  const lines: string[] = [];
-  lines.push(`--font-sans: ${fonts.sans};`);
-  lines.push(`--font-serif: ${fonts.serif};`);
-  lines.push(`--font-mono: ${fonts.mono};`);
-  lines.push(`--radius: ${radius};`);
-  lines.push(`--shadow-x: ${shadows.x};`);
-  lines.push(`--shadow-y: ${shadows.y};`);
-  lines.push(`--shadow-blur: ${shadows.blur};`);
-  lines.push(`--shadow-spread: ${shadows.spread};`);
-  lines.push(`--shadow-opacity: ${shadows.opacity};`);
-  lines.push(`--shadow-color: ${shadows.color};`);
-  lines.push(`--shadow-2xs: ${shadows.shadow2xs};`);
-  lines.push(`--shadow-xs: ${shadows.xs};`);
-  lines.push(`--shadow-sm: ${shadows.sm};`);
-  lines.push(`--shadow: ${shadows.base};`);
-  lines.push(`--shadow-md: ${shadows.md};`);
-  lines.push(`--shadow-lg: ${shadows.lg};`);
-  lines.push(`--shadow-xl: ${shadows.xl};`);
-  lines.push(`--shadow-2xl: ${shadows.shadow2xl};`);
+): string[] => {
+  const lines: string[] = [
+    `--font-sans: ${fonts.sans};`,
+    `--font-serif: ${fonts.serif};`,
+    `--font-mono: ${fonts.mono};`,
+    `--radius: ${radius};`,
+    `--shadow-x: ${shadows.x};`,
+    `--shadow-y: ${shadows.y};`,
+    `--shadow-blur: ${shadows.blur};`,
+    `--shadow-spread: ${shadows.spread};`,
+    `--shadow-opacity: ${shadows.opacity};`,
+    `--shadow-color: ${shadows.color};`,
+    `--shadow-2xs: ${shadows.shadow2xs};`,
+    `--shadow-xs: ${shadows.xs};`,
+    `--shadow-sm: ${shadows.sm};`,
+    `--shadow: ${shadows.base};`,
+    `--shadow-md: ${shadows.md};`,
+    `--shadow-lg: ${shadows.lg};`,
+    `--shadow-xl: ${shadows.xl};`,
+    `--shadow-2xl: ${shadows.shadow2xl};`,
+  ];
   if (trackingNormal) {
     lines.push(`--tracking-normal: ${trackingNormal};`);
   }
@@ -1040,13 +1224,12 @@ function nonColorLines(
   }
 
   return lines;
-}
+};
 
-function indent(lines: string[]): string {
-  return lines.map((l) => `  ${l}`).join("\n");
-}
+const indent = (lines: string[]): string =>
+  lines.map((l) => `  ${l}`).join("\n");
 
-function themeInlineBlock(): string {
+const themeInlineBlock = (): string => {
   const lines = [
     `--color-background: var(--background);`,
     `--color-foreground: var(--foreground);`,
@@ -1101,7 +1284,7 @@ function themeInlineBlock(): string {
   ];
 
   return `@theme inline {\n${indent(lines)}\n}`;
-}
+};
 
 const LAYER_BASE = `@layer base {
   * {
@@ -1116,11 +1299,11 @@ const LAYER_BASE = `@layer base {
 /* Public API                                                   */
 /* ------------------------------------------------------------ */
 
-export function deriveTailwindTheme(
+export const deriveTailwindTheme = (
   _domain: string,
   brand?: LiveBrand,
   styleguide?: LiveStyleguide | null
-): string {
+): string => {
   const light = buildPalette(brand, styleguide, "light");
   const dark = buildPalette(brand, styleguide, "dark");
   const fonts = pickFonts(styleguide);
@@ -1157,13 +1340,13 @@ export function deriveTailwindTheme(
     LAYER_BASE,
     ``,
   ].join("\n");
-}
+};
 
-export function deriveCssVariables(
+export const deriveCssVariables = (
   domain: string,
   brand?: LiveBrand,
   styleguide?: LiveStyleguide | null
-): string {
+): string => {
   const light = buildPalette(brand, styleguide, "light");
   const dark = buildPalette(brand, styleguide, "dark");
   const fonts = pickFonts(styleguide);
@@ -1193,4 +1376,4 @@ export function deriveCssVariables(
     `}`,
     ``,
   ].join("\n");
-}
+};

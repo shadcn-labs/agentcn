@@ -22,12 +22,12 @@ Markdown body sections should appear in this order when relevant:
 
 Recommended token names include colors primary, secondary, tertiary, neutral, surface, on-surface, error; typography headline-display, headline-lg, headline-md, body-lg, body-md, body-sm, label-lg, label-md, label-sm; rounded none, sm, md, lg, xl, full.`;
 
-export function buildDesignMdPrompt(input: {
+export const buildDesignMdPrompt = (input: {
   domain: string;
   contextStyleguide: unknown;
   screenshotUrl?: string;
   markdown?: string;
-}): string {
+}): string => {
   const markdownExcerpt = input.markdown
     ? input.markdown.slice(0, 3000)
     : "No Markdown returned.";
@@ -55,7 +55,7 @@ ${input.screenshotUrl ?? "No screenshot returned."}
 
 Homepage Markdown excerpt:
 ${markdownExcerpt}`;
-}
+};
 
 export const DESIGN_MD_SYSTEM =
   "You are a senior design systems writer. Produce concise, implementation-grade DESIGN.md files that follow the requested spec.";
