@@ -1,0 +1,55 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md design-system document.",
+  "files": [
+    {
+      "content": "import { defineAgent } from 'eve'\n\nexport default defineAgent({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You turn a website into a self-contained DESIGN.md design-system document.\n\nGiven a domain:\n\n1. Gather the four signals through context.dev, in parallel where you can:\n   `extract_styleguide` (design tokens), `get_brand` (logos, colors, slogan,\n   industry), `capture_screenshot` (visual context), and `fetch_markdown`\n   (homepage content).\n2. Follow the `design-md` skill to compose the document: YAML frontmatter of\n   tokens followed by the canonical sections (Overview, Colors, Typography,\n   Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts).\n3. Use precise values from the styleguide (SRGB hex colors, `{path.to.token}`\n   references). Ground the Overview in the brand and page Markdown. Where a value\n   is absent, infer conservatively and mark it as inferred.\n\nOutput only the DESIGN.md document — no commentary around it.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { ContextDev } from 'context.dev'\n\n// All design signals are pulled through context.dev. https://context.dev\nconst client = new ContextDev({ apiKey: process.env.CONTEXT_DEV_API_KEY ?? '' })\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Extracts the design tokens for a domain — colors, typography, spacing, radii, and components.',\n  inputSchema: z.object({ domain: z.string() }),\n  async execute({ domain }) {\n    return await client.web.extractStyleguide({ domain, timeoutMS: 120_000 })\n  },\n})\n",
+      "path": "agent/tools/extract_styleguide.ts",
+      "target": "agent/tools/extract_styleguide.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { ContextDev } from 'context.dev'\n\nconst client = new ContextDev({ apiKey: process.env.CONTEXT_DEV_API_KEY ?? '' })\n\nexport default defineTool({\n  needsApproval: never(),\n  description:\n    'Retrieves brand assets for a domain — logos, backdrops, brand colors, slogan, and industry.',\n  inputSchema: z.object({ domain: z.string() }),\n  async execute({ domain }) {\n    return await client.brand.retrieve({ domain })\n  },\n})\n",
+      "path": "agent/tools/get_brand.ts",
+      "target": "agent/tools/get_brand.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { ContextDev } from 'context.dev'\n\nconst client = new ContextDev({ apiKey: process.env.CONTEXT_DEV_API_KEY ?? '' })\n\nexport default defineTool({\n  needsApproval: never(),\n  description: 'Captures a homepage screenshot for visual context and returns its URL.',\n  inputSchema: z.object({ domain: z.string() }),\n  async execute({ domain }) {\n    return await client.web.screenshot({\n      domain,\n      fullScreenshot: 'false',\n      handleCookiePopup: 'true',\n    })\n  },\n})\n",
+      "path": "agent/tools/capture_screenshot.ts",
+      "target": "agent/tools/capture_screenshot.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from 'eve/tools'\nimport { never } from 'eve/tools/approval'\nimport { z } from 'zod'\nimport { ContextDev } from 'context.dev'\n\nconst client = new ContextDev({ apiKey: process.env.CONTEXT_DEV_API_KEY ?? '' })\n\nexport default defineTool({\n  needsApproval: never(),\n  description: \"Converts the domain's homepage to clean Markdown for grounding the document.\",\n  inputSchema: z.object({ domain: z.string() }),\n  async execute({ domain }) {\n    return await client.web.webScrapeMd({\n      url: `https://${domain}`,\n      includeLinks: false,\n      includeImages: false,\n      useMainContentOnly: true,\n    })\n  },\n})\n",
+      "path": "agent/tools/fetch_markdown.ts",
+      "target": "agent/tools/fetch_markdown.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "---\nname: design-md\ndescription: Specification for composing a self-contained DESIGN.md design-system document from extracted design tokens, brand assets, a screenshot, and page Markdown.\n---\n\n## Goal\n\nTurn the four context.dev payloads (styleguide, brand, screenshot, markdown)\ninto a single self-contained `DESIGN.md` that another agent or designer could\nuse to rebuild the site's look and feel — following the `DESIGN.md` convention.\n\n## Document shape\n\nStart with YAML frontmatter, then the canonical sections in order.\n\n```markdown\n---\nversion: 1\nname: <brand or site name>\ndescription: <one-line summary of the visual identity>\ncolors:\n  # token name -> SRGB hex, e.g. brand.primary: \"#1A73E8\"\ntypography:\n  # role -> family / size / weight\nrounded:\n  # named radii\nspacing:\n  # named spacing steps\ncomponents:\n  # named component tokens, referencing others as {path.to.token}\n---\n\n## Overview\n## Colors\n## Typography\n## Layout\n## Elevation & Depth\n## Shapes\n## Components\n## Do's and Don'ts\n```\n\n## Rules\n\n- Use **precise values** from the styleguide payload. Colors as SRGB hex\n  (`#RRGGBB`). Reference other tokens with `{path.to.token}` syntax.\n- Pull name, slogan, logos, and industry from the brand payload; use the\n  screenshot URL and page Markdown only to ground descriptions in the Overview.\n- Where a value is genuinely absent, infer conservatively and mark it as\n  inferred rather than fabricating exact numbers.\n- \"Do's and Don'ts\" should be short, concrete usage rules derived from the\n  observed system (e.g. spacing scale, color contrast, component usage).\n- Output only the `DESIGN.md` document — no commentary around it.\n",
+      "path": "agent/skills/design-md/SKILL.md",
+      "target": "agent/skills/design-md/SKILL.md",
+      "type": "registry:file"
+    }
+  ],
+  "name": "extract-design-md",
+  "title": "Extract DESIGN.md Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "eve",
+    "context.dev"
+  ]
+}

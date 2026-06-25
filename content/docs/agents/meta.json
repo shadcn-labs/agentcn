@@ -3,6 +3,8 @@
   "pages": [
     "index",
     "[Deep Search](/docs/agents/eve/deep-search)",
+    "[AI SEO Audit](/docs/agents/eve/ai-seo-audit)",
+    "[Extract DESIGN.md](/docs/agents/eve/extract-design-md)",
     "[CSV to Questions](/docs/agents/eve/csv-to-questions)",
     "[Customer Feedback Summary](/docs/agents/eve/feedback-summary)",
     "[Meeting Notes](/docs/agents/eve/meeting-notes)",

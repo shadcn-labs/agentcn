@@ -1,0 +1,17 @@
+{
+  "name": "extract-design-md",
+  "type": "registry:block",
+  "title": "Extract DESIGN.md Agent",
+  "description": "Eve agent that pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md design-system document.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" },
+    { "path": "agent/tools/extract_styleguide.ts", "type": "registry:file" },
+    { "path": "agent/tools/get_brand.ts", "type": "registry:file" },
+    { "path": "agent/tools/capture_screenshot.ts", "type": "registry:file" },
+    { "path": "agent/tools/fetch_markdown.ts", "type": "registry:file" },
+    { "path": "agent/skills/design-md/SKILL.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve", "context.dev"]
+}

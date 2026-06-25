@@ -1,0 +1,124 @@
+---
+title: Extract DESIGN.md
+description: Pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md.
+---
+
+<DocsBaseSwitcher base="eve" agent="extract-design-md" />
+
+<AgentPreview
+  agent="extract-design-md"
+  framework="eve"
+  inputFields={[
+    {
+      name: "domain",
+      label: "Domain",
+      placeholder: "stripe.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Extract DESIGN.md Agent** turns any public website into a self-contained
+`DESIGN.md` design-system document. It pulls four signals through context.dev —
+design tokens (styleguide), brand assets, a homepage screenshot, and clean page
+Markdown — then composes a document with token frontmatter and the canonical
+sections (Overview, Colors, Typography, Layout, Elevation, Shapes, Components,
+Do's and Don'ts). Reach for it when you want to capture a site's look and feel in
+a form another agent or designer can rebuild from.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/extract-design-md
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve context.dev
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/extract-design-md/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/extract-design-md/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<ComponentSource
+  src="registry/eve/extract-design-md/agent/tools/extract_styleguide.ts"
+  title="agent/tools/extract_styleguide.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/extract-design-md/agent/tools/get_brand.ts"
+  title="agent/tools/get_brand.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/extract-design-md/agent/tools/capture_screenshot.ts"
+  title="agent/tools/capture_screenshot.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/extract-design-md/agent/tools/fetch_markdown.ts"
+  title="agent/tools/fetch_markdown.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/extract-design-md/agent/skills/design-md/SKILL.md"
+  title="agent/skills/design-md/SKILL.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts              # Agent definition (model + config)
+├── instructions.md       # Gather signals, then compose DESIGN.md
+├── tools/
+│   ├── extract_styleguide.ts  # Design tokens via context.dev
+│   ├── get_brand.ts           # Logos, colors, slogan, industry
+│   ├── capture_screenshot.ts  # Homepage screenshot URL
+│   └── fetch_markdown.ts      # Clean homepage Markdown
+└── skills/
+    └── design-md/
+        └── SKILL.md      # DESIGN.md format and composition rules
+```
+
+## Customization
+
+- **Data source.** All four signals are pulled through
+  [context.dev](https://context.dev) — styleguide, brand, screenshot, and
+  Markdown. Set `CONTEXT_DEV_API_KEY`.
+- **Reshape the document.** Edit `agent/skills/design-md/SKILL.md` to add
+  sections, change the frontmatter token groups, or adjust the Do's and Don'ts.
+- **Trim the signals.** Remove a tool file from `agent/tools/` (e.g. skip the
+  screenshot) to make the agent faster or cheaper.
+- **Swap the model.** Edit `agent/agent.ts` — `anthropic/claude-sonnet-4-6` for
+  richer synthesis, `anthropic/claude-haiku-4-5` for speed.

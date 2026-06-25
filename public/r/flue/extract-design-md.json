@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md design-system document.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport designMd from '../skills/design-md/SKILL.md' with { type: 'skill' }\nimport {\n  captureScreenshot,\n  extractStyleguide,\n  fetchMarkdown,\n  getBrand,\n} from '../tools/context.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You turn a website into a self-contained DESIGN.md design-system document.\n    Given a domain, gather the four signals through context.dev —\n    extract_styleguide, get_brand, capture_screenshot, and fetch_markdown — then\n    follow the design-md skill to compose the document: YAML frontmatter of\n    tokens followed by the canonical sections. Use precise values from the\n    styleguide; ground the Overview in the brand and page Markdown. Output only\n    the DESIGN.md.\n  `,\n  skills: [designMd],\n  tools: [extractStyleguide, getBrand, captureScreenshot, fetchMarkdown],\n}))\n",
+      "path": "agents/extract-design-md.ts",
+      "target": "agents/extract-design-md.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { ContextDev } from 'context.dev'\n\n// All four design signals are pulled through context.dev. Run them in parallel\n// from the agent; each is independent. https://context.dev\nconst client = new ContextDev({ apiKey: process.env.CONTEXT_DEV_API_KEY ?? '' })\n\nexport const extractStyleguide = defineTool({\n  name: 'extract_styleguide',\n  description:\n    'Extracts the design tokens for a domain — colors, typography, spacing, radii, and components.',\n  parameters: v.object({ domain: v.string() }),\n  execute: async ({ domain }) =>\n    JSON.stringify(await client.web.extractStyleguide({ domain, timeoutMS: 120_000 })),\n})\n\nexport const getBrand = defineTool({\n  name: 'get_brand',\n  description:\n    'Retrieves brand assets for a domain — logos, backdrops, brand colors, slogan, and industry.',\n  parameters: v.object({ domain: v.string() }),\n  execute: async ({ domain }) => JSON.stringify(await client.brand.retrieve({ domain })),\n})\n\nexport const captureScreenshot = defineTool({\n  name: 'capture_screenshot',\n  description: 'Captures a homepage screenshot for visual context and returns its URL.',\n  parameters: v.object({ domain: v.string() }),\n  execute: async ({ domain }) =>\n    JSON.stringify(\n      await client.web.screenshot({\n        domain,\n        fullScreenshot: 'false',\n        handleCookiePopup: 'true',\n      })\n    ),\n})\n\nexport const fetchMarkdown = defineTool({\n  name: 'fetch_markdown',\n  description: \"Converts the domain's homepage to clean Markdown for grounding the document.\",\n  parameters: v.object({ domain: v.string() }),\n  execute: async ({ domain }) =>\n    JSON.stringify(\n      await client.web.webScrapeMd({\n        url: `https://${domain}`,\n        includeLinks: false,\n        includeImages: false,\n        useMainContentOnly: true,\n      })\n    ),\n})\n",
+      "path": "tools/context.ts",
+      "target": "tools/context.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "---\nname: design-md\ndescription: Specification for composing a self-contained DESIGN.md design-system document from extracted design tokens, brand assets, a screenshot, and page Markdown.\n---\n\n## Goal\n\nTurn the four context.dev payloads (styleguide, brand, screenshot, markdown)\ninto a single self-contained `DESIGN.md` that another agent or designer could\nuse to rebuild the site's look and feel — following the `DESIGN.md` convention.\n\n## Document shape\n\nStart with YAML frontmatter, then the canonical sections in order.\n\n```markdown\n---\nversion: 1\nname: <brand or site name>\ndescription: <one-line summary of the visual identity>\ncolors:\n  # token name -> SRGB hex, e.g. brand.primary: \"#1A73E8\"\ntypography:\n  # role -> family / size / weight\nrounded:\n  # named radii\nspacing:\n  # named spacing steps\ncomponents:\n  # named component tokens, referencing others as {path.to.token}\n---\n\n## Overview\n## Colors\n## Typography\n## Layout\n## Elevation & Depth\n## Shapes\n## Components\n## Do's and Don'ts\n```\n\n## Rules\n\n- Use **precise values** from the styleguide payload. Colors as SRGB hex\n  (`#RRGGBB`). Reference other tokens with `{path.to.token}` syntax.\n- Pull name, slogan, logos, and industry from the brand payload; use the\n  screenshot URL and page Markdown only to ground descriptions in the Overview.\n- Where a value is genuinely absent, infer conservatively and mark it as\n  inferred rather than fabricating exact numbers.\n- \"Do's and Don'ts\" should be short, concrete usage rules derived from the\n  observed system (e.g. spacing scale, color contrast, component usage).\n- Output only the `DESIGN.md` document — no commentary around it.\n",
+      "path": "skills/design-md/SKILL.md",
+      "target": "skills/design-md/SKILL.md",
+      "type": "registry:file"
+    }
+  ],
+  "name": "extract-design-md",
+  "title": "Extract DESIGN.md Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime",
+    "context.dev"
+  ]
+}

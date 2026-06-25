@@ -22,6 +22,13 @@ const joinInput = (input: Record<string, string>): string =>
     .join("\n");
 
 export const PREVIEW_AGENTS: Record<string, PreviewAgent> = {
+  "ai-seo-audit": {
+    model: DEFAULT_MODEL,
+    prompt: joinInput,
+    system:
+      "You audit a page for readability to AI answer engines (ChatGPT, Claude, Perplexity). Call fetch_page once to get the page's Markdown and HTML, then score six categories to a 0–100 total (Technical AI Crawlability, Content Structure & Chunking, Structured Data/Schema, E-E-A-T & Entity Authority, Off-site/Citation Surface, Measurement & Governance), list failing checks by impact, and end with an agent-ready fix prompt. If fetching is disabled, explain the audit the recipe runs. Ground every finding in the page only.",
+    tools: ["fetch_page"],
+  },
   "browser-agent": {
     model: DEFAULT_MODEL,
     prompt: joinInput,
@@ -89,6 +96,18 @@ export const PREVIEW_AGENTS: Record<string, PreviewAgent> = {
     system:
       "You are a docs expert. Answer questions about libraries and APIs by calling web_search, preferring official documentation, and cite every claim with a source URL plus a short code example. If web search is disabled, explain the approach.",
     tools: ["web_search"],
+  },
+  "extract-design-md": {
+    model: DEFAULT_MODEL,
+    prompt: joinInput,
+    system:
+      "You turn a website into a self-contained DESIGN.md. Gather four context.dev signals — extract_styleguide, get_brand, capture_screenshot, fetch_markdown — then compose YAML frontmatter of tokens followed by the canonical sections (Overview, Colors, Typography, Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts). Use precise styleguide values; ground the Overview in the brand and page Markdown. If a tool is disabled, explain what the recipe would extract. Output only the DESIGN.md.",
+    tools: [
+      "extract_styleguide",
+      "get_brand",
+      "capture_screenshot",
+      "fetch_markdown",
+    ],
   },
   "feedback-summary": {
     model: DEFAULT_MODEL,

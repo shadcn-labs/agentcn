@@ -1,0 +1,104 @@
+---
+title: AI SEO Audit
+description: Fetches a page through context.dev and scores its readability to AI answer engines, returning failing checks and an agent-ready fix prompt.
+---
+
+<DocsBaseSwitcher base="eve" agent="ai-seo-audit" />
+
+<AgentPreview
+  agent="ai-seo-audit"
+  framework="eve"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com/blog/how-it-works",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **AI SEO Audit Agent** evaluates a page for how readable it is to AI answer
+engines — ChatGPT, Claude, and Perplexity — rather than classic blue-link
+search. It fetches the page through context.dev (never touching the site
+directly), scores six categories to a 0–100 total, lists the failing checks by
+impact, and returns an **agent-ready fix prompt** you can paste straight into a
+coding agent. Reach for it when you want a page to get cited by AI assistants.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/ai-seo-audit
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve context.dev
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/ai-seo-audit/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/ai-seo-audit/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<ComponentSource
+  src="registry/eve/ai-seo-audit/agent/tools/fetch_page.ts"
+  title="agent/tools/fetch_page.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/ai-seo-audit/agent/skills/seo-audit/SKILL.md"
+  title="agent/skills/seo-audit/SKILL.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts              # Agent definition (model + config)
+├── instructions.md       # Audit-and-report instructions
+├── tools/
+│   └── fetch_page.ts     # Page Markdown + HTML via the context.dev SDK
+└── skills/
+    └── seo-audit/
+        └── SKILL.md      # Six-category rubric and scoring bands
+```
+
+## Customization
+
+- **Fetching.** The page is fetched through [context.dev](https://context.dev) —
+  the recipe never hits the audited site directly. Set `CONTEXT_DEV_API_KEY`.
+- **Tune the rubric.** Edit `agent/skills/seo-audit/SKILL.md` to add checks,
+  reweight categories, or change the scoring bands.
+- **Reshape the output.** Edit `agent/instructions.md` to emit JSON, a shorter
+  summary, or a different fix-prompt format.
+- **Swap the model.** Edit `agent/agent.ts` — `anthropic/claude-sonnet-4-6` for
+  deeper analysis, `anthropic/claude-haiku-4-5` for speed.

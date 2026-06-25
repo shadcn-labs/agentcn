@@ -2,6 +2,13 @@
   "homepage": "https://agentcn.vercel.app",
   "items": [
     {
+      "description": "Eve agent that fetches a page through context.dev and scores its readability to AI answer engines across six categories, returning failing checks and an agent-ready fix prompt.",
+      "framework": "eve",
+      "name": "eve/ai-seo-audit",
+      "title": "AI SEO Audit Agent",
+      "type": "registry:block"
+    },
+    {
       "description": "Eve agent that drives a real browser with Playwright using a snapshot-and-selector pattern to complete web tasks.",
       "framework": "eve",
       "name": "eve/browser-agent",
@@ -65,6 +72,13 @@
       "type": "registry:block"
     },
     {
+      "description": "Eve agent that pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md design-system document.",
+      "framework": "eve",
+      "name": "eve/extract-design-md",
+      "title": "Extract DESIGN.md Agent",
+      "type": "registry:block"
+    },
+    {
       "description": "Eve agent that retrieves, categorizes, and summarizes customer feedback into an executive report with recommendations.",
       "framework": "eve",
       "name": "eve/feedback-summary",
@@ -118,6 +132,13 @@
       "framework": "eve",
       "name": "eve/weather",
       "title": "Weather Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that fetches a page through context.dev and scores its readability to AI answer engines across six categories, returning failing checks and an agent-ready fix prompt.",
+      "framework": "flue",
+      "name": "flue/ai-seo-audit",
+      "title": "AI SEO Audit Agent",
       "type": "registry:block"
     },
     {
@@ -181,6 +202,13 @@
       "framework": "flue",
       "name": "flue/docs-expert",
       "title": "Docs Expert Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md design-system document.",
+      "framework": "flue",
+      "name": "flue/extract-design-md",
+      "title": "Extract DESIGN.md Agent",
       "type": "registry:block"
     },
     {

@@ -1,0 +1,100 @@
+---
+title: Extract DESIGN.md
+description: Pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md.
+---
+
+<DocsBaseSwitcher base="flue" agent="extract-design-md" />
+
+<AgentPreview
+  agent="extract-design-md"
+  framework="flue"
+  inputFields={[
+    {
+      name: "domain",
+      label: "Domain",
+      placeholder: "stripe.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Extract DESIGN.md Agent** turns any public website into a self-contained
+`DESIGN.md` design-system document. It pulls four signals through context.dev —
+design tokens (styleguide), brand assets, a homepage screenshot, and clean page
+Markdown — then composes a document with token frontmatter and the canonical
+sections (Overview, Colors, Typography, Layout, Elevation, Shapes, Components,
+Do's and Don'ts). Reach for it when you want to capture a site's look and feel in
+a form another agent or designer can rebuild from.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/extract-design-md
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime context.dev
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/extract-design-md/agents/extract-design-md.ts"
+  title="agents/extract-design-md.ts"
+/>
+
+<ComponentSource
+  src="registry/flue/extract-design-md/tools/context.ts"
+  title="tools/context.ts"
+/>
+
+<ComponentSource
+  src="registry/flue/extract-design-md/skills/design-md/SKILL.md"
+  title="skills/design-md/SKILL.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── extract-design-md.ts  # Agent: gather signals, then compose DESIGN.md
+tools/
+└── context.ts            # Styleguide, brand, screenshot, and Markdown tools
+skills/
+└── design-md/
+    └── SKILL.md          # DESIGN.md format and composition rules
+```
+
+## Customization
+
+- **Data source.** All four signals are pulled through
+  [context.dev](https://context.dev) — styleguide, brand, screenshot, and
+  Markdown. Set `CONTEXT_DEV_API_KEY`.
+- **Reshape the document.** Edit `skills/design-md/SKILL.md` to add sections,
+  change the frontmatter token groups, or adjust the Do's and Don'ts.
+- **Trim the signals.** Drop a tool from `tools/context.ts` (e.g. skip the
+  screenshot) to make the agent faster or cheaper.
+- **Swap the model.** Change the `model` on the agent in
+  `agents/extract-design-md.ts`.

@@ -1,0 +1,13 @@
+{
+  "name": "ai-seo-audit",
+  "type": "registry:block",
+  "title": "AI SEO Audit Agent",
+  "description": "Flue agent that fetches a page through context.dev and scores its readability to AI answer engines across six categories, returning failing checks and an agent-ready fix prompt.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/ai-seo-audit.ts", "type": "registry:file" },
+    { "path": "tools/fetch-page.ts", "type": "registry:file" },
+    { "path": "skills/seo-audit/SKILL.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime", "context.dev"]
+}

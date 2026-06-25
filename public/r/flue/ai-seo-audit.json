@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that fetches a page through context.dev and scores its readability to AI answer engines across six categories, returning failing checks and an agent-ready fix prompt.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport seoAudit from '../skills/seo-audit/SKILL.md' with { type: 'skill' }\nimport { fetchPage } from '../tools/fetch-page.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-sonnet-4-6',\n  instructions: `\n    You audit a web page for how readable it is to AI answer engines\n    (ChatGPT, Claude, Perplexity) — not classic search ranking.\n    Call fetch_page once to retrieve the page's Markdown and HTML, then follow\n    the seo-audit skill: score the six categories to a 0–100 total, report a\n    per-category breakdown, list the failing checks by impact, and end with an\n    agent-ready fix prompt. Ground every finding in the fetched page only.\n  `,\n  skills: [seoAudit],\n  tools: [fetchPage],\n}))\n",
+      "path": "agents/ai-seo-audit.ts",
+      "target": "agents/ai-seo-audit.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\nimport { ContextDev } from 'context.dev'\n\n// context.dev fetches and renders the target page for us — we NEVER make a\n// direct HTTP request to the audited site. All page data flows through the SDK.\n// https://context.dev\nconst client = new ContextDev({ apiKey: process.env.CONTEXT_DEV_API_KEY ?? '' })\n\nexport const fetchPage = defineTool({\n  name: 'fetch_page',\n  description:\n    'Fetches a URL through context.dev and returns both its main-content Markdown and rendered HTML for auditing.',\n  parameters: v.object({\n    url: v.string(),\n  }),\n  execute: async ({ url }) => {\n    const [markdown, html] = await Promise.all([\n      client.web.webScrapeMd({\n        url,\n        includeLinks: true,\n        includeImages: false,\n        useMainContentOnly: true,\n      }),\n      client.web.webScrapeHTML({ url, waitForMs: 3000 }),\n    ])\n\n    return JSON.stringify({ url, markdown, html })\n  },\n})\n",
+      "path": "tools/fetch-page.ts",
+      "target": "tools/fetch-page.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "---\nname: seo-audit\ndescription: Rubric for auditing a page's readability to AI answer engines (ChatGPT, Claude, Perplexity). Use when scoring a page for AI discoverability and citation.\n---\n\n## What this measures\n\nHow well a page can be **crawled, chunked, understood, and cited by AI answer\nengines** — not classic blue-link SEO. Score each of the six categories out of\nits max, then sum to a 0–100 total.\n\n## Categories (each scored out of its max)\n\n1. **Technical AI Crawlability** (20) — Is the page reachable and renderable\n   without JS? `robots`/`llms.txt` allow AI crawlers, clean status, canonical\n   tag, content present in server HTML, no critical content behind client-side\n   rendering.\n2. **Content Structure & Chunking** (20) — One clear `<h1>`, logical heading\n   hierarchy, self-contained sections, short answer-shaped paragraphs, lists and\n   tables for facts, a TL;DR or summary near the top.\n3. **Structured Data / Schema** (15) — Valid JSON-LD (`Article`, `FAQPage`,\n   `Organization`, `Breadcrumb`, etc.), accurate types, entities marked up.\n4. **E-E-A-T & Entity Authority** (20) — Named author with bio/credentials,\n   clear publish/updated dates, citations to primary sources, an `Organization`\n   /`Person` entity an engine can resolve.\n5. **Off-site / Citation Surface** (15) — Signals that the page/brand is\n   referenced elsewhere: consistent naming, outbound links to authorities,\n   shareable canonical URLs, presence in knowledge sources.\n6. **Measurement & Governance** (10) — Freshness cadence, a content owner,\n   change tracking, and a way to verify the page stays accurate over time.\n\n## Scoring\n\nPer check: `pass` = full weight, `partial` = half, `fail` = 0, `na` = excluded\nfrom the denominator. Category score = sum of its checks. Overall = sum of\ncategories, rounded to one decimal.\n\nBands: **Critical** ≤40 · **Below average** ≤55 · **Average** ≤70 ·\n**Strong** ≤85 · **Excellent** >85.\n\n## Output\n\nReport, in order:\n\n1. Overall score (0–100) and band.\n2. A per-category table: score / max and a one-line reason.\n3. The failing and partial checks, highest-impact first.\n4. An **agent-ready fix prompt** — a copy-paste block a coding agent can run to\n   fix the top failures, referencing the concrete page elements involved.\n\nOnly assert what the fetched Markdown and HTML support. Never invent tags,\nschema, or content that is not in the page.\n",
+      "path": "skills/seo-audit/SKILL.md",
+      "target": "skills/seo-audit/SKILL.md",
+      "type": "registry:file"
+    }
+  ],
+  "name": "ai-seo-audit",
+  "title": "AI SEO Audit Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime",
+    "context.dev"
+  ]
+}

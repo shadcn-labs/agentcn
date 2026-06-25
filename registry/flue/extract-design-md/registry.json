@@ -1,0 +1,13 @@
+{
+  "name": "extract-design-md",
+  "type": "registry:block",
+  "title": "Extract DESIGN.md Agent",
+  "description": "Flue agent that pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md design-system document.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/extract-design-md.ts", "type": "registry:file" },
+    { "path": "tools/context.ts", "type": "registry:file" },
+    { "path": "skills/design-md/SKILL.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime", "context.dev"]
+}

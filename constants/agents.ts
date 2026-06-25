@@ -974,8 +974,108 @@ const companyKnowledge: Agent = {
   },
 };
 
+const aiSeoAudit: Agent = {
+  description:
+    "Fetches a page through context.dev and scores its readability to AI answer engines, returning failing checks and an agent-ready fix prompt.",
+  frameworks: ["eve", "flue"],
+  inputFields: [
+    {
+      label: "Page URL",
+      name: "url",
+      placeholder: "https://example.com/blog/how-it-works",
+      type: "text",
+    },
+  ],
+  shortTitle: "AI SEO Audit",
+  slug: "ai-seo-audit",
+  title: "AI SEO Audit Agent",
+  transcript: {
+    eve: [
+      {
+        role: "user",
+        text: "Audit https://example.com/blog/how-it-works for AI search.",
+      },
+      {
+        detail: "markdown + html via context.dev",
+        role: "tool",
+        tool: "fetch_page",
+      },
+      {
+        role: "agent",
+        text: "Score: 62/100 (Average). Strong on content structure, weak on schema (no JSON-LD) and author authority (no byline or dates). Top fixes are in the agent-ready prompt below — paste it into Claude Code.",
+      },
+    ],
+    flue: [
+      {
+        role: "user",
+        text: "Audit https://example.com/blog/how-it-works for AI search.",
+      },
+      {
+        detail: "markdown + html via context.dev",
+        role: "tool",
+        tool: "fetch_page",
+      },
+      {
+        role: "agent",
+        text: "Scored the six categories to 62/100 (Average), listed the failing checks by impact, and returned a copy-paste fix prompt — all grounded in the fetched page.",
+      },
+    ],
+  },
+};
+
+const extractDesignMd: Agent = {
+  description:
+    "Pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md.",
+  frameworks: ["eve", "flue"],
+  inputFields: [
+    {
+      label: "Domain",
+      name: "domain",
+      placeholder: "stripe.com",
+      type: "text",
+    },
+  ],
+  shortTitle: "Extract DESIGN.md",
+  slug: "extract-design-md",
+  title: "Extract DESIGN.md Agent",
+  transcript: {
+    eve: [
+      {
+        role: "user",
+        text: "Generate a DESIGN.md for stripe.com",
+      },
+      {
+        detail: "tokens + brand + screenshot + markdown",
+        role: "tool",
+        tool: "extract_styleguide",
+      },
+      {
+        role: "agent",
+        text: "Composed DESIGN.md: frontmatter tokens (colors, typography, spacing, radii, components) plus Overview, Colors, Typography, Layout, Elevation, Shapes, Components, and Do's and Don'ts — values pulled from the styleguide.",
+      },
+    ],
+    flue: [
+      {
+        role: "user",
+        text: "Generate a DESIGN.md for stripe.com",
+      },
+      {
+        detail: "four context.dev signals in parallel",
+        role: "tool",
+        tool: "extract_styleguide",
+      },
+      {
+        role: "agent",
+        text: "Gathered the four context.dev payloads, then emitted a self-contained DESIGN.md — token frontmatter followed by the canonical sections, grounded in the extracted styleguide and brand.",
+      },
+    ],
+  },
+};
+
 export const AGENTS: readonly Agent[] = [
   deepSearch,
+  aiSeoAudit,
+  extractDesignMd,
   csvToQuestions,
   feedbackSummary,
   meetingNotes,
