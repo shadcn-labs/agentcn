@@ -1,6 +1,6 @@
 ---
 title: AI SEO Audit
-description: Fetches a page through context.dev and scores its readability to AI answer engines, returning failing checks and an agent-ready fix prompt.
+description: Runs a deterministic AI-SEO audit on a page through context.dev — scoring ~30 checks across six categories into a 0–100 total, returning failing checks and an agent-ready fix prompt.
 ---
 
 <DocsBaseSwitcher base="eve" agent="ai-seo-audit" />
@@ -23,9 +23,12 @@ description: Fetches a page through context.dev and scores its readability to AI
 The **AI SEO Audit Agent** evaluates a page for how readable it is to AI answer
 engines — ChatGPT, Claude, and Perplexity — rather than classic blue-link
 search. It fetches the page through context.dev (never touching the site
-directly), scores six categories to a 0–100 total, lists the failing checks by
-impact, and returns an **agent-ready fix prompt** you can paste straight into a
-coding agent. Reach for it when you want a page to get cited by AI assistants.
+directly), then runs a **deterministic rubric** of ~30 checks across six
+categories to a 0–100 total. The model doesn't eyeball the score — `audit_page`
+computes it in `agent/lib/rules.ts`, so the same page always yields the same
+result. The agent presents the breakdown, lists the failing checks by impact,
+and returns an **agent-ready fix prompt** you can paste straight into a coding
+agent. Reach for it when you want a page to get cited by AI assistants.
 
 ## Installation
 
@@ -63,8 +66,33 @@ npm install eve context.dev
 />
 
 <ComponentSource
-  src="registry/eve/ai-seo-audit/agent/tools/fetch_page.ts"
-  title="agent/tools/fetch_page.ts"
+  src="registry/eve/ai-seo-audit/agent/tools/audit_page.ts"
+  title="agent/tools/audit_page.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/ai-seo-audit/agent/lib/audit.ts"
+  title="agent/lib/audit.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/ai-seo-audit/agent/lib/rules.ts"
+  title="agent/lib/rules.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/ai-seo-audit/agent/lib/agent-fix-prompt.ts"
+  title="agent/lib/agent-fix-prompt.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/ai-seo-audit/agent/lib/audit-types.ts"
+  title="agent/lib/audit-types.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/ai-seo-audit/agent/lib/url.ts"
+  title="agent/lib/url.ts"
 />
 
 <ComponentSource
@@ -86,19 +114,26 @@ agent/
 ├── agent.ts              # Agent definition (model + config)
 ├── instructions.md       # Audit-and-report instructions
 ├── tools/
-│   └── fetch_page.ts     # Page Markdown + HTML via the context.dev SDK
+│   └── audit_page.ts     # Runs the deterministic audit, returns the scored result
+├── lib/
+│   ├── audit.ts          # Fetches via context.dev, parses, and scores the rules
+│   ├── rules.ts          # The ~30 checks and six category weights
+│   ├── agent-fix-prompt.ts # Builds the copy-paste fix prompts from the findings
+│   ├── audit-types.ts    # Shared result types
+│   └── url.ts            # URL normalization helpers
 └── skills/
     └── seo-audit/
-        └── SKILL.md      # Six-category rubric and scoring bands
+        └── SKILL.md      # How the agent presents the audit_page result
 ```
 
 ## Customization
 
 - **Fetching.** The page is fetched through [context.dev](https://context.dev) —
   the recipe never hits the audited site directly. Set `CONTEXT_DEV_API_KEY`.
-- **Tune the rubric.** Edit `agent/skills/seo-audit/SKILL.md` to add checks,
-  reweight categories, or change the scoring bands.
-- **Reshape the output.** Edit `agent/instructions.md` to emit JSON, a shorter
-  summary, or a different fix-prompt format.
-- **Swap the model.** Edit `agent/agent.ts` — `anthropic/claude-sonnet-4-6` for
-  deeper analysis, `anthropic/claude-haiku-4-5` for speed.
+- **Tune the rubric.** Edit `agent/lib/rules.ts` to add checks, reweight
+  categories, or change the scoring bands — this is the single source of truth
+  for the score.
+- **Reshape the output.** Edit `agent/instructions.md` or `SKILL.md` to emit
+  JSON, a shorter summary, or a different fix-prompt format.
+- **Swap the model.** Edit `agent/agent.ts`. The model only narrates the
+  deterministic result, so any capable model works.

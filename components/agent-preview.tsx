@@ -2,8 +2,10 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 
+import { CopyButton } from "@/components/copy-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { PreviewArtifact } from "@/lib/preview/events";
 import { cn } from "@/lib/utils";
 
 interface InputField {
@@ -25,6 +27,7 @@ type LogEntry =
   | { kind: "subagent:dispatch"; agent: string }
   | { kind: "text"; text: string }
   | { kind: "done"; result: string }
+  | { kind: "artifacts"; tabs: PreviewArtifact[] }
   | { kind: "error"; message: string }
   | { kind: "raw"; text: string };
 
@@ -45,6 +48,49 @@ const formatResult = (result: unknown): string => {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
+
+const ArtifactTabs = ({ tabs }: { tabs: PreviewArtifact[] }) => {
+  const [active, setActive] = useState(tabs[0]?.id ?? "");
+  const current = tabs.find((tab) => tab.id === active) ?? tabs[0];
+  if (!current) {
+    return null;
+  }
+
+  return (
+    <div className="text-foreground">
+      <p className="mb-2 text-green-600 dark:text-green-400">✓ completed</p>
+      <div className="flex flex-wrap gap-1 border-b">
+        {tabs.map((tab) => {
+          const isActive = tab.id === current.id;
+          return (
+            <button
+              type="button"
+              key={tab.id}
+              onClick={() => setActive(tab.id)}
+              className={cn(
+                "-mb-px border-b-2 px-2.5 py-1.5 text-left transition-colors",
+                isActive
+                  ? "border-foreground text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <span className="font-medium">{tab.label}</span>{" "}
+              <span className="text-[0.65rem] text-muted-foreground/70 uppercase">
+                {tab.hint}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="relative mt-2">
+        <CopyButton value={current.content} />
+        <pre className="max-h-80 overflow-auto whitespace-pre-wrap pr-9">
+          {current.content}
+        </pre>
+      </div>
+    </div>
+  );
+};
 
 const LogLine = ({ entry }: { entry: LogEntry }) => {
   switch (entry.kind) {
@@ -80,6 +126,9 @@ const LogLine = ({ entry }: { entry: LogEntry }) => {
           </pre>
         </div>
       );
+    }
+    case "artifacts": {
+      return <ArtifactTabs tabs={entry.tabs} />;
     }
     case "error": {
       return (
@@ -164,6 +213,15 @@ export const AgentPreview = ({
         }
         case "done": {
           append({ kind: "done", result: formatResult(event.result) });
+          break;
+        }
+        case "artifacts": {
+          append({
+            kind: "artifacts",
+            tabs: Array.isArray(event.tabs)
+              ? (event.tabs as PreviewArtifact[])
+              : [],
+          });
           break;
         }
         case "error": {

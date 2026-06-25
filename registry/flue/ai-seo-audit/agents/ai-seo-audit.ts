@@ -1,7 +1,7 @@
 import { createAgent } from '@flue/runtime'
 import type { AgentRouteHandler } from '@flue/runtime'
 import seoAudit from '../skills/seo-audit/SKILL.md' with { type: 'skill' }
-import { fetchPage } from '../tools/fetch-page.ts'
+import { auditPage } from '../tools/audit-page.ts'
 
 export const route: AgentRouteHandler = async (_c, next) => next()
 
@@ -10,11 +10,12 @@ export default createAgent(() => ({
   instructions: `
     You audit a web page for how readable it is to AI answer engines
     (ChatGPT, Claude, Perplexity) — not classic search ranking.
-    Call fetch_page once to retrieve the page's Markdown and HTML, then follow
-    the seo-audit skill: score the six categories to a 0–100 total, report a
-    per-category breakdown, list the failing checks by impact, and end with an
-    agent-ready fix prompt. Ground every finding in the fetched page only.
+    Call audit_page once with the URL. It runs a deterministic rubric through
+    context.dev and returns the score, per-category checks, top priorities, and
+    agent fix prompts. Present that result faithfully following the seo-audit
+    skill — never invent or recompute scores, and only report checks the tool
+    returned.
   `,
   skills: [seoAudit],
-  tools: [fetchPage],
+  tools: [auditPage],
 }))

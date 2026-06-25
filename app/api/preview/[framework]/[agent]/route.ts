@@ -127,32 +127,23 @@ const eveStream = (message: string): ReadableStream<Uint8Array> => {
 
 /**
  * Runs any catalogued agent in-process against the Anthropic Messages API,
- * streaming structured preview events. Safe, key-free tools run for real;
- * the rest degrade with a clear note. Used for Flue and for Eve when no
- * durable Eve backend (EVE_PREVIEW_URL) is configured.
+ * streaming structured preview events. The runner resolves ANTHROPIC_API_KEY
+ * from the env and reports a clear error when it is missing. Safe, key-free
+ * tools run for real; the rest degrade with a clear note. Used for Flue and for
+ * Eve when no durable Eve backend (EVE_PREVIEW_URL) is configured.
  */
 const genericStream = (
   slug: string,
   input: Record<string, string>
-): ReadableStream<Uint8Array> => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-
-  return new ReadableStream<Uint8Array>({
+): ReadableStream<Uint8Array> =>
+  new ReadableStream<Uint8Array>({
     async start(controller) {
       const emit: EmitEvent = (event) => {
         controller.enqueue(sseFrame(JSON.stringify(event)));
       };
 
       try {
-        if (!apiKey) {
-          emit({
-            message:
-              "ANTHROPIC_API_KEY is not set. Add it to .env.local to run the live preview in-process.",
-            type: "error",
-          });
-          return;
-        }
-        await runPreview({ apiKey, emit, input, slug });
+        await runPreview({ emit, input, slug });
       } catch (error) {
         emit({
           message: error instanceof Error ? error.message : "Unknown error.",
@@ -163,7 +154,6 @@ const genericStream = (
       }
     },
   });
-};
 
 export const POST = async (
   request: Request,

@@ -2,16 +2,15 @@
   "name": "extract-design-md",
   "type": "registry:block",
   "title": "Extract DESIGN.md Agent",
-  "description": "Eve agent that pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md design-system document.",
+  "description": "Eve agent that turns a domain into a self-contained DESIGN.md — gathering the styleguide, screenshot, and homepage Markdown from context.dev, then composing the document in a single Claude call with the screenshot as a vision image.",
   "framework": "eve",
   "files": [
     { "path": "agent/agent.ts", "type": "registry:file" },
     { "path": "agent/instructions.md", "type": "registry:file" },
-    { "path": "agent/tools/extract_styleguide.ts", "type": "registry:file" },
-    { "path": "agent/tools/get_brand.ts", "type": "registry:file" },
-    { "path": "agent/tools/capture_screenshot.ts", "type": "registry:file" },
-    { "path": "agent/tools/fetch_markdown.ts", "type": "registry:file" },
-    { "path": "agent/skills/design-md/SKILL.md", "type": "registry:file" }
+    { "path": "agent/tools/compose_design_md.ts", "type": "registry:file" },
+    { "path": "agent/lib/compose.ts", "type": "registry:file" },
+    { "path": "agent/lib/design-md.ts", "type": "registry:file" },
+    { "path": "agent/lib/derive-tokens.ts", "type": "registry:file" }
   ],
-  "dependencies": ["eve", "context.dev"]
+  "dependencies": ["eve", "context.dev", "ai", "@ai-sdk/anthropic"]
 }

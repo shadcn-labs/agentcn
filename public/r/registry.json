@@ -2,7 +2,7 @@
   "homepage": "https://agentcn.vercel.app",
   "items": [
     {
-      "description": "Eve agent that fetches a page through context.dev and scores its readability to AI answer engines across six categories, returning failing checks and an agent-ready fix prompt.",
+      "description": "Eve agent that runs a deterministic AI-SEO audit on a page through context.dev — scoring ~30 checks across six categories into a 0–100 total and returning failing checks and an agent-ready fix prompt.",
       "framework": "eve",
       "name": "eve/ai-seo-audit",
       "title": "AI SEO Audit Agent",
@@ -72,7 +72,7 @@
       "type": "registry:block"
     },
     {
-      "description": "Eve agent that pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md design-system document.",
+      "description": "Eve agent that turns a domain into a self-contained DESIGN.md — gathering the styleguide, screenshot, and homepage Markdown from context.dev, then composing the document in a single Claude call with the screenshot as a vision image.",
       "framework": "eve",
       "name": "eve/extract-design-md",
       "title": "Extract DESIGN.md Agent",
@@ -135,7 +135,7 @@
       "type": "registry:block"
     },
     {
-      "description": "Flue agent that fetches a page through context.dev and scores its readability to AI answer engines across six categories, returning failing checks and an agent-ready fix prompt.",
+      "description": "Flue agent that runs a deterministic AI-SEO audit on a page through context.dev — scoring ~30 checks across six categories into a 0–100 total and returning failing checks and an agent-ready fix prompt.",
       "framework": "flue",
       "name": "flue/ai-seo-audit",
       "title": "AI SEO Audit Agent",
@@ -205,7 +205,7 @@
       "type": "registry:block"
     },
     {
-      "description": "Flue agent that pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md design-system document.",
+      "description": "Flue workflow that turns a domain into a self-contained DESIGN.md — gathering the styleguide, screenshot, and homepage Markdown from context.dev, then composing the document in a single Claude call with the screenshot as a vision image.",
       "framework": "flue",
       "name": "flue/extract-design-md",
       "title": "Extract DESIGN.md Agent",

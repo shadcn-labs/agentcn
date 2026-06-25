@@ -2,12 +2,17 @@
   "name": "ai-seo-audit",
   "type": "registry:block",
   "title": "AI SEO Audit Agent",
-  "description": "Eve agent that fetches a page through context.dev and scores its readability to AI answer engines across six categories, returning failing checks and an agent-ready fix prompt.",
+  "description": "Eve agent that runs a deterministic AI-SEO audit on a page through context.dev — scoring ~30 checks across six categories into a 0–100 total and returning failing checks and an agent-ready fix prompt.",
   "framework": "eve",
   "files": [
     { "path": "agent/agent.ts", "type": "registry:file" },
     { "path": "agent/instructions.md", "type": "registry:file" },
-    { "path": "agent/tools/fetch_page.ts", "type": "registry:file" },
+    { "path": "agent/tools/audit_page.ts", "type": "registry:file" },
+    { "path": "agent/lib/audit.ts", "type": "registry:file" },
+    { "path": "agent/lib/rules.ts", "type": "registry:file" },
+    { "path": "agent/lib/agent-fix-prompt.ts", "type": "registry:file" },
+    { "path": "agent/lib/audit-types.ts", "type": "registry:file" },
+    { "path": "agent/lib/url.ts", "type": "registry:file" },
     { "path": "agent/skills/seo-audit/SKILL.md", "type": "registry:file" }
   ],
   "dependencies": ["eve", "context.dev"]

@@ -26,8 +26,8 @@ export const PREVIEW_AGENTS: Record<string, PreviewAgent> = {
     model: DEFAULT_MODEL,
     prompt: joinInput,
     system:
-      "You audit a page for readability to AI answer engines (ChatGPT, Claude, Perplexity). Call fetch_page once to get the page's Markdown and HTML, then score six categories to a 0–100 total (Technical AI Crawlability, Content Structure & Chunking, Structured Data/Schema, E-E-A-T & Entity Authority, Off-site/Citation Surface, Measurement & Governance), list failing checks by impact, and end with an agent-ready fix prompt. If fetching is disabled, explain the audit the recipe runs. Ground every finding in the page only.",
-    tools: ["fetch_page"],
+      "You audit a page for readability to AI answer engines (ChatGPT, Claude, Perplexity). Call audit_page once with the URL — it runs a deterministic rubric through context.dev and returns the score, band, per-category checks (pass/partial/fail/na with evidence), top priorities, and agent fix prompts. Present that result faithfully: the overall score/100 and band, a per-category breakdown, the failing and partial checks ordered by impact (cite each check id, evidence, and recommendation), then the returned agentPrompts.full verbatim in a copy-paste block. Never invent or recompute scores or checks. If the audit is disabled, explain the audit the recipe runs.",
+    tools: ["audit_page"],
   },
   "browser-agent": {
     model: DEFAULT_MODEL,
@@ -101,7 +101,7 @@ export const PREVIEW_AGENTS: Record<string, PreviewAgent> = {
     model: DEFAULT_MODEL,
     prompt: joinInput,
     system:
-      "You turn a website into a self-contained DESIGN.md. Gather four context.dev signals — extract_styleguide, get_brand, capture_screenshot, fetch_markdown — then compose YAML frontmatter of tokens followed by the canonical sections (Overview, Colors, Typography, Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts). Use precise styleguide values; ground the Overview in the brand and page Markdown. If a tool is disabled, explain what the recipe would extract. Output only the DESIGN.md.",
+      "You turn a website into a self-contained DESIGN.md following the Google DESIGN.md convention. Gather four context.dev signals — extract_styleguide, get_brand, capture_screenshot, fetch_markdown — then compose YAML frontmatter (version: alpha; keys version, name, description, colors, typography, rounded, spacing, components; SRGB hex colors; {path.to.token} references; recommended token names like primary/secondary/tertiary/neutral/surface/on-surface/error and headline-display/body-md/label-sm) followed by the canonical sections in order (Overview, Colors, Typography, Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts). The extracted styleguide is the primary source of tokens; use the screenshot and page Markdown as supporting evidence and the brand for the Overview. Where data is missing, infer conservatively and state uncertainty in prose, not in token values. If a tool is disabled, explain what the recipe would extract. Output only the DESIGN.md.",
     tools: [
       "extract_styleguide",
       "get_brand",
