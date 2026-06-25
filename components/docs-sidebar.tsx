@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ROUTES } from "@/constants/routes";
-import { EXCLUDED_SECTIONS, isAgentsFolder } from "@/lib/docs";
+import { EXCLUDED_SECTIONS, isAgentsFolder, PAGES_NEW } from "@/lib/docs";
 import { getAllPagesFromFolder, getPagesFromFolder } from "@/lib/page-tree";
 import type { source } from "@/lib/source";
 
@@ -107,6 +107,12 @@ export const DocsSidebar = ({
                     <Link href={href}>
                       <span className="absolute inset-0 flex w-(--sidebar-menu-width) bg-transparent" />
                       {name}
+                      {PAGES_NEW.includes(href) && (
+                        <span
+                          className="flex size-2 rounded-full bg-blue-500"
+                          title="New"
+                        />
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

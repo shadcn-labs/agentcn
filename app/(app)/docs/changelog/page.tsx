@@ -1,6 +1,7 @@
 import { RssIcon } from "lucide-react";
 import Link from "next/link";
 
+import { DocsTocFooter } from "@/components/docs-toc-footer";
 import { PageTransition } from "@/components/page-transition";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
@@ -131,6 +132,7 @@ export default function ChangelogPage() {
               )}
             </div>
           </div>
+          <DocsTocFooter docId="" className="mx-8" />
         </div>
       </div>
     </PageTransition>
