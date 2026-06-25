@@ -2,10 +2,6 @@ import { openai } from '@ai-sdk/openai'
 import { createClient } from '@libsql/client'
 import { embed, embedMany } from 'ai'
 
-/**
- * Minimal libSQL-backed vector store for PDF chunks. Swap the client URL for a
- * remote Turso database, or replace libSQL with Pinecone/Qdrant/pgvector.
- */
 const db = createClient({ url: process.env.LIBSQL_URL ?? 'file:pdf-index.db' })
 const embeddingModel = openai.embedding('text-embedding-3-small')
 

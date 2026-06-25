@@ -1,13 +1,6 @@
-/**
- * Server-side tool catalog for the in-process agent preview.
- *
- * Each recipe's tools are mirrored here so the live preview can actually call
- * them. Tools that need no secret and are safe to run in a shared, hosted
- * environment execute for real; tools that need an API key, a database, a
- * browser, or shell access (or that would mutate external state) degrade
- * gracefully — they return a clear note so the agent still produces a sensible
- * response without doing anything unsafe.
- */
+/** Preview tool catalog. */
+import { runAudit } from "@/lib/preview/seo-audit/audit";
+import { normalizeAuditUrl } from "@/lib/preview/seo-audit/url";
 
 export interface PreviewTool {
   description: string;
@@ -25,7 +18,6 @@ const str = (value: unknown): string =>
 const num = (value: unknown, fallback: number): number =>
   typeof value === "number" ? value : fallback;
 
-/** Standard degradation payload for tools that can't run in the hosted preview. */
 const disabled = (
   envOrReason: string,
   action: string
@@ -33,6 +25,42 @@ const disabled = (
   disabled: true,
   note: `${action} is disabled in the hosted preview (${envOrReason}). Install the recipe and run it locally to enable it.`,
 });
+
+const CONTEXT_DEV_BASE_URL = "https://api.context.dev/v1";
+
+const contextDevGet = async (
+  action: string,
+  path: string,
+  query: Record<string, string | undefined>
+): Promise<unknown> => {
+  const apiKey = process.env.CONTEXT_DEV_API_KEY;
+  if (!apiKey) {
+    return disabled("CONTEXT_DEV_API_KEY", action);
+  }
+
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined && value !== "") {
+      params.set(key, value);
+    }
+  }
+
+  try {
+    const res = await fetch(
+      `${CONTEXT_DEV_BASE_URL}${path}?${params.toString()}`,
+      { headers: { authorization: `Bearer ${apiKey}` } }
+    );
+    if (!res.ok) {
+      const body = await res.text();
+      return {
+        error: `context.dev ${path} failed (${res.status}): ${body.slice(0, 200)}`,
+      };
+    }
+    return await res.json();
+  } catch (error) {
+    return { error: String(error) };
+  }
+};
 
 const SAMPLE_FEEDBACK = [
   {
@@ -89,7 +117,6 @@ const SAMPLE_SCHEMA = {
   ],
 };
 
-/** Best-effort YouTube transcript fetch from the public watch page. */
 const fetchTranscript = async (url: string): Promise<unknown> => {
   try {
     const page = await fetch(url, {
@@ -130,6 +157,31 @@ const fetchTranscript = async (url: string): Promise<unknown> => {
 };
 
 const TOOLS: Record<string, PreviewTool> = {
+  audit_page: {
+    description:
+      "Runs the deterministic AI-SEO audit on a URL through context.dev and returns the full scored result: a 0–100 score and band, per-category checks (pass/partial/fail/na with evidence), top priorities, and ready-to-run agent fix prompts.",
+    execute: async (input) => {
+      const apiKey = process.env.CONTEXT_DEV_API_KEY;
+      if (!apiKey) {
+        return disabled("CONTEXT_DEV_API_KEY", "AI SEO audit");
+      }
+      const normalized = normalizeAuditUrl(str(input.url));
+      if (!normalized) {
+        return { error: "Provide a valid URL to audit." };
+      }
+      try {
+        return await runAudit(normalized, apiKey);
+      } catch (error) {
+        return { error: String(error) };
+      }
+    },
+    input_schema: {
+      properties: { url: { type: "string" } },
+      required: ["url"],
+      type: "object",
+    },
+    name: "audit_page",
+  },
   browser_click: {
     description: "Clicks an element by selector and returns a page snapshot.",
     execute: () =>
@@ -171,6 +223,37 @@ const TOOLS: Record<string, PreviewTool> = {
     },
     name: "browser_type",
   },
+  capture_screenshot: {
+    description:
+      "Captures a homepage screenshot for a domain and returns its URL.",
+    execute: (input) =>
+      contextDevGet("Screenshot capture", "/web/screenshot", {
+        domain: str(input.domain),
+        fullScreenshot: "false",
+        handleCookiePopup: "true",
+      }),
+    input_schema: {
+      properties: { domain: { type: "string" } },
+      required: ["domain"],
+      type: "object",
+    },
+    name: "capture_screenshot",
+  },
+  extract_styleguide: {
+    description:
+      "Extracts a domain's design tokens — colors, typography, spacing, radii, and components.",
+    execute: (input) =>
+      contextDevGet("Styleguide extraction", "/web/styleguide", {
+        domain: str(input.domain),
+        timeoutMS: "120000",
+      }),
+    input_schema: {
+      properties: { domain: { type: "string" } },
+      required: ["domain"],
+      type: "object",
+    },
+    name: "extract_styleguide",
+  },
   fetch_csv: {
     description: "Fetches a CSV file from a URL and returns its text content.",
     execute: async (input) => {
@@ -191,6 +274,23 @@ const TOOLS: Record<string, PreviewTool> = {
       type: "object",
     },
     name: "fetch_csv",
+  },
+  fetch_markdown: {
+    description:
+      "Converts a domain's homepage to clean Markdown for grounding the document.",
+    execute: (input) =>
+      contextDevGet("Markdown extraction", "/web/scrape/markdown", {
+        includeImages: "false",
+        includeLinks: "false",
+        url: `https://${str(input.domain)}`,
+        useMainContentOnly: "true",
+      }),
+    input_schema: {
+      properties: { domain: { type: "string" } },
+      required: ["domain"],
+      type: "object",
+    },
+    name: "fetch_markdown",
   },
   fetch_pr: {
     description: "Fetches a GitHub pull request's metadata and changed files.",
@@ -242,6 +342,20 @@ const TOOLS: Record<string, PreviewTool> = {
       type: "object",
     },
     name: "generate_image",
+  },
+  get_brand: {
+    description:
+      "Retrieves a domain's brand assets — logos, backdrops, brand colors, slogan, and industry.",
+    execute: (input) =>
+      contextDevGet("Brand retrieval", "/brand/retrieve", {
+        domain: str(input.domain),
+      }),
+    input_schema: {
+      properties: { domain: { type: "string" } },
+      required: ["domain"],
+      type: "object",
+    },
+    name: "get_brand",
   },
   get_feedback: {
     description: "Retrieves a page of customer feedback entries.",

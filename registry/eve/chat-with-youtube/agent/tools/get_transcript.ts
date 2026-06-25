@@ -23,8 +23,6 @@ export default defineTool({
     url: z.string().url(),
   }),
   async execute({ url }) {
-    // Pull the watch page through Bright Data's Web Unlocker so YouTube's
-    // anti-bot and rate limits never block the transcript fetch.
     const html = await unlock(`https://www.youtube.com/watch?v=${videoId(url)}`)
     const player = extractJson<PlayerResponse>(html, 'ytInitialPlayerResponse')
     const tracks = player?.captions?.playerCaptionsTracklistRenderer?.captionTracks
@@ -33,7 +31,6 @@ export default defineTool({
     }
     const track = tracks.find((t) => t.languageCode?.startsWith('en')) ?? tracks[0]
 
-    // The caption track is itself fetched through the Web Unlocker.
     const raw = await unlock(`${track.baseUrl}&fmt=json3`)
     const data = JSON.parse(raw) as Json3
     return {

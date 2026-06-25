@@ -2,9 +2,7 @@ export interface Sponsor {
   name: string;
   href: string;
   logo?: string;
-  /** Logo shown in light mode (falls back to `logoDark`). */
   logoLight?: string;
-  /** Logo shown in dark mode (falls back to `logoLight`). */
   logoDark?: string;
 }
 

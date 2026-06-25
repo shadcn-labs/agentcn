@@ -2,7 +2,6 @@ import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-// import { DocsBaseSwitcher } from "@/components/docs-base-switcher";
 import { DocsCopyPage } from "@/components/docs-copy-page";
 import { DocsKeyboardShortcuts } from "@/components/docs-keyboard-shortcuts";
 import { DocsNavLink } from "@/components/docs-nav-link";

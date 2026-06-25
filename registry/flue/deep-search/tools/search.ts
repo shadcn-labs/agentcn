@@ -12,9 +12,6 @@ export const webSearch = defineTool({
     numResults: v.optional(v.number(), 5),
   }),
   execute: async ({ query, numResults }) => {
-    // Bright Data SERP API — real-time, unblocked search results, billed per
-    // successful request. `brd_json=1` returns parsed JSON instead of raw HTML.
-    // https://docs.brightdata.com/scraping-automation/serp-api
     const target = new URL('https://www.google.com/search')
     target.searchParams.set('q', query)
     target.searchParams.set('num', String(numResults))

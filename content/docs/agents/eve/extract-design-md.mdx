@@ -1,6 +1,6 @@
 ---
 title: Extract DESIGN.md
-description: Pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md.
+description: Turns a domain into a self-contained DESIGN.md — gathering the styleguide, screenshot, and homepage Markdown from context.dev, then composing the document in a single Claude call.
 ---
 
 <DocsBaseSwitcher base="eve" agent="extract-design-md" />
@@ -20,13 +20,21 @@ description: Pulls a site's design tokens, brand assets, screenshot, and page Ma
 
 ## Summary
 
-The **Extract DESIGN.md Agent** turns any public website into a self-contained
-`DESIGN.md` design-system document. It pulls four signals through context.dev —
-design tokens (styleguide), brand assets, a homepage screenshot, and clean page
-Markdown — then composes a document with token frontmatter and the canonical
-sections (Overview, Colors, Typography, Layout, Elevation, Shapes, Components,
-Do's and Don'ts). Reach for it when you want to capture a site's look and feel in
-a form another agent or designer can rebuild from.
+The **Extract DESIGN.md Agent** turns any public website into design artifacts.
+The `compose_design_md` tool gathers the styleguide, brand, a homepage
+screenshot, and clean page Markdown through context.dev, then returns **three
+outputs**, which the agent relays verbatim:
+
+- **DESIGN.md** — composed in **one Claude call** (screenshot passed as
+  a vision image): token frontmatter (`version: alpha`, colors, typography,
+  rounded, spacing, components) plus the canonical sections (Overview, Colors,
+  Typography, Layout, Elevation, Shapes, Components, Do's and Don'ts).
+- **Tailwind v4 `@theme` block** — derived **deterministically** from the
+  styleguide + brand in `agent/lib/derive-tokens.ts`.
+- **CSS `:root` tokens** — the same tokens as vanilla CSS variables.
+
+It follows the [designmd.supply](https://designmd.supply) pipeline — the same
+prompt spec and deterministic token derivers — running on Claude.
 
 ## Installation
 
@@ -48,7 +56,7 @@ npx shadcn@latest add @agentcn/eve/extract-design-md
 <Step>Install the following dependencies:</Step>
 
 ```bash
-npm install eve context.dev
+npm install eve context.dev ai @ai-sdk/anthropic
 ```
 
 <Step>Copy and paste the following code into your project.</Step>
@@ -64,28 +72,23 @@ npm install eve context.dev
 />
 
 <ComponentSource
-  src="registry/eve/extract-design-md/agent/tools/extract_styleguide.ts"
-  title="agent/tools/extract_styleguide.ts"
+  src="registry/eve/extract-design-md/agent/tools/compose_design_md.ts"
+  title="agent/tools/compose_design_md.ts"
 />
 
 <ComponentSource
-  src="registry/eve/extract-design-md/agent/tools/get_brand.ts"
-  title="agent/tools/get_brand.ts"
+  src="registry/eve/extract-design-md/agent/lib/compose.ts"
+  title="agent/lib/compose.ts"
 />
 
 <ComponentSource
-  src="registry/eve/extract-design-md/agent/tools/capture_screenshot.ts"
-  title="agent/tools/capture_screenshot.ts"
+  src="registry/eve/extract-design-md/agent/lib/design-md.ts"
+  title="agent/lib/design-md.ts"
 />
 
 <ComponentSource
-  src="registry/eve/extract-design-md/agent/tools/fetch_markdown.ts"
-  title="agent/tools/fetch_markdown.ts"
-/>
-
-<ComponentSource
-  src="registry/eve/extract-design-md/agent/skills/design-md/SKILL.md"
-  title="agent/skills/design-md/SKILL.md"
+  src="registry/eve/extract-design-md/agent/lib/derive-tokens.ts"
+  title="agent/lib/derive-tokens.ts"
 />
 
 <Step>Update the import paths to match your project setup.</Step>
@@ -100,25 +103,24 @@ npm install eve context.dev
 ```text
 agent/
 ├── agent.ts              # Agent definition (model + config)
-├── instructions.md       # Gather signals, then compose DESIGN.md
+├── instructions.md       # Call compose_design_md, relay all three artifacts
 ├── tools/
-│   ├── extract_styleguide.ts  # Design tokens via context.dev
-│   ├── get_brand.ts           # Logos, colors, slogan, industry
-│   ├── capture_screenshot.ts  # Homepage screenshot URL
-│   └── fetch_markdown.ts      # Clean homepage Markdown
-└── skills/
-    └── design-md/
-        └── SKILL.md      # DESIGN.md format and composition rules
+│   └── compose_design_md.ts  # Returns DESIGN.md + Tailwind + CSS
+└── lib/
+    ├── compose.ts        # Fetches signals; Claude call + token derivers
+    ├── design-md.ts      # The verbatim DESIGN.md prompt spec
+    └── derive-tokens.ts  # Deterministic Tailwind v4 @theme + CSS :root tokens
 ```
 
 ## Customization
 
-- **Data source.** All four signals are pulled through
-  [context.dev](https://context.dev) — styleguide, brand, screenshot, and
-  Markdown. Set `CONTEXT_DEV_API_KEY`.
-- **Reshape the document.** Edit `agent/skills/design-md/SKILL.md` to add
-  sections, change the frontmatter token groups, or adjust the Do's and Don'ts.
-- **Trim the signals.** Remove a tool file from `agent/tools/` (e.g. skip the
-  screenshot) to make the agent faster or cheaper.
-- **Swap the model.** Edit `agent/agent.ts` — `anthropic/claude-sonnet-4-6` for
-  richer synthesis, `anthropic/claude-haiku-4-5` for speed.
+- **Data source.** The styleguide, screenshot, and Markdown are pulled through
+  [context.dev](https://context.dev). Set `CONTEXT_DEV_API_KEY`, and
+  `ANTHROPIC_API_KEY` for the model call.
+- **Reshape the document.** Edit `agent/lib/design-md.ts` — the prompt spec is
+  the single source of truth for the frontmatter keys, token names, and sections.
+- **Swap the model.** Change the model in `agent/lib/compose.ts` — it uses
+  `claude-sonnet-4-6` (vision-capable). The reference uses `gpt-5.4-mini`; any
+  multimodal model that can read the screenshot works.
+- **Temperature.** Adjust `temperature` in `agent/lib/compose.ts` (the reference
+  uses `0.2`) to trade determinism for variety.

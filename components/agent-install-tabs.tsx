@@ -21,7 +21,6 @@ const pmCommands = {
   yarn: "yarn",
 };
 
-// Every recipe in `<framework>/<agent>` form, e.g. "eve/deep-search".
 const registryItemNames = AGENTS.flatMap((agent) =>
   agent.frameworks.map((framework) => `${framework}/${agent.slug}`)
 ).toSorted((a, b) => a.localeCompare(b, "en", { sensitivity: "base" }));

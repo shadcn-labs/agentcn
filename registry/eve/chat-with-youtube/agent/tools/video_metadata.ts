@@ -10,8 +10,6 @@ export default defineTool({
     url: z.string().url(),
   }),
   async execute({ url }) {
-    // Routed through Bright Data's Web Unlocker so metadata lookups never hit
-    // YouTube's rate limits, even at scale.
     const raw = await unlock(
       `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`
     )

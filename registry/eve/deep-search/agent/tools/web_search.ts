@@ -13,9 +13,6 @@ export default defineTool({
     numResults: z.number().min(1).max(10).default(5),
   }),
   async execute({ query, numResults }) {
-    // Bright Data SERP API — real-time, unblocked search results, billed per
-    // successful request. `brd_json=1` returns parsed JSON instead of raw HTML.
-    // https://docs.brightdata.com/scraping-automation/serp-api
     const target = new URL('https://www.google.com/search')
     target.searchParams.set('q', query)
     target.searchParams.set('num', String(numResults))

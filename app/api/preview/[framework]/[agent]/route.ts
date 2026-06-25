@@ -44,10 +44,6 @@ const SSE_HEADERS = {
 const sseFrame = (payload: string): Uint8Array =>
   new TextEncoder().encode(`data: ${payload}\n\n`);
 
-/**
- * Proxies a durable Eve session: opens the session, attaches to its NDJSON
- * stream, and forwards each raw event to the browser as a Server-Sent Event.
- */
 const eveStream = (message: string): ReadableStream<Uint8Array> => {
   const baseUrl = process.env.EVE_PREVIEW_URL;
 
@@ -107,7 +103,6 @@ const eveStream = (message: string): ReadableStream<Uint8Array> => {
           for (const line of lines) {
             const trimmed = line.trim();
             if (trimmed) {
-              // Forward each raw NDJSON event line as an SSE frame.
               controller.enqueue(sseFrame(trimmed));
             }
           }
@@ -125,34 +120,18 @@ const eveStream = (message: string): ReadableStream<Uint8Array> => {
   });
 };
 
-/**
- * Runs any catalogued agent in-process against the Anthropic Messages API,
- * streaming structured preview events. Safe, key-free tools run for real;
- * the rest degrade with a clear note. Used for Flue and for Eve when no
- * durable Eve backend (EVE_PREVIEW_URL) is configured.
- */
 const genericStream = (
   slug: string,
   input: Record<string, string>
-): ReadableStream<Uint8Array> => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-
-  return new ReadableStream<Uint8Array>({
+): ReadableStream<Uint8Array> =>
+  new ReadableStream<Uint8Array>({
     async start(controller) {
       const emit: EmitEvent = (event) => {
         controller.enqueue(sseFrame(JSON.stringify(event)));
       };
 
       try {
-        if (!apiKey) {
-          emit({
-            message:
-              "ANTHROPIC_API_KEY is not set. Add it to .env.local to run the live preview in-process.",
-            type: "error",
-          });
-          return;
-        }
-        await runPreview({ apiKey, emit, input, slug });
+        await runPreview({ emit, input, slug });
       } catch (error) {
         emit({
           message: error instanceof Error ? error.message : "Unknown error.",
@@ -163,7 +142,6 @@ const genericStream = (
       }
     },
   });
-};
 
 export const POST = async (
   request: Request,
@@ -191,8 +169,6 @@ export const POST = async (
     return Response.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  // Eve: proxy a durable session when a deployed backend is configured;
-  // otherwise fall back to the in-process runner so the preview still works.
   if (framework === "eve" && process.env.EVE_PREVIEW_URL) {
     const message = Object.values(input).join("\n\n").trim();
     return new Response(eveStream(message), { headers: SSE_HEADERS });

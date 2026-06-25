@@ -2,10 +2,6 @@ import { openai } from '@ai-sdk/openai'
 import { createClient } from '@libsql/client'
 import { embed, embedMany } from 'ai'
 
-/**
- * Minimal libSQL-backed vector store for the knowledge corpus. Swap for
- * pgvector/Neon, Pinecone, or Qdrant behind the same functions.
- */
 const db = createClient({ url: process.env.LIBSQL_URL ?? 'file:knowledge.db' })
 const embeddingModel = openai.embedding('text-embedding-3-small')
 

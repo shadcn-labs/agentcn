@@ -192,7 +192,6 @@ export const mdxComponents = {
     __pnpm__?: string;
     __bun__?: string;
   }) => {
-    // Inline Code.
     if (typeof props.children === "string") {
       return (
         <code
@@ -205,7 +204,6 @@ export const mdxComponents = {
       );
     }
 
-    // npm command.
     const isNpmCommand = __npm__ && __yarn__ && __pnpm__ && __bun__;
     if (isNpmCommand) {
       return (
@@ -218,7 +216,6 @@ export const mdxComponents = {
       );
     }
 
-    // Default codeblock.
     return (
       <>
         {__raw__ && (

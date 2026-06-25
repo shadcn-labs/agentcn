@@ -1,9 +1,4 @@
-/**
- * Fetches a URL through Bright Data's Web Unlocker — handles YouTube reliably
- * at scale with no rate limits or bot blocks. Returns the raw response body.
- * Set BRIGHTDATA_API_KEY and (optionally) BRIGHTDATA_UNLOCKER_ZONE.
- * https://docs.brightdata.com/scraping-automation/web-unlocker
- */
+
 export async function unlock(url: string): Promise<string> {
   const res = await fetch('https://api.brightdata.com/request', {
     method: 'POST',
@@ -23,16 +18,11 @@ export async function unlock(url: string): Promise<string> {
   return res.text()
 }
 
-/** Extracts the YouTube video id from a watch, youtu.be, or embed URL. */
 export function videoId(url: string): string {
   const u = new URL(url)
   return u.searchParams.get('v') ?? u.pathname.split('/').filter(Boolean).pop() ?? url
 }
 
-/**
- * Walks a balanced JSON object literal out of a page's HTML, starting at the
- * first `{` after `marker`. String-aware, so braces inside strings are ignored.
- */
 export function extractJson<T = unknown>(html: string, marker: string): T | null {
   const at = html.indexOf(marker)
   if (at === -1) return null

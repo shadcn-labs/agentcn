@@ -1,4 +1,3 @@
-/** Redacts common PII from text before it reaches the user. */
 const PATTERNS: [RegExp, string][] = [
   [/[\w.+-]+@[\w-]+\.[\w.-]+/g, '[redacted-email]'],
   [/\b(?:\+?\d{1,2}[\s-]?)?(?:\(\d{3}\)|\d{3})[\s-]?\d{3}[\s-]?\d{4}\b/g, '[redacted-phone]'],

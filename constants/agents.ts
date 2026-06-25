@@ -1,13 +1,5 @@
 import { SITE } from "@/constants/site";
 
-/**
- * Shared catalog of agent recipes and the frameworks they ship for.
- *
- * This is the single source of truth that drives the per-framework docs split,
- * the install command tabs, and the home page agent preview (sidebar, framework
- * switcher, and chat preview). Add a new recipe here and it shows up everywhere.
- */
-
 export type FrameworkId = "eve" | "flue";
 
 export interface Framework {
@@ -25,7 +17,6 @@ export const FRAMEWORK_LABEL: Record<FrameworkId, string> = {
   flue: "Flue",
 };
 
-/** A single turn in an agent's sample chat transcript shown in the preview. */
 export type ChatMessage =
   | { role: "user"; text: string }
   | { role: "agent"; text: string }
@@ -39,16 +30,12 @@ export interface AgentInputField {
 }
 
 export interface Agent {
-  /** URL/registry slug, e.g. "deep-search". */
   slug: string;
   title: string;
-  /** Short label used in the sidebar list. */
   shortTitle: string;
   description: string;
-  /** Frameworks this recipe is available for. */
   frameworks: FrameworkId[];
   inputFields: AgentInputField[];
-  /** Sample transcript per framework, rendered in the home chat preview. */
   transcript: Record<FrameworkId, ChatMessage[]>;
 }
 
@@ -976,7 +963,7 @@ const companyKnowledge: Agent = {
 
 const aiSeoAudit: Agent = {
   description:
-    "Fetches a page through context.dev and scores its readability to AI answer engines, returning failing checks and an agent-ready fix prompt.",
+    "Runs a deterministic AI-SEO audit on a page through context.dev — scoring ~30 checks across six categories into a 0–100 total, returning failing checks and an agent-ready fix prompt.",
   frameworks: ["eve", "flue"],
   inputFields: [
     {
@@ -996,9 +983,9 @@ const aiSeoAudit: Agent = {
         text: "Audit https://example.com/blog/how-it-works for AI search.",
       },
       {
-        detail: "markdown + html via context.dev",
+        detail: "deterministic score + checks via context.dev",
         role: "tool",
-        tool: "fetch_page",
+        tool: "audit_page",
       },
       {
         role: "agent",
@@ -1011,13 +998,13 @@ const aiSeoAudit: Agent = {
         text: "Audit https://example.com/blog/how-it-works for AI search.",
       },
       {
-        detail: "markdown + html via context.dev",
+        detail: "deterministic score + checks via context.dev",
         role: "tool",
-        tool: "fetch_page",
+        tool: "audit_page",
       },
       {
         role: "agent",
-        text: "Scored the six categories to 62/100 (Average), listed the failing checks by impact, and returned a copy-paste fix prompt — all grounded in the fetched page.",
+        text: "Scored the six categories to 62/100 (Average), listed the failing checks by impact, and returned a copy-paste fix prompt — all from the deterministic audit.",
       },
     ],
   },
@@ -1025,7 +1012,7 @@ const aiSeoAudit: Agent = {
 
 const extractDesignMd: Agent = {
   description:
-    "Pulls a site's design tokens, brand assets, screenshot, and page Markdown through context.dev and composes a self-contained DESIGN.md.",
+    "Turns a domain into a self-contained DESIGN.md — gathering the styleguide, screenshot, and homepage Markdown from context.dev, then composing the document in a single Claude call with the screenshot as a vision image.",
   frameworks: ["eve", "flue"],
   inputFields: [
     {
@@ -1045,13 +1032,13 @@ const extractDesignMd: Agent = {
         text: "Generate a DESIGN.md for stripe.com",
       },
       {
-        detail: "tokens + brand + screenshot + markdown",
+        detail: "styleguide + screenshot + markdown via context.dev",
         role: "tool",
-        tool: "extract_styleguide",
+        tool: "compose_design_md",
       },
       {
         role: "agent",
-        text: "Composed DESIGN.md: frontmatter tokens (colors, typography, spacing, radii, components) plus Overview, Colors, Typography, Layout, Elevation, Shapes, Components, and Do's and Don'ts — values pulled from the styleguide.",
+        text: "Composed DESIGN.md: frontmatter tokens (version: alpha; colors, typography, spacing, rounded, components) plus Overview, Colors, Typography, Layout, Elevation, Shapes, Components, and Do's and Don'ts — values pulled from the styleguide.",
       },
     ],
     flue: [
@@ -1060,13 +1047,13 @@ const extractDesignMd: Agent = {
         text: "Generate a DESIGN.md for stripe.com",
       },
       {
-        detail: "four context.dev signals in parallel",
+        detail: "styleguide + screenshot + markdown via context.dev",
         role: "tool",
-        tool: "extract_styleguide",
+        tool: "compose_design_md",
       },
       {
         role: "agent",
-        text: "Gathered the four context.dev payloads, then emitted a self-contained DESIGN.md — token frontmatter followed by the canonical sections, grounded in the extracted styleguide and brand.",
+        text: "Gathered the context.dev signals, then emitted a self-contained DESIGN.md in one Claude call — token frontmatter followed by the canonical sections, grounded in the extracted styleguide.",
       },
     ],
   },

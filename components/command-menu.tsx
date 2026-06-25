@@ -79,16 +79,6 @@ const buildDocPageKeywords = (
 ];
 
 const DocPageLeadingIcon = ({ parsed }: { parsed: DocUrlKind }) => {
-  // if (parsed.kind === "theme") {
-  //   const color = themePrimaryBySlug[parsed.slug];
-  //   return (
-  //     <span
-  //       className="border-border/60 size-4 shrink-0 rounded-sm border"
-  //       style={color ? { backgroundColor: color } : undefined}
-  //       aria-hidden
-  //     />
-  //   );
-  // }
   if (parsed.kind === "template") {
     return <SquareDashedIcon />;
   }

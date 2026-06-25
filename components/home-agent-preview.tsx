@@ -82,7 +82,6 @@ export const HomeAgentPreview = ({ className }: { className?: string }) => {
       return;
     }
     setSelectedSlug(slug);
-    // Keep the framework valid for the newly selected agent.
     if (!next.frameworks.includes(framework)) {
       setFramework(next.frameworks[0]);
     }
