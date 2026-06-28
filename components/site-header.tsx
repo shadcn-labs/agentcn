@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { BrandContextMenu } from "@/components/brand-context-menu";
 import { CommandMenu } from "@/components/command-menu";
+import { UserMenu } from "@/components/community/user-menu";
 import { LogoMark } from "@/components/logo";
 import { MainNav } from "@/components/main-nav";
 import { MobileNav } from "@/components/mobile-nav";
@@ -17,6 +18,7 @@ import { source } from "@/lib/source";
 const navItems = [
   { href: ROUTES.DOCS, label: "Docs" },
   { href: ROUTES.DOCS_AGENTS, label: "Agents" },
+  { href: ROUTES.COMMUNITY, label: "Community" },
 ];
 
 export const SiteHeader = () => (
@@ -54,6 +56,7 @@ export const SiteHeader = () => (
           <SponsorLink />
           <ModeSwitcher />
           <SiteSettings />
+          <UserMenu />
         </div>
       </div>
     </div>
