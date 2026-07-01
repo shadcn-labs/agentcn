@@ -1,0 +1,12 @@
+{
+  "name": "openui-assistant",
+  "type": "registry:block",
+  "title": "Open UI Assistant",
+  "description": "Flue agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/open-ui-assistant.ts", "type": "registry:file" },
+    { "path": "tools/get-current-time.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

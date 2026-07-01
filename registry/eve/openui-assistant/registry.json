@@ -1,0 +1,15 @@
+{
+  "name": "openui-assistant",
+  "type": "registry:block",
+  "title": "Open UI Assistant",
+  "description": "Eve agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" },
+    { "path": "agent/channels/eve.ts", "type": "registry:file" },
+    { "path": "agent/tools/get_current_time.ts", "type": "registry:file" },
+    { "path": "agent/instructions/openui.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}
