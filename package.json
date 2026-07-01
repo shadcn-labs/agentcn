@@ -4,16 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm registry:build && next build",
+    "build": "pnpm registry:build && pnpm examples:build && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "registry:build": "node --experimental-strip-types scripts/build-registry.mts",
+    "examples:build": "node --experimental-strip-types scripts/build-examples.mts",
     "postinstall": "fumadocs-mdx",
     "check": "ultracite check",
     "fix": "ultracite fix",
     "prepare": "lefthook install"
   },
   "dependencies": {
+    "@openuidev/react-headless": "^0.9.1",
+    "@openuidev/react-lang": "^0.2.8",
+    "@openuidev/react-ui": "^0.12.1",
     "@tailwindcss/postcss": "^4.2.4",
     "@vercel/analytics": "^2.0.1",
     "@web-kits/audio": "^0.1.0",

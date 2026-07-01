@@ -1,0 +1,105 @@
+---
+title: OpenUI Assistant
+description: An OpenUI-powered assistant with real-time UI generation capabilities.
+---
+
+<DocsBaseSwitcher base="eve" agent="openui-assistant" />
+
+<AgentPreview
+  agent="openui-assistant"
+  framework="eve"
+  inputFields={[
+    {
+      name: "message",
+      label: "Message",
+      placeholder: "What time is it in Tokyo?",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **OpenUI Assistant** is a conversational agent powered by OpenUI's
+real-time UI generation. It can render interactive React components inline
+during a conversation — charts, forms, data tables, and more — using the
+OpenUI Lang component library. It also includes a timezone-aware time tool
+as a baseline demonstration of the tool-call path.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/openui-assistant
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve @openuidev/react-lang @openuidev/react-ui react react-dom
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/openui-assistant/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/openui-assistant/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<ComponentSource
+  src="registry/eve/openui-assistant/agent/channels/eve.ts"
+  title="agent/channels/eve.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/openui-assistant/agent/tools/get_current_time.ts"
+  title="agent/tools/get_current_time.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/openui-assistant/agent/instructions/openui.ts"
+  title="agent/instructions/openui.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts                  # Agent definition (model + OpenUI deps)
+├── instructions.md           # Base identity instructions
+├── channels/
+│   └── eve.ts                # HTTP channel with anonymous auth
+├── instructions/
+│   └── openui.ts             # Dynamic OpenUI Lang instructions
+└── tools/
+    └── get_current_time.ts   # Timezone-aware current time tool
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts` to use a different provider or model.
+- **Add authentication.** Replace `none()` in `channels/eve.ts` with `bearer()` or `basic()`.
+- **Add more tools.** Extend the agent with additional capabilities.
+- **Customize instructions.** Edit `instructions.md` or `instructions/openui.ts`.

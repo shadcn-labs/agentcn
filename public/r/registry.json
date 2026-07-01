@@ -114,6 +114,13 @@
       "type": "registry:block"
     },
     {
+      "description": "Eve agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+      "framework": "eve",
+      "name": "eve/openui-assistant",
+      "title": "Open UI Assistant",
+      "type": "registry:block"
+    },
+    {
       "description": "Eve agent that replies to Slack mentions and DMs, threaded, via the Slack Web API.",
       "framework": "eve",
       "name": "eve/slack-agent",
@@ -244,6 +251,13 @@
       "framework": "flue",
       "name": "flue/meeting-notes",
       "title": "Meeting Notes Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Flue agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+      "framework": "flue",
+      "name": "flue/openui-assistant",
+      "title": "Open UI Assistant",
       "type": "registry:block"
     },
     {

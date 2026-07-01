@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useMemo, useRef, useState } from "react";
 
 import { CopyButton } from "@/components/copy-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ExamplesIndex } from "@/examples/__index__";
 import type { PreviewArtifact } from "@/lib/preview/events";
 import { cn } from "@/lib/utils";
 
@@ -48,6 +49,13 @@ const formatResult = (result: unknown): string => {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
+
+const useCustomPreview = (agent: string, framework: string) =>
+  useMemo(() => {
+    const entry =
+      ExamplesIndex[framework as keyof typeof ExamplesIndex]?.[agent];
+    return entry?.component ?? null;
+  }, [agent, framework]);
 
 const ArtifactTabs = ({ tabs }: { tabs: PreviewArtifact[] }) => {
   const [active, setActive] = useState(tabs[0]?.id ?? "");
@@ -141,7 +149,7 @@ const LogLine = ({ entry }: { entry: LogEntry }) => {
   }
 };
 
-export const AgentPreview = ({
+const DefaultAgentPreview = ({
   agent,
   framework,
   inputFields,
@@ -371,5 +379,35 @@ export const AgentPreview = ({
         ) : null}
       </div>
     </div>
+  );
+};
+
+export const AgentPreview = ({
+  agent,
+  framework,
+  inputFields,
+}: AgentPreviewProps) => {
+  const CustomPreview = useCustomPreview(agent, framework);
+
+  if (CustomPreview) {
+    return (
+      <Suspense
+        fallback={
+          <div className="not-prose my-6 overflow-hidden rounded-xl border bg-card p-8 text-center text-muted-foreground">
+            Loading preview…
+          </div>
+        }
+      >
+        <CustomPreview />
+      </Suspense>
+    );
+  }
+
+  return (
+    <DefaultAgentPreview
+      agent={agent}
+      framework={framework}
+      inputFields={inputFields}
+    />
   );
 };
