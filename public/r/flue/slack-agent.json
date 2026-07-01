@@ -3,7 +3,7 @@
   "description": "Flue agent that replies to Slack mentions and DMs, threaded, via the Slack Web API.",
   "files": [
     {
-      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { postMessage } from '../tools/post-message.ts'\n\n/**\n * Mount this agent behind your Slack Events endpoint. Verify the Slack signature\n * in the route before calling next(), then map app_mention / message.im events to\n * an agent session keyed by thread_ts.\n */\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: `\n    You are a Slack assistant. Reply concisely, scoped to the thread you were\n    addressed in. When you have an answer, call post_message with the channel and\n    thread_ts. Use Slack mrkdwn formatting.\n  `,\n  tools: [postMessage],\n}))\n",
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { postMessage } from '../tools/post-message.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'anthropic/claude-haiku-4-5',\n  instructions: `\n    You are a Slack assistant. Reply concisely, scoped to the thread you were\n    addressed in. When you have an answer, call post_message with the channel and\n    thread_ts. Use Slack mrkdwn formatting.\n  `,\n  tools: [postMessage],\n}))\n",
       "path": "agents/slack-agent.ts",
       "target": "agents/slack-agent.ts",
       "type": "registry:file"
