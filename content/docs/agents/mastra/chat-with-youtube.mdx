@@ -1,0 +1,122 @@
+---
+title: Chat with YouTube
+description: Fetches a video's metadata and transcript, then answers questions with clickable timestamp citations.
+---
+
+<DocsBaseSwitcher base="mastra" agent="chat-with-youtube" />
+
+<AgentPreview
+  agent="chat-with-youtube"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "YouTube URL",
+      placeholder: "https://youtu.be/dQw4w9WgXcQ",
+      type: "text",
+    },
+    {
+      name: "question",
+      label: "Question",
+      placeholder: "Summarize the video with chapter timestamps.",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Chat with YouTube Agent** answers questions about a video using its
+transcript. It pulls the video's metadata and full transcript, then summarizes,
+answers follow-ups, and generates chapter timestamps — each citation a clickable
+link straight to that moment. Reach for it to skim long talks, lectures, or
+podcasts without watching end to end.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/chat-with-youtube
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/libsql @mastra/memory youtube-transcript-scraper
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/chat-with-youtube/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-youtube/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-youtube/memory.ts"
+  title="memory.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-youtube/lib/youtube-utils.ts"
+  title="lib/youtube-utils.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-youtube/tools/youtube-metadata.ts"
+  title="tools/youtube-metadata.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-youtube/tools/youtube-transcript.ts"
+  title="tools/youtube-transcript.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts                    # Agent definition (model + config)
+├── instructions.md              # Comprehensive YouTube assistant instructions
+├── memory.ts                    # Memory instance
+├── lib/
+│   └── youtube-utils.ts         # Video ID extraction + timestamp formatting
+└── tools/
+    ├── youtube-metadata.ts      # Fetch video title, author, description, duration
+    └── youtube-transcript.ts    # Fetch timestamped transcript segments
+```
+
+## How It Works
+
+1. **Get Metadata** - `fetch-youtube-metadata` retrieves video title, author, description, and duration
+2. **Get Transcript** - `fetch-youtube-transcript` fetches the full transcript with timestamps
+3. **Answer Questions** - The agent answers based on transcript content with clickable timestamp citations
+4. **Generate Chapters** - Creates chapter timestamps in YouTube description format
+
+## Customization
+
+- **Swap the model.** Edit the `model` field in `config.ts`.
+- **Add chapters export.** Add a tool that writes the chapter list back as a YouTube description or VTT file.
+- **Handle missing transcripts.** Fall back to an STT service when a video has no captions.
+- **Swap metadata source.** Use the YouTube Data API for richer metadata.

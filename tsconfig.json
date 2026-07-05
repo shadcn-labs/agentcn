@@ -34,5 +34,10 @@
     "next.config.mjs",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "registry/eve", "registry/flue"]
+  "exclude": [
+    "node_modules",
+    "registry/eve",
+    "registry/flue",
+    "registry/mastra"
+  ]
 }

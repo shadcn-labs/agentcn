@@ -1,0 +1,92 @@
+---
+title: GitHub PR Code Review
+description: Fetches a GitHub pull request and returns adaptive, file-by-file code review feedback.
+---
+
+<DocsBaseSwitcher base="mastra" agent="github-review" />
+
+<AgentPreview
+  agent="github-review"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "Pull request URL",
+      placeholder: "https://github.com/owner/repo/pull/123",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **GitHub PR Code Review Agent** reviews a pull request and returns actionable
+feedback. It fetches the PR's files and patches, adapts its depth to the diff
+size, and reports bugs, security issues, and style notes grouped by file — ending
+with an approve / request-changes recommendation. Reach for it to triage reviews
+or give contributors fast first-pass feedback.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/github-review
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/github-review/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/github-review/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/github-review/tools/fetch_pr.ts"
+  title="tools/fetch_pr.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts          # Agent definition (model + config)
+├── instructions.md    # Adaptive, file-by-file review instructions
+└── tools/
+    └── fetch_pr.ts    # Fetches PR metadata + changed files
+```
+
+## Customization
+
+- **Tune the depth thresholds.** Edit `instructions.md` to change how review depth
+  scales with PR size.
+- **Skip more files.** Add glob patterns for generated or vendored paths.
+- **Post back to GitHub.** Add a tool that creates a review via the GitHub API
+  instead of replying in chat.
+- **Swap the model.** Edit `config.ts`.

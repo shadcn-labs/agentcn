@@ -1,0 +1,111 @@
+---
+title: Company Knowledge
+description: Indexes internal documents into a vector store and answers questions over them, with PII redaction.
+---
+
+<DocsBaseSwitcher base="mastra" agent="company-knowledge" />
+
+<AgentPreview
+  agent="company-knowledge"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "query",
+      label: "Question",
+      placeholder: "What's our policy on refund requests over $500?",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Company Knowledge Agent** answers questions over your internal documents —
+issues, wiki pages, notes. It indexes them into a vector store, searches the
+corpus first, and redacts personal data (emails, phone numbers, SSNs, card
+numbers, API keys) from responses. Reach for it to build an internal "ask the
+company" assistant.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/company-knowledge
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @libsql/client @ai-sdk/openai ai
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/company-knowledge/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/company-knowledge/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/company-knowledge/lib/pii.ts"
+  title="lib/pii.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/company-knowledge/lib/vector-store.ts"
+  title="lib/vector-store.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/company-knowledge/tools/index_document.ts"
+  title="tools/index_document.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/company-knowledge/tools/search_knowledge.ts"
+  title="tools/search_knowledge.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts                 # Agent definition (model + config)
+├── instructions.md           # Corpus-first, PII-safe instructions
+├── lib/
+│   ├── pii.ts                # PII redaction helper
+│   └── vector-store.ts       # libSQL vector store + embeddings
+└── tools/
+    ├── index_document.ts     # Add a document to the corpus
+    └── search_knowledge.ts   # Search the corpus (redacted)
+```
+
+## Customization
+
+- **Connect sources.** Feed `index_document` from Linear, Notion, or your wiki —
+  on a schedule for fresh data.
+- **Swap the vector store.** Replace `lib/vector-store.ts` with pgvector/Neon,
+  Pinecone, or Qdrant.
+- **Tune redaction.** Edit the patterns in `lib/pii.ts` for your data.
+- **Swap the model.** Edit `config.ts`.

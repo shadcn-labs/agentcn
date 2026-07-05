@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Mastra agent that looks up current weather for a location via the Open-Meteo API.",
+  "files": [
+    {
+      "content": "import { agentConfig } from '@mastra/core/agent'\nimport memory from './memory'\n\nexport default agentConfig({\n  model: 'anthropic/claude-haiku-4-5',\n  memory,\n})\n",
+      "path": "config.ts",
+      "target": "config.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a helpful weather assistant that provides accurate weather information and can help planning activities based on the weather.\n\nYour primary function is to help users get weather details for specific locations. When responding:\n- Always ask for a location if none is provided\n- If the location name isn't in English, please translate it\n- If giving a location with multiple parts (e.g. \"New York, NY\"), use the most relevant part (e.g. \"New York\")\n- Include relevant details like humidity, wind conditions, and precipitation\n- Keep responses concise but informative\n- If the user asks for activities and provides the weather forecast, suggest activities based on the weather forecast.\n- If the user asks for activities, respond in the format they request.\n\nUse the get_weather tool to fetch current weather data.",
+      "path": "instructions.md",
+      "target": "instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\n\ninterface GeocodingResponse {\n  results: {\n    latitude: number\n    longitude: number\n    name: string\n  }[]\n}\n\ninterface WeatherResponse {\n  current: {\n    time: string\n    temperature_2m: number\n    apparent_temperature: number\n    relative_humidity_2m: number\n    wind_speed_10m: number\n    wind_gusts_10m: number\n    weather_code: number\n  }\n}\n\nexport default createTool({\n  id: 'get_weather',\n  description: 'Get current weather for a location',\n  inputSchema: z.object({\n    location: z.string().describe('City name'),\n  }),\n  outputSchema: z.object({\n    temperature: z.number(),\n    feelsLike: z.number(),\n    humidity: z.number(),\n    windSpeed: z.number(),\n    windGust: z.number(),\n    conditions: z.string(),\n    location: z.string(),\n  }),\n  execute: async (inputData) => {\n    const { location } = inputData\n    const geocodingUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1`\n    const geocodingResponse = await fetch(geocodingUrl)\n    const geocodingData = (await geocodingResponse.json()) as GeocodingResponse\n\n    if (!geocodingData.results?.[0]) {\n      throw new Error(`Location '${location}' not found`)\n    }\n\n    const { latitude, longitude, name } = geocodingData.results[0]\n\n    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,weather_code`\n\n    const response = await fetch(weatherUrl)\n    const data = (await response.json()) as WeatherResponse\n\n    return {\n      temperature: data.current.temperature_2m,\n      feelsLike: data.current.apparent_temperature,\n      humidity: data.current.relative_humidity_2m,\n      windSpeed: data.current.wind_speed_10m,\n      windGust: data.current.wind_gusts_10m,\n      conditions: getWeatherCondition(data.current.weather_code),\n      location: name,\n    }\n  },\n})\n\nfunction getWeatherCondition(code: number): string {\n  const conditions: Record<number, string> = {\n    0: 'Clear sky',\n    1: 'Mainly clear',\n    2: 'Partly cloudy',\n    3: 'Overcast',\n    45: 'Foggy',\n    48: 'Depositing rime fog',\n    51: 'Light drizzle',\n    53: 'Moderate drizzle',\n    55: 'Dense drizzle',\n    56: 'Light freezing drizzle',\n    57: 'Dense freezing drizzle',\n    61: 'Slight rain',\n    63: 'Moderate rain',\n    65: 'Heavy rain',\n    66: 'Light freezing rain',\n    67: 'Heavy freezing rain',\n    71: 'Slight snow fall',\n    73: 'Moderate snow fall',\n    75: 'Heavy snow fall',\n    77: 'Snow grains',\n    80: 'Slight rain showers',\n    81: 'Moderate rain showers',\n    82: 'Violent rain showers',\n    85: 'Slight snow showers',\n    86: 'Heavy snow showers',\n    95: 'Thunderstorm',\n    96: 'Thunderstorm with slight hail',\n    99: 'Thunderstorm with heavy hail',\n  }\n  return conditions[code] || 'Unknown'\n}",
+      "path": "tools/get_weather.ts",
+      "target": "tools/get_weather.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createWorkflow, createStep } from '@mastra/core/workflows'\nimport { z } from 'zod'\n\nconst fetchWeather = createStep({\n  id: 'fetch-weather',\n  description: 'Fetches current weather for a given location',\n  inputSchema: z.object({\n    location: z.string(),\n  }),\n  outputSchema: z.object({\n    temperature: z.number(),\n    feelsLike: z.number(),\n    humidity: z.number(),\n    windSpeed: z.number(),\n    windGust: z.number(),\n    conditions: z.string(),\n    location: z.string(),\n  }),\n  execute: async ({ inputData, mastra }) => {\n    const agent = mastra?.getAgent('weatherAgent')\n    const response = await agent?.generate(\n      `What is the current weather in ${inputData.location}? Use the get_weather tool.`,\n    )\n    const weatherData = JSON.parse(response?.text || '{}')\n    return {\n      temperature: weatherData.temperature ?? 0,\n      feelsLike: weatherData.feelsLike ?? 0,\n      humidity: weatherData.humidity ?? 0,\n      windSpeed: weatherData.windSpeed ?? 0,\n      windGust: weatherData.windGust ?? 0,\n      conditions: weatherData.conditions ?? 'Unknown',\n      location: weatherData.location ?? inputData.location,\n    }\n  },\n})\n\nconst planActivities = createStep({\n  id: 'plan-activities',\n  description: 'Suggests activities based on weather conditions',\n  inputSchema: z.object({\n    temperature: z.number(),\n    feelsLike: z.number(),\n    humidity: z.number(),\n    windSpeed: z.number(),\n    windGust: z.number(),\n    conditions: z.string(),\n    location: z.string(),\n  }),\n  outputSchema: z.object({\n    location: z.string(),\n    temperature: z.number(),\n    conditions: z.string(),\n    activities: z.string(),\n  }),\n  execute: async ({ inputData, mastra }) => {\n    const agent = mastra?.getAgent('weatherAgent')\n    const response = await agent?.generate(\n      `Suggest 3-5 outdoor and indoor activities for the following weather in ${inputData.location}: ${inputData.conditions}, ${inputData.temperature}°C (feels like ${inputData.feelsLike}°C), humidity ${inputData.humidity}%, wind ${inputData.windSpeed} km/h. Provide brief, practical suggestions.`,\n    )\n    return {\n      location: inputData.location,\n      temperature: inputData.temperature,\n      conditions: inputData.conditions,\n      activities: response?.text || 'No suggestions available.',\n    }\n  },\n})\n\nexport const weatherWorkflow = createWorkflow({\n  id: 'weather-workflow',\n  inputSchema: z.object({\n    location: z.string(),\n  }),\n  outputSchema: z.object({\n    location: z.string(),\n    temperature: z.number(),\n    conditions: z.string(),\n    activities: z.string(),\n  }),\n})\n  .then(fetchWeather)\n  .then(planActivities)\n\nweatherWorkflow.commit()\n",
+      "path": "workflows/weather-workflow.ts",
+      "target": "workflows/weather-workflow.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { Memory } from '@mastra/memory'\n\nexport default new Memory({\n  options: {\n    lastMessages: 10,\n  },\n})\n",
+      "path": "memory.ts",
+      "target": "memory.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "weather",
+  "title": "Weather Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@mastra/core",
+    "@mastra/memory"
+  ]
+}

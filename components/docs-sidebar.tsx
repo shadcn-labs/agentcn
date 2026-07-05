@@ -14,19 +14,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ROUTES } from "@/constants/routes";
+import { TOP_LEVEL_SECTIONS } from "@/constants/site";
 import { EXCLUDED_SECTIONS, isAgentsFolder, PAGES_NEW } from "@/lib/docs";
 import { getAllPagesFromFolder, getPagesFromFolder } from "@/lib/page-tree";
 import type { source } from "@/lib/source";
-
-const TOP_LEVEL_SECTIONS = [
-  { href: ROUTES.DOCS, name: "Introduction" },
-  { href: ROUTES.DOCS_INSTALLATION, name: "Installation" },
-  { href: ROUTES.DOCS_AGENTS, name: "Agents" },
-  { href: ROUTES.DOCS_MCP, name: "MCP" },
-  { href: ROUTES.DOCS_REGISTRY, name: "Registry" },
-  { href: ROUTES.LLMS, name: "llms.txt" },
-  { href: ROUTES.DOCS_CHANGELOG, name: "Changelog" },
-];
 
 const SidebarMenuItemLink = ({
   href,

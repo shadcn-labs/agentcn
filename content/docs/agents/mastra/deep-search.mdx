@@ -1,0 +1,164 @@
+---
+title: Deep Search
+description: A multi-agent deep search system that researches questions by clarifying intent, planning queries, evaluating results, and synthesizing answers.
+---
+
+<DocsBaseSwitcher base="mastra" agent="deep-search" />
+
+<AgentPreview
+  agent="deep-search"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "initialQuery",
+      label: "Research question",
+      placeholder:
+        "What pricing models do the top 3 observability vendors use?",
+      type: "textarea",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Deep Search Agent** is a multi-agent system that researches questions through an iterative process. It clarifies user intent, plans search queries, evaluates results for completeness, and synthesizes a comprehensive answer. The system uses 4 specialized agents working together in a workflow to produce well-researched, cited answers.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/deep-search
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/libsql
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/deep-search/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/subagents/intent-clarifier/config.ts"
+  title="subagents/intent-clarifier/config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/subagents/intent-clarifier/instructions.md"
+  title="subagents/intent-clarifier/instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/subagents/research-planner/config.ts"
+  title="subagents/research-planner/config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/subagents/research-planner/instructions.md"
+  title="subagents/research-planner/instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/subagents/search-result-evaluator/config.ts"
+  title="subagents/search-result-evaluator/config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/subagents/search-result-evaluator/instructions.md"
+  title="subagents/search-result-evaluator/instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/subagents/answerer/config.ts"
+  title="subagents/answerer/config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/subagents/answerer/instructions.md"
+  title="subagents/answerer/instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/skills/research/SKILL.md"
+  title="skills/research/SKILL.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/deep-search/workflows/deep-search.ts"
+  title="workflows/deep-search.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts                          # Main agent config with workflow
+├── instructions.md                    # Main agent instructions
+├── subagents/
+│   ├── intent-clarifier/
+│   │   ├── config.ts                  # Intent clarifier config
+│   │   └── instructions.md            # Generates clarifying questions
+│   ├── research-planner/
+│   │   ├── config.ts                  # Research planner config
+│   │   └── instructions.md            # Writes search queries
+│   ├── search-result-evaluator/
+│   │   ├── config.ts                  # Search evaluator config
+│   │   └── instructions.md            # Evaluates result quality
+│   └── answerer/
+│       ├── config.ts                  # Answerer config
+│       └── instructions.md            # Synthesizes final answer
+├── skills/
+│   └── research/
+│       └── SKILL.md                   # Research procedure
+└── workflows/
+    └── deep-search.ts                 # Orchestrates all agents
+```
+
+## How It Works
+
+1. **Clarify Intent** - The intent-clarifier agent asks 3 clarifying questions to understand the user's needs
+2. **Plan Queries** - The research-planner agent generates 3-5 search queries based on the clarified intent
+3. **Search** - The system executes searches using Bright Data SERP API
+4. **Evaluate** - The search-result-evaluator agent checks if results are sufficient
+5. **Iterate** - If results are insufficient, the system loops back to step 2 (up to 4 iterations)
+6. **Answer** - The answerer agent synthesizes a comprehensive, cited answer
+
+## Environment Variables
+
+```bash
+BRIGHTDATA_API_KEY=       # Required: Bright Data API key
+BRIGHTDATA_SERP_ZONE=     # Optional: Bright Data SERP zone (defaults to "serp_api")
+```
+
+## Customization
+
+- **Search provider.** Replace the `performSearch` function in `workflows/deep-search.ts` with another provider like [Exa](https://exa.ai), SerpAPI, or Google Custom Search.
+- **Swap models.** Edit the `model` field in each subagent's `config.ts`.
+- **Adjust iterations.** Modify the loop limit in `workflows/deep-search.ts` (currently 4).
+- **Add more agents.** Create new subagents under `subagents/` and wire them into the workflow.

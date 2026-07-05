@@ -27,7 +27,7 @@
       "type": "registry:file"
     },
     {
-      "content": "import path from 'node:path'\n\n/** Root of the sandbox. Everything the agent reads/writes stays under here. */\nexport const WORKSPACE = path.resolve(process.env.WORKSPACE_DIR ?? 'workspace')\n\n/** Resolves a user-supplied path and refuses anything that escapes the sandbox. */\nexport function resolveInWorkspace(relativePath: string): string {\n  const resolved = path.resolve(WORKSPACE, relativePath)\n  if (resolved !== WORKSPACE && !resolved.startsWith(WORKSPACE + path.sep)) {\n    throw new Error(`Path escapes the workspace: ${relativePath}`)\n  }\n  return resolved\n}\n",
+      "content": "import path from 'node:path'\n\nexport const WORKSPACE = path.resolve(process.env.WORKSPACE_DIR ?? 'workspace')\n\nexport function resolveInWorkspace(relativePath: string): string {\n  const resolved = path.resolve(WORKSPACE, relativePath)\n  if (resolved !== WORKSPACE && !resolved.startsWith(WORKSPACE + path.sep)) {\n    throw new Error(`Path escapes the workspace: ${relativePath}`)\n  }\n  return resolved\n}\n",
       "path": "lib/workspace.ts",
       "target": "lib/workspace.ts",
       "type": "registry:file"

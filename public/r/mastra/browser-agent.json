@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "A browser-operating agent that interacts with live web pages using Playwright-based tools with accessibility-tree ref ids.",
+  "files": [
+    {
+      "content": "import { agentConfig } from '@mastra/core/agent'\nimport { AgentBrowser, AgentBrowserThreadManager } from '@mastra/agent-browser'\nimport type { AgentBrowserThreadManagerConfig } from '@mastra/agent-browser'\nimport { openai } from '@ai-sdk/openai'\nimport { createRequire } from 'node:module'\nimport { dirname, join, normalize } from 'node:path'\nimport { spawn } from 'node:child_process'\nimport 'playwright-chromium'\n\nconst require = createRequire(import.meta.url)\n\nlet installDepsPromise: Promise<void> | undefined\n\nfunction shouldInstallLinuxDeps() {\n  return (\n    process.platform === 'linux' &&\n    typeof process.getuid === 'function' &&\n    process.getuid() === 0 &&\n    process.env.BROWSER_SKIP_INSTALL_DEPS !== 'true' &&\n    !process.env.BROWSER_CDP_URL\n  )\n}\n\nfunction resolvePlaywrightCli() {\n  const packageEntry = require.resolve('playwright-chromium')\n  const cliPath = normalize(join(dirname(packageEntry), 'cli.js'))\n\n  if (!cliPath.endsWith('/node_modules/playwright-chromium/cli.js')) {\n    throw new Error(`Unexpected playwright-chromium CLI path: ${cliPath}`)\n  }\n\n  return cliPath\n}\n\nasync function installPlaywrightLinuxDeps() {\n  if (!shouldInstallLinuxDeps()) return\n\n  installDepsPromise ??= new Promise<void>((resolve, reject) => {\n    const child = spawn(process.execPath, [resolvePlaywrightCli(), 'install-deps', 'chromium'], {\n      shell: false,\n      stdio: 'inherit',\n    })\n\n    const timeout = setTimeout(() => {\n      installDepsPromise = undefined\n      child.kill('SIGTERM')\n      reject(new Error('Timed out installing Playwright Chromium system dependencies'))\n    }, 120_000)\n\n    child.once('error', error => {\n      clearTimeout(timeout)\n      installDepsPromise = undefined\n      reject(error)\n    })\n\n    child.once('exit', code => {\n      clearTimeout(timeout)\n      if (code === 0) {\n        resolve()\n      } else {\n        installDepsPromise = undefined\n        reject(new Error(`Failed to install Playwright Chromium system dependencies: exit code ${code}`))\n      }\n    })\n  })\n\n  await installDepsPromise\n}\n\nclass RuntimeDepsThreadManager extends AgentBrowserThreadManager {\n  protected override async createSession(threadId: string) {\n    await installPlaywrightLinuxDeps()\n    return super.createSession(threadId)\n  }\n}\n\nconst browser = new AgentBrowser({\n  headless: process.env.BROWSER_HEADLESS !== 'false',\n  ...(process.env.BROWSER_CDP_URL ? { cdpUrl: process.env.BROWSER_CDP_URL, scope: 'shared' as const } : {}),\n  createThreadManager: (config: AgentBrowserThreadManagerConfig) => new RuntimeDepsThreadManager(config),\n})\n\nexport default agentConfig({\n  model: 'mastra/openai/gpt-5-mini',\n  browser,\n  defaultOptions: {\n    maxSteps: 100,\n  },\n  tools: {\n    web_search: openai.tools.webSearch({}),\n  },\n})\n",
+      "path": "config.ts",
+      "target": "config.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a browser-operating agent. You interact with live web pages using Playwright-based tools that target elements by accessibility-tree ref ids.\n\n## Your tools\n\n**Navigation:** browser_goto (open URL), browser_back (go back), browser_tabs (list/switch tabs), browser_close (close tab).\n\n**Observation:** browser_snapshot (get page accessibility tree with ref ids — this is your primary way to \"see\" the page), browser_screenshot (visual capture).\n\n**Interaction:** browser_click (click by ref), browser_type (type into input by ref), browser_press (press key combo), browser_select (select dropdown option), browser_scroll (scroll up/down), browser_hover (hover element), browser_drag (drag between refs).\n\n**Other:** browser_wait (pause for ms), browser_dialog (accept/dismiss dialog), browser_evaluate (run arbitrary JS — escape hatch only).\n\n**Search:** web_search (quick factual lookup without opening a browser).\n\n## Core workflow\n\n1. **Decide: browser or search?** For quick factual questions (\"what's the capital of France?\"), use web_search. For anything requiring page interaction, form filling, scraping structured data, or verifying live page state, use the browser.\n\n2. **Navigate.** Call browser_goto with the target URL.\n\n3. **Snapshot.** Always call browser_snapshot before interacting. The snapshot returns the accessibility tree with ref ids like [ref=12]. You MUST use these refs for click, type, select, etc.\n\n4. **Interact.** Click buttons, fill forms, select dropdowns using the ref ids from the snapshot.\n\n5. **Re-snapshot after actions.** The page state changes after clicks and typing. Take a new snapshot to see the updated state before proceeding.\n\n6. **Verify.** Before reporting results, take a final snapshot (or screenshot) to confirm the page shows what you expect. Never report data you haven't verified on the page.\n\n## Rules\n\n- **Snapshot before every interaction.** Never click or type without a recent snapshot — refs go stale after page changes.\n- **One action at a time.** Click one thing, then snapshot again. Don't chain 5 clicks without checking the result.\n- **Use web_search as a fallback.** If the browser can't load a page or you hit a wall, fall back to web_search for the information.\n- **Stop on blockers.** If you hit a CAPTCHA, login wall, paywall, or bot detection, say so clearly and explain what you saw. Don't retry endlessly.\n- **Use browser_evaluate sparingly.** Only for tasks that can't be done through the standard tools (e.g. reading a computed CSS value). Prefer snapshot + click/type.\n- **Cite URLs.** Always include the URLs you visited in your final answer.\n- **Be concise.** Report what you found and what you did, not a play-by-play of every snapshot.\n",
+      "path": "instructions.md",
+      "target": "instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { Memory } from '@mastra/memory'\n\nexport default new Memory({\n  options: {\n    lastMessages: 10,\n  },\n})\n",
+      "path": "memory.ts",
+      "target": "memory.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "browser-agent",
+  "title": "Browser Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@mastra/core",
+    "@mastra/agent-browser",
+    "@mastra/libsql",
+    "@mastra/memory",
+    "@ai-sdk/openai",
+    "playwright-chromium"
+  ]
+}

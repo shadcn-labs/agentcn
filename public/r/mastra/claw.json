@@ -1,0 +1,72 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Mastra agent that operates a sandboxed workspace — read/write files and run shell commands — to finish multi-step tasks.",
+  "files": [
+    {
+      "content": "import { agentConfig } from '@mastra/core/agent'\n\nexport default agentConfig({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "config.ts",
+      "target": "config.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are Claw, an autonomous personal assistant that actively operates a computer to complete multi-step tasks. You have a sandboxed workspace (filesystem + shell), a full browser, web search, and reusable skills.\n\n## Your capabilities\n\n**Workspace filesystem** (all paths relative to workspace root):\n- read_file — read a file. Always read before editing.\n- write_file — create or overwrite a file.\n- edit_file — surgical string replacement in an existing file. Requires reading the file first.\n- list_files — list directory contents as a tree.\n- delete_file — delete a file or directory.\n- file_stat — check if a path exists and get metadata.\n- mkdir — create a directory.\n- grep — regex search across files. Use this to find code, config values, or text patterns.\n\n**Sandbox shell** (CWD is the workspace root):\n- run_shell — run a shell command. Use for: installing packages, building, running scripts, git operations, curl, jq, etc.\n\n**Quick lookup:**\n- web_search — fast factual search without opening a browser.\n\n## How to work\n\n1. **Plan briefly, then act.** When given a task, think for 2–3 sentences about the approach, then start executing. Don't ask clarifying questions unless the task is genuinely ambiguous — prefer making progress and adjusting.\n\n2. **Check skills first.** If the task matches an available skill, follow it step-by-step instead of improvising. Skills encode tested procedures.\n\n3. **Read before you write.** Never edit or overwrite a file without reading it first. Never claim a file exists without checking. Use list_files to understand project structure before diving in.\n\n4. **Workspace for local work, browser for the web.**\n   - Writing code, editing configs, running builds → workspace filesystem + shell.\n   - Filling out a web form, scraping a page, navigating a web app → browser tools.\n   - Quick factual question → web_search (no browser needed).\n\n5. **Shell is powerful.** Use run_shell for anything you'd do in a terminal: git, npm/pnpm, curl, python, jq, awk, etc. Pipe commands together. Don't manually parse what a CLI can do for you.\n\n6. **Verify your work.** After making changes, confirm they worked:\n   - Wrote code? Read it back or run the linter/build.\n   - Ran a command? Check the exit code and output.\n   - Filled a form? Snapshot the confirmation page.\n\n7. **Summarize at the end.** When the task is done, tell the user:\n   - What you did (briefly).\n   - Where the artifacts are (file paths, URLs, etc.).\n   - Anything that needs follow-up.",
+      "path": "instructions.md",
+      "target": "instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { readFile } from 'node:fs/promises'\nimport { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\nimport { resolveInWorkspace } from '../lib/workspace'\n\nexport default createTool({\n  id: 'read_file',\n  description: 'Reads a UTF-8 file from the workspace.',\n  inputSchema: z.object({\n    path: z.string(),\n  }),\n  execute: async (inputData) => {\n    const { path: filePath } = inputData\n    const content = await readFile(resolveInWorkspace(filePath), 'utf-8')\n    return { content, path: filePath }\n  },\n})\n",
+      "path": "tools/read_file.ts",
+      "target": "tools/read_file.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { mkdir, writeFile } from 'node:fs/promises'\nimport { dirname } from 'node:path'\nimport { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\nimport { resolveInWorkspace } from '../lib/workspace'\n\nexport default createTool({\n  id: 'write_file',\n  description: 'Writes (or overwrites) a UTF-8 file in the workspace.',\n  inputSchema: z.object({\n    path: z.string(),\n    content: z.string(),\n  }),\n  execute: async (inputData) => {\n    const { path: filePath, content } = inputData\n    const target = resolveInWorkspace(filePath)\n    await mkdir(dirname(target), { recursive: true })\n    await writeFile(target, content, 'utf-8')\n    return { bytes: content.length, path: filePath }\n  },\n})\n",
+      "path": "tools/write_file.ts",
+      "target": "tools/write_file.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { exec } from 'node:child_process'\nimport { promisify } from 'node:util'\nimport { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\nimport { WORKSPACE } from '../lib/workspace'\n\nconst run = promisify(exec)\n\nexport default createTool({\n  id: 'run_shell',\n  description:\n    'Runs a shell command inside the workspace directory and returns its stdout/stderr.',\n  inputSchema: z.object({\n    command: z.string(),\n  }),\n  execute: async (inputData) => {\n    const { command } = inputData\n    try {\n      const { stdout, stderr } = await run(command, {\n        cwd: WORKSPACE,\n        timeout: 60_000,\n      })\n      return { stderr, stdout }\n    } catch (error) {\n      return { error: String(error) }\n    }\n  },\n})\n",
+      "path": "tools/run_shell.ts",
+      "target": "tools/run_shell.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { readFile, writeFile } from 'node:fs/promises'\nimport { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\nimport { resolveInWorkspace } from '../lib/workspace'\n\nexport default createTool({\n  id: 'edit_file',\n  description:\n    'Replaces an exact string match in an existing file. Fails if oldContent is not found.',\n  inputSchema: z.object({\n    path: z.string().describe('Relative path to the file'),\n    oldContent: z.string().describe('Exact string to find'),\n    newContent: z.string().describe('String to replace it with'),\n  }),\n  execute: async (inputData) => {\n    const { path: filePath, oldContent, newContent } = inputData\n    const target = resolveInWorkspace(filePath)\n    const content = await readFile(target, 'utf-8')\n    if (!content.includes(oldContent)) {\n      throw new Error(`oldContent not found in ${filePath}`)\n    }\n    await writeFile(target, content.replace(oldContent, newContent), 'utf-8')\n    return { success: true, path: filePath }\n  },\n})\n",
+      "path": "tools/edit_file.ts",
+      "target": "tools/edit_file.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { readdir, stat } from 'node:fs/promises'\nimport { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\nimport { resolveInWorkspace } from '../lib/workspace'\n\nexport default createTool({\n  id: 'list_files',\n  description: 'Lists files and subdirectories in a workspace directory.',\n  inputSchema: z.object({\n    dirPath: z\n      .string()\n      .optional()\n      .describe('Relative directory path (defaults to workspace root)'),\n  }),\n  outputSchema: z.object({\n    files: z.array(\n      z.object({\n        name: z.string(),\n        type: z.enum(['file', 'directory']),\n        size: z.number(),\n      }),\n    ),\n  }),\n  execute: async (inputData) => {\n    const { dirPath = '.' } = inputData\n    const target = resolveInWorkspace(dirPath)\n    const entries = await readdir(target, { withFileTypes: true })\n    const result = await Promise.all(\n      entries.map(async (entry) => {\n        const fullPath = `${target}/${entry.name}`\n        const s = await stat(fullPath)\n        return {\n          name: entry.name,\n          type: entry.isDirectory() ? 'directory' as const : 'file' as const,\n          size: s.size,\n        }\n      }),\n    )\n    return { files: result }\n  },\n})\n",
+      "path": "tools/list_files.ts",
+      "target": "tools/list_files.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { unlink } from 'node:fs/promises'\nimport { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\nimport { resolveInWorkspace } from '../lib/workspace'\n\nexport default createTool({\n  id: 'delete_file',\n  description: 'Deletes a file from the workspace.',\n  inputSchema: z.object({\n    path: z.string().describe('Relative path to the file to delete'),\n  }),\n  execute: async (inputData) => {\n    const { path: filePath } = inputData\n    const target = resolveInWorkspace(filePath)\n    await unlink(target)\n    return { success: true, path: filePath }\n  },\n})\n",
+      "path": "tools/delete_file.ts",
+      "target": "tools/delete_file.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { readdir, readFile, stat } from 'node:fs/promises'\nimport { join, relative } from 'node:path'\nimport { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\nimport { resolveInWorkspace } from '../lib/workspace'\n\nasync function walk(dir: string): Promise<string[]> {\n  const entries = await readdir(dir, { withFileTypes: true })\n  const files: string[] = []\n  for (const entry of entries) {\n    const fullPath = join(dir, entry.name)\n    if (entry.isDirectory()) {\n      if (entry.name === 'node_modules' || entry.name === '.git') continue\n      files.push(...(await walk(fullPath)))\n    } else {\n      files.push(fullPath)\n    }\n  }\n  return files\n}\n\nexport default createTool({\n  id: 'grep',\n  description: 'Searches for a regex pattern across files in the workspace.',\n  inputSchema: z.object({\n    pattern: z.string().describe('Regular expression pattern to search for'),\n    dirPath: z\n      .string()\n      .optional()\n      .describe('Relative directory to search in (defaults to workspace root)'),\n  }),\n  outputSchema: z.object({\n    matches: z.array(\n      z.object({\n        file: z.string(),\n        line: z.number(),\n        content: z.string(),\n      }),\n    ),\n  }),\n  execute: async (inputData) => {\n    const { pattern, dirPath = '.' } = inputData\n    const root = resolveInWorkspace(dirPath)\n    const re = new RegExp(pattern, 'gi')\n    const files = await walk(root)\n    const matches: Array<{ file: string; line: number; content: string }> = []\n    for (const filePath of files) {\n      try {\n        const content = await readFile(filePath, 'utf-8')\n        const lines = content.split('\\n')\n        for (let i = 0; i < lines.length; i++) {\n          if (re.test(lines[i])) {\n            matches.push({\n              file: relative(process.cwd(), filePath),\n              line: i + 1,\n              content: lines[i],\n            })\n          }\n          re.lastIndex = 0\n        }\n      } catch {\n        // skip unreadable files\n      }\n    }\n    return { matches }\n  },\n})\n",
+      "path": "tools/grep.ts",
+      "target": "tools/grep.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import path from 'node:path'\n\nexport const WORKSPACE = path.resolve(process.env.WORKSPACE_DIR ?? 'workspace')\n\nexport function resolveInWorkspace(relativePath: string): string {\n  const resolved = path.resolve(WORKSPACE, relativePath)\n  if (resolved !== WORKSPACE && !resolved.startsWith(WORKSPACE + path.sep)) {\n    throw new Error(`Path escapes the workspace: ${relativePath}`)\n  }\n  return resolved\n}\n",
+      "path": "lib/workspace.ts",
+      "target": "lib/workspace.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "claw",
+  "title": "Claw Autonomous Assistant",
+  "type": "registry:block",
+  "dependencies": [
+    "@mastra/core"
+  ]
+}

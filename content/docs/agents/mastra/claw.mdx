@@ -1,0 +1,115 @@
+---
+title: Claw Autonomous Assistant
+description: Operates a sandboxed workspace — read/write files and run shell commands — to finish multi-step tasks.
+---
+
+<DocsBaseSwitcher base="mastra" agent="claw" />
+
+<AgentPreview
+  agent="claw"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "task",
+      label: "Task",
+      placeholder: "Scaffold a Vite + React app in ./app and run the build.",
+      type: "textarea",
+    },
+  ]}
+/>
+
+## Summary
+
+**Claw** is an autonomous assistant that operates a sandboxed workspace to finish
+multi-step tasks. It reads and writes files, runs shell commands scoped to a
+workspace directory, and follows reusable skills. Reach for it as a base for
+coding assistants, repo automation, or any agent that needs a real filesystem.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/claw
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource src="registry/mastra/claw/config.ts" title="config.ts" />
+
+<ComponentSource
+  src="registry/mastra/claw/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/claw/lib/workspace.ts"
+  title="lib/workspace.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/claw/tools/read_file.ts"
+  title="tools/read_file.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/claw/tools/write_file.ts"
+  title="tools/write_file.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/claw/tools/run_shell.ts"
+  title="tools/run_shell.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/claw/skills/workspace/SKILL.md"
+  title="skills/workspace/SKILL.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent definition (model + config)
+├── instructions.md       # Autonomous, sandbox-safe instructions
+├── lib/
+│   └── workspace.ts      # Sandbox root + path guard
+├── tools/
+│   ├── read_file.ts      # Read a workspace file
+│   ├── write_file.ts     # Write a workspace file
+│   └── run_shell.ts      # Run a command in the workspace
+└── skills/
+    └── workspace/
+        └── SKILL.md      # Plan / inspect / act / verify procedure
+```
+
+## Customization
+
+- **Harden the sandbox.** Run `run_shell` inside a container or jail; the path
+  guard only constrains file paths, not arbitrary commands.
+- **Add web browsing.** Pair with the [Browser Agent](/docs/agents/mastra/browser-agent)
+  tools for tasks that need the web.
+- **Add skills.** Drop more `SKILL.md` procedures under `skills/`.
+- **Swap the model.** Edit `config.ts`.

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Mastra agent that answers questions about libraries and APIs by searching the live web and citing sources.",
+  "files": [
+    {
+      "content": "import { agentConfig } from '@mastra/core/agent'\n\nexport default agentConfig({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "config.ts",
+      "target": "config.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a documentation expert and technical research assistant. You give precise, well-sourced answers by searching the web before responding.\n\nYou have a Mastra tool named web_search. Use it for documentation, API behavior, changelogs, version differences, pricing, deprecation status, and recent announcements. Do not say you lack web access for those questions; call web_search first and cite the sources it returns.\n\n## Workflow\n\n1. **Understand the question.** Identify the library, API, framework, or topic. Note the version if the user mentions one.\n2. **Search first.** Always use the available web search tool before answering anything that depends on current docs, API behavior, version differences, changelogs, pricing, deprecation status, or recent announcements. Run 2–3 targeted queries (e.g. \"next.js app router middleware\" rather than \"next.js docs\"). If the first search doesn't yield authoritative results, refine and search again — up to 4 total searches per question.\n3. **Evaluate sources.** Prefer results in this order:\n   - Official documentation and reference pages\n   - Release notes, changelogs, and migration guides\n   - Primary blog posts from the maintainer or company\n   - Well-regarded community resources (MDN, StackOverflow accepted answers, reputable blogs)\n   - Avoid SEO farms, AI-generated aggregator sites, and undated content.\n4. **Synthesize and answer.** Lead with the direct answer in 1–2 sentences. Then provide supporting detail: code examples, version-specific caveats, and links.\n\n## Output format\n\n**Answer**\nThe concise answer (1–2 sentences).\n\n**Detail**\nExpanded explanation with inline citations as [Source Title](url). Include code snippets if the question is about APIs or configuration — use the exact syntax from the docs, not your own invention.\n\n**Sources**\nA numbered list of every source you cited:\n1. [Source Title](url) — one-line description of what this source covers.\n2. ...\n\n## Hard rules\n\n- Never fabricate URLs, version numbers, API signatures, or quotes.\n- If sources disagree, present both positions with their respective sources and state which appears more authoritative and why.\n- If you cannot find a reliable source after searching, say \"I couldn't find an authoritative source for this\" — do not guess.\n- When answering about a specific version, confirm the version in the search results before citing.\n- Keep answers concise. A good answer is 100–300 words in the Detail section, not 1000.",
+      "path": "instructions.md",
+      "target": "instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { Memory } from '@mastra/memory'\n\nexport default new Memory({\n  options: {\n    lastMessages: 20,\n  },\n})\n",
+      "path": "memory.ts",
+      "target": "memory.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\n\nconst trimTrailingSlash = (value: string) => (value.endsWith('/') ? value.slice(0, -1) : value)\n\nconst getGatewayUrl = () => trimTrailingSlash(process.env.MASTRA_GATEWAY_URL ?? 'https://gateway-api.mastra.ai')\n\nconst getGatewayChatCompletionsUrl = () => {\n  const gatewayUrl = getGatewayUrl()\n\n  if (gatewayUrl.endsWith('/v1')) {\n    return `${gatewayUrl}/chat/completions`\n  }\n\n  return `${gatewayUrl}/v1/chat/completions`\n}\n\nconst sourceSchema = z.object({\n  title: z.string(),\n  url: z.string(),\n})\n\ntype GatewayAnnotation = {\n  type?: string\n  url_citation?: {\n    title?: string\n    url?: string\n  }\n}\n\ntype GatewayResponse = {\n  choices?: Array<{\n    message?: {\n      content?: string | Array<{ type?: string; text?: string }>\n      annotations?: GatewayAnnotation[]\n    }\n  }>\n}\n\nconst parseContent = (content: string | Array<{ type?: string; text?: string }> | undefined) => {\n  if (typeof content === 'string') {\n    return content\n  }\n\n  if (Array.isArray(content)) {\n    return content\n      .map(part => (typeof part.text === 'string' ? part.text : ''))\n      .filter(Boolean)\n      .join('\\n')\n  }\n\n  return ''\n}\n\nconst parseSources = (annotations: GatewayAnnotation[] = []) => {\n  const seen = new Set<string>()\n\n  return annotations\n    .map(annotation => annotation.url_citation)\n    .filter((citation): citation is { title?: string; url?: string } => Boolean(citation?.url))\n    .map(citation => ({ title: citation.title ?? citation.url!, url: citation.url! }))\n    .filter(source => {\n      if (seen.has(source.url)) {\n        return false\n      }\n\n      seen.add(source.url)\n      return true\n    })\n}\n\nexport default createTool({\n  id: 'web_search',\n  description: 'Search the web through Mastra Gateway and return a concise answer with source URLs.',\n  inputSchema: z.object({\n    query: z.string().describe('A targeted web search query.'),\n  }),\n  outputSchema: z.object({\n    answer: z.string(),\n    sources: z.array(sourceSchema),\n  }),\n  execute: async (inputData) => {\n    const apiKey = process.env.MASTRA_GATEWAY_API_KEY\n\n    if (!apiKey) {\n      throw new Error('MASTRA_GATEWAY_API_KEY is required to use web_search.')\n    }\n\n    const response = await fetch(getGatewayChatCompletionsUrl(), {\n      method: 'POST',\n      headers: {\n        Authorization: `Bearer ${apiKey}`,\n        'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n        model: 'openai/gpt-5-mini',\n        messages: [\n          {\n            role: 'system',\n            content:\n              'Search the web for the user query. Return a concise factual summary and preserve source citations in the response metadata.',\n          },\n          {\n            role: 'user',\n            content: inputData.query,\n          },\n        ],\n        tools: [\n          {\n            type: 'openrouter:web_search',\n            search_context_size: 'medium',\n          },\n        ],\n      }),\n    })\n\n    if (!response.ok) {\n      throw new Error(`Gateway web search failed: ${response.status} ${response.statusText}`.trim())\n    }\n\n    const data = (await response.json()) as GatewayResponse\n    const message = data.choices?.[0]?.message\n\n    return {\n      answer: parseContent(message?.content),\n      sources: parseSources(message?.annotations),\n    }\n  },\n})",
+      "path": "tools/web_search.ts",
+      "target": "tools/web_search.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "docs-expert",
+  "title": "Docs Expert Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@mastra/core",
+    "@mastra/memory"
+  ]
+}

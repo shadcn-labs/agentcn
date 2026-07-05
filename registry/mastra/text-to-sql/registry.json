@@ -1,0 +1,15 @@
+{
+  "name": "text-to-sql",
+  "type": "registry:block",
+  "title": "Chat with Database Agent",
+  "description": "Mastra agent that introspects a database schema, converts questions to SQL, and runs read-only queries.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/introspect-database.ts", "type": "registry:file" },
+    { "path": "tools/execute-sql.ts", "type": "registry:file" },
+    { "path": "lib/db.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@libsql/client"]
+}

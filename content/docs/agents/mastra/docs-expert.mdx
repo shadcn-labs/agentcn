@@ -1,0 +1,91 @@
+---
+title: Docs Expert
+description: Answers questions about libraries and APIs by searching the live web and citing sources.
+---
+
+<DocsBaseSwitcher base="mastra" agent="docs-expert" />
+
+<AgentPreview
+  agent="docs-expert"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "query",
+      label: "Question",
+      placeholder: "How do I stream responses with the Vercel AI SDK?",
+      type: "textarea",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Docs Expert Agent** answers technical questions about libraries, APIs, and
+tools by searching the live web — preferring official documentation and citing
+every claim. Reach for it as a grounded "ask the docs" helper that returns
+copy-pasteable answers instead of hallucinated APIs.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/docs-expert
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/docs-expert/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/docs-expert/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/docs-expert/tools/web_search.ts"
+  title="tools/web_search.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts            # Agent definition (model + config)
+├── instructions.md      # Cite-your-sources answering instructions
+└── tools/
+    └── web_search.ts    # Web search via the Exa API
+```
+
+## Customization
+
+- **Swap the search provider.** Edit `web_search.ts` for Brave, Tavily, or a
+  docs-specific index.
+- **Constrain to your docs.** Restrict queries to a domain to build a
+  product-specific expert.
+- **Add page fetching.** Add a `scrape_url` tool so the agent reads full pages.
+- **Swap the model.** Edit `config.ts`.

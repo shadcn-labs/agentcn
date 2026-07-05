@@ -1,0 +1,93 @@
+---
+title: Customer Feedback Summary
+description: Retrieves, categorizes, and summarizes customer feedback into an executive report with recommendations.
+---
+
+<DocsBaseSwitcher base="mastra" agent="feedback-summary" />
+
+<AgentPreview
+  agent="feedback-summary"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "query",
+      label: "Request",
+      placeholder: "What are the critical issues from enterprise customers?",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Customer Feedback Summary Agent** answers questions about your customer
+feedback. It retrieves entries from your data source, categorizes them by theme
+and segment, and produces an executive summary with representative quotes and
+concrete recommendations. Reach for it to turn a backlog of reviews, tickets, or
+survey responses into something a team can act on.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/feedback-summary
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/feedback-summary/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/feedback-summary/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/feedback-summary/tools/get_feedback.ts"
+  title="tools/get_feedback.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent definition (model + config)
+├── instructions.md       # Retrieve / categorize / summarize instructions
+└── tools/
+    └── get_feedback.ts   # Paginated feedback retrieval
+```
+
+## Customization
+
+- **Connect your source.** Point `get_feedback` at your database, support desk,
+  or reviews API — keep the pagination + segment parameters.
+- **Change the categories.** Edit `instructions.md` to use your own taxonomy
+  (severity tiers, product areas, sentiment).
+- **Swap the model.** Edit `config.ts` — a larger model for nuanced
+  synthesis, a smaller one for speed.
+- **Add a scorer.** Track summary quality across runs to tune the prompt.

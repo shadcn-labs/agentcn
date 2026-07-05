@@ -1,0 +1,22 @@
+{
+  "name": "deep-search",
+  "type": "registry:block",
+  "title": "Deep Search Agent",
+  "description": "A multi-agent deep search system that researches questions by clarifying intent, planning queries, evaluating results, and synthesizing answers.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "subagents/intent-clarifier/config.ts", "type": "registry:file" },
+    { "path": "subagents/intent-clarifier/instructions.md", "type": "registry:file" },
+    { "path": "subagents/research-planner/config.ts", "type": "registry:file" },
+    { "path": "subagents/research-planner/instructions.md", "type": "registry:file" },
+    { "path": "subagents/search-result-evaluator/config.ts", "type": "registry:file" },
+    { "path": "subagents/search-result-evaluator/instructions.md", "type": "registry:file" },
+    { "path": "subagents/answerer/config.ts", "type": "registry:file" },
+    { "path": "subagents/answerer/instructions.md", "type": "registry:file" },
+    { "path": "skills/research/SKILL.md", "type": "registry:file" },
+    { "path": "workflows/deep-search.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/libsql"]
+}

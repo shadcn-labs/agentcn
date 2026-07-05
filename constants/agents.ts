@@ -1,6 +1,6 @@
 import { SITE } from "@/constants/site";
 
-export type FrameworkId = "eve" | "flue";
+export type FrameworkId = "eve" | "flue" | "mastra";
 
 export interface Framework {
   id: FrameworkId;
@@ -10,11 +10,13 @@ export interface Framework {
 export const FRAMEWORKS: readonly Framework[] = [
   { id: "eve", label: "Eve" },
   { id: "flue", label: "Flue" },
+  { id: "mastra", label: "Mastra" },
 ] as const;
 
 export const FRAMEWORK_LABEL: Record<FrameworkId, string> = {
   eve: "Eve",
   flue: "Flue",
+  mastra: "Mastra",
 };
 
 export type ChatMessage =
@@ -42,7 +44,7 @@ export interface Agent {
 const deepSearch: Agent = {
   description:
     "Researches a question, evaluates its own findings, and iterates until the answer is complete and cited.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Research question",
@@ -96,13 +98,33 @@ const deepSearch: Agent = {
         text: "Workflow complete. Searcher subagents gathered sourced findings per vendor; the evaluator confirmed coverage before the orchestrator returned a cited answer.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "What pricing models do the top observability vendors use?",
+      },
+      {
+        detail: "dispatched to agent-searcher",
+        role: "tool",
+        tool: "agent-searcher",
+      },
+      {
+        detail: "coverage verified",
+        role: "tool",
+        tool: "agent-evaluator",
+      },
+      {
+        role: "agent",
+        text: "Subagents gathered sourced findings per vendor; the evaluator confirmed full coverage before the orchestrator returned a cited answer.",
+      },
+    ],
   },
 };
 
 const csvToQuestions: Agent = {
   description:
     "Summarizes a CSV dataset to stay within token limits, then generates focused analytical questions.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "CSV URL",
@@ -145,13 +167,28 @@ const csvToQuestions: Agent = {
         text: "Workflow complete. The summarizer compressed the dataset to a column profile; the questioner produced analytical questions grounded in those columns.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Generate questions for https://example.com/world-gdp.csv",
+      },
+      {
+        detail: "https://example.com/world-gdp.csv",
+        role: "tool",
+        tool: "fetch-csv",
+      },
+      {
+        role: "agent",
+        text: "Dataset: 190 rows × 5 columns (country, year, gdp_usd, growth_pct, population). Questions: Which countries had the highest GDP growth in 2025? How does GDP per capita correlate with growth? Which regions show declining GDP year over year?",
+      },
+    ],
   },
 };
 
 const feedbackSummary: Agent = {
   description:
     "Retrieves, categorizes, and summarizes customer feedback into an executive report with recommendations.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Request",
@@ -194,13 +231,28 @@ const feedbackSummary: Agent = {
         text: "Retrieved and categorized enterprise feedback, then returned an executive summary with the top themes by volume and severity plus concrete recommendations.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "What are the critical issues from enterprise customers?",
+      },
+      {
+        detail: "segment=enterprise, page 1–2",
+        role: "tool",
+        tool: "get-feedback",
+      },
+      {
+        role: "agent",
+        text: "Top enterprise themes: SSO reliability (12 reports, high severity), slow CSV exports (8), and unclear audit logs (5). Recommendation: prioritize the SSO fix this sprint and add export pagination.",
+      },
+    ],
   },
 };
 
 const meetingNotes: Agent = {
   description:
     "Turns a raw meeting transcript into a structured summary, decisions, and action items.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Transcript",
@@ -243,13 +295,28 @@ const meetingNotes: Agent = {
         text: "Workflow complete. The transcript was parsed into a typed Notes object: a summary, the key decisions, owner/task action items, and open questions.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Turn this standup transcript into notes…",
+      },
+      {
+        detail: "3 decisions, 4 action items",
+        role: "tool",
+        tool: "save-notes",
+      },
+      {
+        role: "agent",
+        text: "Summary captured. Decisions: ship v2 Friday, freeze the schema, drop the legacy export. Action items: Aniket — finalize migration; Sam — write release notes; unassigned — update docs.",
+      },
+    ],
   },
 };
 
 const chatWithPdf: Agent = {
   description:
     "Indexes a PDF into a vector store and answers questions over it with page-cited retrieval.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "PDF URL",
@@ -308,13 +375,33 @@ const chatWithPdf: Agent = {
         text: "Workflow complete. Retrieval returned a typed answer with page-level citations grounded only in the indexed chunks.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Index whitepaper.pdf and tell me the main conclusion.",
+      },
+      {
+        detail: "42 chunks across 12 pages",
+        role: "tool",
+        tool: "index-pdf",
+      },
+      {
+        detail: "top 5 chunks",
+        role: "tool",
+        tool: "search-docs",
+      },
+      {
+        role: "agent",
+        text: "The paper concludes that batching cuts p99 latency by ~40% under load (p. 9), with the trade-off of higher memory use (p. 11).",
+      },
+    ],
   },
 };
 
 const flashcardsPdf: Agent = {
   description:
     "Turns a PDF into study flash cards, with optional AI-generated images per concept.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "PDF URL",
@@ -362,13 +449,28 @@ const flashcardsPdf: Agent = {
         text: "Workflow complete. Returned a typed Flashcards object — front/back pairs plus an image URL on each card.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Make flash cards from biology-chapter.pdf",
+      },
+      {
+        detail: "biology-chapter.pdf",
+        role: "tool",
+        tool: "parse-pdf",
+      },
+      {
+        role: "agent",
+        text: 'Created 18 cards. Front: "What is the powerhouse of the cell?" Back: "The mitochondrion." Ask for images to attach a generated illustration per card.',
+      },
+    ],
   },
 };
 
 const chatWithYoutube: Agent = {
   description:
     "Fetches a video's metadata and transcript, then answers questions with clickable timestamp citations.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "YouTube URL",
@@ -427,13 +529,33 @@ const chatWithYoutube: Agent = {
         text: "Composed the tools in order, then returned a chaptered summary with clickable youtu.be?t= citations grounded in the transcript.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Summarize this talk with chapter timestamps.",
+      },
+      {
+        detail: "title + author",
+        role: "tool",
+        tool: "video-metadata",
+      },
+      {
+        detail: "1,240 segments",
+        role: "tool",
+        tool: "get-transcript",
+      },
+      {
+        role: "agent",
+        text: "Chapters: Intro (00:00), The problem (02:14), Live demo (08:40), Q&A (21:05). Each links straight to that moment in the video.",
+      },
+    ],
   },
 };
 
 const docsChatbot: Agent = {
   description:
     "Answers questions about a library's functions by looking up structured documentation.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Question",
@@ -476,13 +598,28 @@ const docsChatbot: Agent = {
         text: "Returned the signature, description, and a usage example straight from the documentation source — no invented parameters.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Tell me about the getPlanetaryData function.",
+      },
+      {
+        detail: "getPlanetaryData",
+        role: "tool",
+        tool: "lookup-docs",
+      },
+      {
+        role: "agent",
+        text: "getPlanetaryData(planet: string): Promise<PlanetaryData> — fetches orbital and physical data for a planet. Example: await getPlanetaryData('mars').",
+      },
+    ],
   },
 };
 
 const textToSql: Agent = {
   description:
     "Introspects a database schema, converts questions to SQL, and runs read-only queries.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Question",
@@ -535,13 +672,33 @@ const textToSql: Agent = {
         text: "Introspected the schema, generated a single SELECT, and ran it read-only — returning the ranked customers with the SQL used.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Show me the top 5 customers by revenue last quarter.",
+      },
+      {
+        detail: "tables: customers, orders",
+        role: "tool",
+        tool: "introspect-schema",
+      },
+      {
+        detail: "SELECT ... ORDER BY revenue DESC LIMIT 5",
+        role: "tool",
+        tool: "run-query",
+      },
+      {
+        role: "agent",
+        text: "Top 5 by Q3 revenue: Acme ($82k), Globex ($61k), Initech ($55k), Umbrella ($49k), Soylent ($44k). Query was read-only.",
+      },
+    ],
   },
 };
 
 const githubReview: Agent = {
   description:
     "Fetches a GitHub pull request and returns adaptive, file-by-file code review feedback.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Pull request URL",
@@ -584,13 +741,28 @@ const githubReview: Agent = {
         text: "The pr-review workflow returned a typed Review: a summary, an approve/request-changes recommendation, and per-file comments tagged by severity.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Review github.com/acme/api/pull/482",
+      },
+      {
+        detail: "owner=acme repo=api #482 — 7 files",
+        role: "tool",
+        tool: "fetch-pr",
+      },
+      {
+        role: "agent",
+        text: "Found 1 bug (unhandled null in auth.ts), 1 security note (logging a token), and 3 style nits. Recommendation: request changes — fix the null deref and the token log before merge.",
+      },
+    ],
   },
 };
 
 const slackAgent: Agent = {
   description:
     "Replies to Slack mentions and DMs, scoped to the thread, via the Slack Web API.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Message",
@@ -633,12 +805,27 @@ const slackAgent: Agent = {
         text: "The agent, mounted behind the Slack Events route, answered scoped to thread_ts and posted the summary back to the channel.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "@bot summarize the incident thread above.",
+      },
+      {
+        detail: "channel=#incidents thread_ts=…",
+        role: "tool",
+        tool: "post-message",
+      },
+      {
+        role: "agent",
+        text: "Posted a threaded reply: root cause was a bad config push at 14:02, rolled back by 14:18; follow-up is to add a config canary.",
+      },
+    ],
   },
 };
 
 const googleSheets: Agent = {
   description: "Reads, analyzes, and edits Google Sheets via the Sheets API.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Spreadsheet ID",
@@ -692,13 +879,28 @@ const googleSheets: Agent = {
         text: "Read the data, computed per-region totals, and wrote them to F1:G4 — only touching the range you specified.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Total revenue by region in Sheet1.",
+      },
+      {
+        detail: "Sheet1!A1:D200",
+        role: "tool",
+        tool: "read-range",
+      },
+      {
+        role: "agent",
+        text: "Read 200 rows. Totals — West $312k, East $287k, Central $198k. Ask me to write these back and I'll call update-range.",
+      },
+    ],
   },
 };
 
 const weather: Agent = {
   description:
     "Looks up the current weather for a location via the Open-Meteo API.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Location",
@@ -741,13 +943,28 @@ const weather: Agent = {
         text: "Geocoded the city and fetched current conditions: 31°C, feels like 33°C, light wind, mostly clear.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "What's the weather in Pune?",
+      },
+      {
+        detail: "Pune",
+        role: "tool",
+        tool: "get-weather",
+      },
+      {
+        role: "agent",
+        text: "It's 31°C in Pune, feels like 33°C, light breeze at 9 km/h, mostly clear.",
+      },
+    ],
   },
 };
 
 const docsExpert: Agent = {
   description:
     "Answers questions about libraries and APIs by searching the live web and citing sources.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Question",
@@ -790,13 +1007,28 @@ const docsExpert: Agent = {
         text: "Searched, preferred the official documentation, and returned a copy-pasteable example with every claim cited to a source URL.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "How do I stream responses with the Vercel AI SDK?",
+      },
+      {
+        detail: "vercel ai sdk streamText",
+        role: "tool",
+        tool: "web-search",
+      },
+      {
+        role: "agent",
+        text: "Use `streamText` from `ai` and return `result.toDataStreamResponse()` from your route — example and details cited from the official AI SDK docs.",
+      },
+    ],
   },
 };
 
 const claw: Agent = {
   description:
     "Operates a sandboxed workspace — read/write files and run shell commands — to finish multi-step tasks.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Task",
@@ -849,13 +1081,33 @@ const claw: Agent = {
         text: "Planned the task, inspected before acting, and wrote the file — all scoped to the sandboxed workspace.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Add a CHANGELOG.md summarizing recent commits.",
+      },
+      {
+        detail: "git log --oneline -n 20",
+        role: "tool",
+        tool: "run-shell",
+      },
+      {
+        detail: "CHANGELOG.md",
+        role: "tool",
+        tool: "write-file",
+      },
+      {
+        role: "agent",
+        text: "Done. Read the last 20 commits, grouped them by type, and wrote CHANGELOG.md in the workspace.",
+      },
+    ],
   },
 };
 
 const browserAgent: Agent = {
   description:
     "Drives a real browser with Playwright using a snapshot-and-selector pattern to complete web tasks.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Task",
@@ -907,6 +1159,26 @@ const browserAgent: Agent = {
       {
         role: "agent",
         text: "Opened the page, snapshotted it for stable selectors, and read off the top stories — re-snapshotting before acting.",
+      },
+    ],
+    mastra: [
+      {
+        role: "user",
+        text: "List the top 3 stories on Hacker News.",
+      },
+      {
+        detail: "https://news.ycombinator.com",
+        role: "tool",
+        tool: "browser-goto",
+      },
+      {
+        detail: "title + interactive elements",
+        role: "tool",
+        tool: "browser-snapshot",
+      },
+      {
+        role: "agent",
+        text: "Top 3 right now: 1) a Postgres performance deep-dive, 2) a new local-first sync engine, 3) Show HN for a terminal file manager.",
       },
     ],
   },
@@ -964,7 +1236,7 @@ const openuiAssistant: Agent = {
 const companyKnowledge: Agent = {
   description:
     "Indexes internal documents into a vector store and answers questions over them, with PII redaction.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Question",
@@ -1007,13 +1279,28 @@ const companyKnowledge: Agent = {
         text: "Searched the indexed corpus first, answered from cited passages, and relied on the retrieval layer's PII redaction before responding.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "What's our policy on refunds over $500?",
+      },
+      {
+        detail: "top 5 passages",
+        role: "tool",
+        tool: "search-knowledge",
+      },
+      {
+        role: "agent",
+        text: "Per the Finance wiki, refunds over $500 need manager approval and a logged reason. Source: finance/refunds. (Any personal data in the source is redacted.)",
+      },
+    ],
   },
 };
 
 const aiSeoAudit: Agent = {
   description:
     "Runs a deterministic AI-SEO audit on a page through context.dev — scoring ~30 checks across six categories into a 0–100 total, returning failing checks and an agent-ready fix prompt.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Page URL",
@@ -1056,13 +1343,28 @@ const aiSeoAudit: Agent = {
         text: "Scored the six categories to 62/100 (Average), listed the failing checks by impact, and returned a copy-paste fix prompt — all from the deterministic audit.",
       },
     ],
+    mastra: [
+      {
+        role: "user",
+        text: "Audit https://example.com/blog/how-it-works for AI search.",
+      },
+      {
+        detail: "deterministic score + checks via context.dev",
+        role: "tool",
+        tool: "audit-page",
+      },
+      {
+        role: "agent",
+        text: "Score: 62/100 (Average). Strong on content structure, weak on schema (no JSON-LD) and author authority (no byline or dates). Top fixes are in the agent-ready prompt below — paste it into Claude Code.",
+      },
+    ],
   },
 };
 
 const extractDesignMd: Agent = {
   description:
     "Turns a domain into a self-contained DESIGN.md — gathering the styleguide, screenshot, and homepage Markdown from context.dev, then composing the document in a single Claude call with the screenshot as a vision image.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Domain",
@@ -1103,6 +1405,21 @@ const extractDesignMd: Agent = {
       {
         role: "agent",
         text: "Gathered the context.dev signals, then emitted a self-contained DESIGN.md in one Claude call — token frontmatter followed by the canonical sections, grounded in the extracted styleguide.",
+      },
+    ],
+    mastra: [
+      {
+        role: "user",
+        text: "Generate a DESIGN.md for stripe.com",
+      },
+      {
+        detail: "styleguide + screenshot + markdown via context.dev",
+        role: "tool",
+        tool: "compose-design-md",
+      },
+      {
+        role: "agent",
+        text: "Composed DESIGN.md: frontmatter tokens (version: alpha; colors, typography, spacing, rounded, components) plus Overview, Colors, Typography, Layout, Elevation, Shapes, Components, and Do's and Don'ts — values pulled from the styleguide.",
       },
     ],
   },

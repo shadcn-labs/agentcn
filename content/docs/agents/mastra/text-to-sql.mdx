@@ -1,0 +1,103 @@
+---
+title: Chat with Database
+description: Introspects a database schema, converts questions to SQL, and runs read-only queries.
+---
+
+<DocsBaseSwitcher base="mastra" agent="text-to-sql" />
+
+<AgentPreview
+  agent="text-to-sql"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "question",
+      label: "Question",
+      placeholder: "Show me the top 5 customers by revenue last quarter.",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Chat with Database Agent** answers questions about your data in plain
+English. It introspects the schema, writes the SQL, runs it read-only, and
+explains the results. Reach for it to give non-SQL users a safe way to query a
+database, or to prototype analytics without hand-writing queries.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/text-to-sql
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @libsql/client
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/text-to-sql/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/text-to-sql/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/text-to-sql/lib/db.ts"
+  title="lib/db.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/text-to-sql/tools/introspect-database.ts"
+  title="tools/introspect-database.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/text-to-sql/tools/execute-sql.ts"
+  title="tools/execute-sql.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts                   # Agent definition (model + config)
+├── instructions.md             # Introspect → SQL → execute instructions
+├── lib/
+│   └── db.ts                   # Database client (SQLite by default)
+└── tools/
+    ├── introspect-database.ts  # Lists tables and columns
+    └── execute-sql.ts          # Runs a read-only SELECT
+```
+
+## Customization
+
+- **Swap the database.** Replace the client in `lib/db.ts` with Postgres or MySQL.
+- **Allow writes (carefully).** The `run_query` tool blocks non-`SELECT` SQL by
+  default — relax that only behind explicit confirmation.
+- **Add row limits.** Cap result size in `run_query` to protect against huge scans.
+- **Swap the model.** Edit `config.ts`.

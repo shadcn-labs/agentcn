@@ -1,0 +1,20 @@
+{
+  "name": "claw",
+  "type": "registry:block",
+  "title": "Claw Autonomous Assistant",
+  "description": "Mastra agent that operates a sandboxed workspace — read/write files and run shell commands — to finish multi-step tasks.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/read_file.ts", "type": "registry:file" },
+    { "path": "tools/write_file.ts", "type": "registry:file" },
+    { "path": "tools/run_shell.ts", "type": "registry:file" },
+    { "path": "tools/edit_file.ts", "type": "registry:file" },
+    { "path": "tools/list_files.ts", "type": "registry:file" },
+    { "path": "tools/delete_file.ts", "type": "registry:file" },
+    { "path": "tools/grep.ts", "type": "registry:file" },
+    { "path": "lib/workspace.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

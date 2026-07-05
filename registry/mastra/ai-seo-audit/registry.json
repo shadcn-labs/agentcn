@@ -1,0 +1,19 @@
+{
+  "name": "ai-seo-audit",
+  "type": "registry:block",
+  "title": "AI SEO Audit Agent",
+  "description": "Mastra agent that runs a deterministic AI-SEO audit on a page through context.dev — scoring ~30 checks across six categories into a 0–100 total, returning failing checks and an agent-ready fix prompt.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/audit_page.ts", "type": "registry:file" },
+    { "path": "lib/audit.ts", "type": "registry:file" },
+    { "path": "lib/audit-types.ts", "type": "registry:file" },
+    { "path": "lib/rules.ts", "type": "registry:file" },
+    { "path": "lib/url.ts", "type": "registry:file" },
+    { "path": "lib/agent-fix-prompt.ts", "type": "registry:file" },
+    { "path": "skills/seo-audit/SKILL.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

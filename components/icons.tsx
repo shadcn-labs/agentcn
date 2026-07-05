@@ -3,6 +3,91 @@ import { FileIcon, TerminalSquareIcon } from "lucide-react";
 import type { PackageManager } from "@/hooks/use-package-manager";
 import { cn } from "@/lib/utils";
 
+export const EveIcon = ({
+  className,
+  ...props
+}: React.ComponentProps<"svg">) => (
+  <svg
+    fill="none"
+    viewBox="0 0 78 25"
+    xmlns="http://www.w3.org/2000/svg"
+    className={cn("size-4", className)}
+    {...props}
+  >
+    <path
+      d="M77.7002 3.89551H54.0762L37.5781 24.3818H32.3486L36.5322 19.1729L51.958 0H77.7002V3.89551ZM21.0898 24.3721H0V20.4766H21.0898V24.3721ZM77.7012 20.4766V24.3721H56.6104V20.4766H77.7012ZM17.7744 14.0537H0V10.1582H17.7744V14.0537ZM77.7012 14.0537H59.9268V10.1582H77.7012V14.0537ZM34.7197 3.89551H0V0H34.7197V3.89551Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
+export const FlueIcon = ({
+  className,
+  ...props
+}: React.ComponentProps<"svg">) => (
+  <svg
+    viewBox="0 0 108 108"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    className={cn("size-4", className)}
+    {...props}
+  >
+    <rect
+      width="108"
+      height="108"
+      transform="matrix(-1 0 0 1 108 0)"
+      fill="currentColor"
+    />
+    <rect
+      width="18"
+      height="18"
+      transform="matrix(-1 0 0 1 72 18)"
+      fill="var(--background)"
+    />
+    <rect
+      width="18"
+      height="18"
+      transform="matrix(-1 0 0 1 54 72)"
+      fill="var(--background)"
+    />
+    <rect
+      width="18"
+      height="18"
+      transform="matrix(-1 0 0 1 54 36)"
+      fill="var(--background)"
+    />
+    <rect
+      width="18"
+      height="18"
+      transform="matrix(-1 0 0 1 72 54)"
+      fill="var(--background)"
+    />
+  </svg>
+);
+
+export const MastraIcon = ({
+  className,
+  ...props
+}: React.ComponentProps<"svg">) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="116 116 430 267"
+    fill="none"
+    className={cn("size-4", className)}
+    {...props}
+  >
+    <path
+      fill="currentColor"
+      d="M174.36 266.33c32.23 0 58.36 25.9 58.36 57.83 0 31.94-26.13 57.83-58.36 57.83S116 356.1 116 324.16s26.13-57.83 58.36-57.83"
+    />
+    <path
+      fill="currentColor"
+      d="M250.76 116c32.23 0 58.36 25.9 58.36 57.83q0 4.09-.56 8.01c-2.94 20.97-7.26 44.62 4.65 62.19l13.72 20.22 3.39 4.13c.62.75 1.8.71 2.36-.09l2.87-4.04 12.54-18.5c12.52-18.45 7.98-43.38 5.83-65.51a58 58 0 0 1-.27-5.6c0-31.94 26.13-57.83 58.36-57.83s58.36 25.89 58.36 57.83q0 4.66-.72 9.12c-3.18 19.84-7.73 41.77 2.4 59.16l5.8 9.28c5.48 8.79 15.3 13.57 25.26 16.46 24.22 7.04 41.9 29.22 41.91 55.5 0 31.94-26.13 57.83-58.36 57.83s-58.36-25.89-58.36-57.83q0-5.15.88-10.05c3.46-19.56 8.04-41.24-1.98-58.43l-12.72-21.84-.77-1.04a1.42 1.42 0 0 0-2.24-.06l-13.6 20.05c-12.2 17.98-7.6 42.26-4.75 63.73q.5 3.75.5 7.64c0 31.94-26.13 57.83-58.36 57.83s-58.36-25.89-58.36-57.83c0-22.69 3.54-48.01-9.23-66.85l-1-1.49c-10.27-15.12-28.48-22.63-44.5-31.57a57.7 57.7 0 0 1-29.77-50.42c0-31.94 26.13-57.83 58.36-57.83"
+    />
+  </svg>
+);
+
 export const ThemeIcon = ({
   className,
   ...props

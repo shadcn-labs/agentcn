@@ -1,0 +1,15 @@
+{
+  "name": "flashcards-pdf",
+  "type": "registry:block",
+  "title": "Flash Cards from PDF Agent",
+  "description": "Mastra agent that turns a PDF into study flash cards, with optional AI-generated images per concept.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" },
+    { "path": "tools/parse_pdf.ts", "type": "registry:file" },
+    { "path": "tools/generate_image.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory", "pdf-parse"]
+}

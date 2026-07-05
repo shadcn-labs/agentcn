@@ -1,0 +1,18 @@
+{
+  "name": "company-knowledge",
+  "type": "registry:block",
+  "title": "Company Knowledge Agent",
+  "description": "Mastra agent that indexes internal documents into a vector store and answers questions over them, with PII redaction.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/search_knowledge.ts", "type": "registry:file" },
+    { "path": "tools/index_document.ts", "type": "registry:file" },
+    { "path": "lib/vector-store.ts", "type": "registry:file" },
+    { "path": "lib/pii.ts", "type": "registry:file" },
+    { "path": "workflows/index-knowledge.ts", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory", "@ai-sdk/openai", "@libsql/client", "ai"]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "weather",
+  "type": "registry:block",
+  "title": "Weather Agent",
+  "description": "Mastra agent that looks up current weather for a location via the Open-Meteo API.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/get_weather.ts", "type": "registry:file" },
+    { "path": "workflows/weather-workflow.ts", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

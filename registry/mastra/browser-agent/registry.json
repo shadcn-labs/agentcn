@@ -1,0 +1,20 @@
+{
+  "name": "browser-agent",
+  "type": "registry:block",
+  "title": "Browser Agent",
+  "description": "A browser-operating agent that interacts with live web pages using Playwright-based tools with accessibility-tree ref ids.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": [
+    "@mastra/core",
+    "@mastra/agent-browser",
+    "@mastra/libsql",
+    "@mastra/memory",
+    "@ai-sdk/openai",
+    "playwright-chromium"
+  ]
+}

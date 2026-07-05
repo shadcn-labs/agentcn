@@ -1,0 +1,94 @@
+---
+title: CSV to Questions
+description: Summarizes a CSV dataset to stay within token limits, then generates focused analytical questions.
+---
+
+<DocsBaseSwitcher base="mastra" agent="csv-to-questions" />
+
+<AgentPreview
+  agent="csv-to-questions"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "CSV URL",
+      placeholder: "https://example.com/world-gdp.csv",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **CSV to Questions Agent** takes a CSV dataset and turns it into a set of
+sharp, answerable analytical questions. It first summarizes the data — columns,
+types, ranges, patterns — to compress large files and avoid token-limit errors,
+then generates questions a data analyst would actually ask. Reach for it to
+kickstart exploratory analysis or build study material from raw data.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/csv-to-questions
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/csv-to-questions/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/csv-to-questions/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/csv-to-questions/tools/fetch_csv.ts"
+  title="tools/fetch_csv.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts            # Agent definition (model + config)
+├── instructions.md      # Summarize-then-question instructions
+└── tools/
+    └── fetch_csv.ts     # Loads a CSV file from a URL
+```
+
+## Customization
+
+- **Read local files.** Swap `fetch_csv` to read from disk or object storage
+  instead of a URL.
+- **Control the question style.** Edit `instructions.md` to bias toward trends,
+  comparisons, or hypothesis tests.
+- **Swap the model.** Edit `config.ts`. A large-context model handles wide
+  datasets without truncation.
+- **Chunk huge files.** Summarize in row batches and merge the profiles before
+  generating questions.

@@ -34,12 +34,9 @@ export const DocsBaseSwitcher = ({
         </Link>
       ))}
       {activeBase?.meta?.logo && (
-        <div
-          className="ml-auto shrink-0 text-muted-foreground opacity-80 [&_svg]:h-4 [&_svg]:w-fit"
-          dangerouslySetInnerHTML={{
-            __html: activeBase.meta.logo,
-          }}
-        />
+        <div className="ml-auto shrink-0 text-muted-foreground opacity-80 [&_svg]:h-4 [&_svg]:w-fit">
+          <activeBase.meta.logo />
+        </div>
       )}
     </div>
   );

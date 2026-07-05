@@ -1,0 +1,52 @@
+{
+  "skill_name": "mastra-file-agents",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "This is a Mastra project. I've got a single `weather` agent with its tools all defined inline in `src/mastra/index.ts`. I want to move it over to the new file-based agent convention (one folder per agent). Can you migrate it? The app runs with `mastra dev`.",
+      "expected_output": "A src/mastra/agents/weather/ directory with config.ts (agentConfig, model, no inline instructions/tools), instructions.md containing the weather instructions, and tools/get_weather.ts and tools/get_forecast.ts each default-exporting createTool. The weather entry is removed from the Mastra({ agents }) map in index.ts.",
+      "files": ["evals/files/weather-project"],
+      "expectations": [
+        "Creates src/mastra/agents/weather/config.ts that uses agentConfig() and sets model 'openai/gpt-5.5'",
+        "config.ts does NOT pass the instructions string inline (instructions moved to instructions.md)",
+        "Creates src/mastra/agents/weather/instructions.md containing the weather assistant instructions text",
+        "Creates src/mastra/agents/weather/tools/get_weather.ts that default-exports the get_weather tool",
+        "Creates src/mastra/agents/weather/tools/get_forecast.ts that default-exports the get_forecast tool",
+        "Tool filenames exactly match the original tool keys (get_weather, get_forecast)",
+        "Removes the weather agent from the new Mastra({ agents }) map in src/mastra/index.ts",
+        "Does not leave a duplicate code registration of the weather agent (no code-vs-file collision)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Please convert my Mastra `support` agent (defined in src/mastra/agents/support.ts and registered in src/mastra/index.ts) to a file-based agent directory. It runs via `mastra dev`. Keep its exact behavior.",
+      "expected_output": "A src/mastra/agents/support/ directory. Because instructions is a dynamic function, it stays in config.ts (not instructions.md). memory.ts default-exports the Memory instance with the same options. tools/lookup_order.ts default-exports the tool. The old support.ts file and its import + registration are removed. description is preserved.",
+      "files": ["evals/files/support-project"],
+      "expectations": [
+        "Keeps the dynamic instructions function in config.ts rather than moving it to instructions.md",
+        "Does NOT create an instructions.md for the dynamic-instruction agent (or leaves it unused)",
+        "Creates memory.ts that default-exports a Memory instance preserving lastMessages: 20 and semanticRecall: false",
+        "Does not also set memory in config.ts (avoids the config.memory vs memory.ts collision)",
+        "Creates tools/lookup_order.ts default-exporting the lookup_order tool",
+        "Preserves the agent description 'Handles customer support questions.' in config.ts",
+        "Removes the support agent registration from src/mastra/index.ts and the now-unused import",
+        "Deletes or empties the old src/mastra/agents/support.ts so there is no duplicate code agent"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I have a Mastra supervisor agent that delegates to a researcher agent (both registered in src/mastra/index.ts, with researcher in the supervisor's `agents` map). Migrate this to the file-based convention with the researcher as a subagent of the supervisor. Runs on `mastra dev`.",
+      "expected_output": "src/mastra/agents/supervisor/ with config.ts + instructions.md, and a subagents/researcher/ directory containing config.ts (with a non-empty description), instructions.md, and tools/search.ts. The supervisor and researcher entries are removed from the code Mastra({ agents }) map.",
+      "files": ["evals/files/research-project"],
+      "expectations": [
+        "Creates src/mastra/agents/supervisor/ with config.ts (agentConfig, model) and instructions.md",
+        "Places the researcher under src/mastra/agents/supervisor/subagents/researcher/",
+        "The researcher subagent config.ts sets a non-empty description",
+        "Creates the researcher's own tools/search.ts inside the subagent directory (subagents are isolated)",
+        "Creates instructions.md for both supervisor and researcher",
+        "Removes both supervisor and researcher from the code new Mastra({ agents }) map",
+        "Does not leave researcher registered as a top-level code agent"
+      ]
+    }
+  ]
+}

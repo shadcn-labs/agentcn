@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Mastra agent that answers questions about a library's functions by looking up structured documentation.",
+  "files": [
+    {
+      "content": "import { agentConfig } from '@mastra/core/agent'\n\nexport default agentConfig({\n  model: 'anthropic/claude-haiku-4-5',\n})\n",
+      "path": "config.ts",
+      "target": "config.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are a documentation assistant for a code library.\n\n## Your tools\n\n**Documentation Lookup:**\n- lookup_docs — Looks up library functions matching a name or keyword and returns their documentation.\n\n## Workflow\n\nWhen a user asks about a function:\n1. Call `lookup_docs` with the function name (or a keyword) to retrieve its signature, description, parameters, and example.\n2. Answer using only the returned documentation. Show the signature and a short usage example.\n3. If no matching function is found, say so and suggest the closest matches by name.\n\n## Response Guidelines\n\n- Show function arguments with their types, descriptions, and whether they're required\n- Be ready to compare functions or explain their relationships\n- If no specific function is mentioned, help users discover relevant functions\n- Focus on practical usage examples and best practices\n- Help users understand not just what each function does, but how to use it effectively in their projects\n- When showing function arguments, explain the expected data types and formats clearly\n\nNever invent functions, parameters, or behavior that isn't in the docs.",
+      "path": "instructions.md",
+      "target": "instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { readFile } from 'node:fs/promises'\nimport { fileURLToPath } from 'node:url'\nimport { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\n\ninterface FunctionDoc {\n  name: string\n  signature: string\n  description: string\n}\n\nconst DATA_URL = new URL('../data/functions.json', import.meta.url)\n\nexport default createTool({\n  id: 'lookup_docs',\n  description:\n    'Looks up library functions matching a name or keyword and returns their documentation.',\n  inputSchema: z.object({\n    query: z.string(),\n  }),\n  execute: async (inputData) => {\n    const { query } = inputData\n    const docs = JSON.parse(\n      await readFile(fileURLToPath(DATA_URL), 'utf-8')\n    ) as FunctionDoc[]\n    const q = query.toLowerCase()\n    const matches = docs.filter(\n      (d) =>\n        d.name.toLowerCase().includes(q) ||\n        d.description.toLowerCase().includes(q)\n    )\n    return matches.length\n      ? { matches }\n      : { suggestions: docs.map((d) => d.name) }\n  },\n})\n",
+      "path": "tools/lookup_docs.ts",
+      "target": "tools/lookup_docs.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "[\n  {\n    \"name\": \"getPlanetaryData\",\n    \"signature\": \"getPlanetaryData(planet: string): Promise<PlanetaryData>\",\n    \"description\": \"Fetches orbital and physical data for a planet in the solar system.\",\n    \"parameters\": [\n      { \"name\": \"planet\", \"type\": \"string\", \"description\": \"Planet name, e.g. \\\"mars\\\".\" }\n    ],\n    \"example\": \"const data = await getPlanetaryData('mars')\"\n  },\n  {\n    \"name\": \"computeOrbit\",\n    \"signature\": \"computeOrbit(body: string, days: number): Orbit\",\n    \"description\": \"Computes the projected orbit of a body over a number of days.\",\n    \"parameters\": [\n      { \"name\": \"body\", \"type\": \"string\", \"description\": \"Body identifier.\" },\n      { \"name\": \"days\", \"type\": \"number\", \"description\": \"Projection window in days.\" }\n    ],\n    \"example\": \"const orbit = computeOrbit('halley', 365)\"\n  }\n]\n",
+      "path": "data/functions.json",
+      "target": "data/functions.json",
+      "type": "registry:file"
+    }
+  ],
+  "name": "docs-chatbot",
+  "title": "Docs Chatbot Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@mastra/core"
+  ]
+}

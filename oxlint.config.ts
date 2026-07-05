@@ -10,6 +10,7 @@ export default defineConfig({
     "public/r/**",
     "registry/eve/**",
     "registry/flue/**",
+    "registry/mastra/**",
     ".agents/**",
     ".cursor/**",
     ".changeset/**",

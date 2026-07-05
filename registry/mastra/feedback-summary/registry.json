@@ -1,0 +1,14 @@
+{
+  "name": "feedback-summary",
+  "type": "registry:block",
+  "title": "Customer Feedback Summary Agent",
+  "description": "Mastra agent that retrieves, categorizes, and summarizes customer feedback into an executive report with recommendations.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" },
+    { "path": "tools/get_feedback.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

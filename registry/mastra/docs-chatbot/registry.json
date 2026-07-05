@@ -1,0 +1,14 @@
+{
+  "name": "docs-chatbot",
+  "type": "registry:block",
+  "title": "Docs Chatbot Agent",
+  "description": "Mastra agent that answers questions about a library's functions by looking up structured documentation.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/lookup_docs.ts", "type": "registry:file" },
+    { "path": "data/functions.json", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

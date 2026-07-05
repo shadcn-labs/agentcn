@@ -1,0 +1,97 @@
+---
+title: Flash Cards from PDF
+description: Turns a PDF into study flash cards, with optional AI-generated images per concept.
+---
+
+<DocsBaseSwitcher base="mastra" agent="flashcards-pdf" />
+
+<AgentPreview
+  agent="flashcards-pdf"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "PDF URL",
+      placeholder: "https://example.com/biology-chapter.pdf",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Flash Cards from PDF Agent** turns a document into ready-to-study flash
+cards. It extracts the text, identifies the concepts worth memorizing, and writes
+concise front/back pairs — and on request, generates an illustrative image for
+each card. Reach for it to build study decks from textbooks, slides, or notes.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/flashcards-pdf
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core unpdf
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/flashcards-pdf/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/flashcards-pdf/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/flashcards-pdf/tools/parse_pdf.ts"
+  title="tools/parse_pdf.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/flashcards-pdf/tools/generate_image.ts"
+  title="tools/generate_image.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts               # Agent definition (model + config)
+├── instructions.md         # Card-writing instructions
+└── tools/
+    ├── parse_pdf.ts        # Extract text from a PDF
+    └── generate_image.ts   # Generate an image for a concept
+```
+
+## Customization
+
+- **Change the card style.** Edit `instructions.md` for cloze deletions,
+  definitions, or Q&A pairs.
+- **Swap the image model.** Edit `generate_image.ts` to use a different provider
+  or skip images entirely.
+- **Export the deck.** Add a tool that writes cards to Anki, CSV, or your SRS.
+- **Swap the model.** Edit `config.ts`.

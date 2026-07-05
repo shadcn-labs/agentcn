@@ -1,0 +1,14 @@
+{
+  "name": "google-sheets",
+  "type": "registry:block",
+  "title": "Google Sheets Analysis Agent",
+  "description": "Mastra agent that reads, analyzes, and edits Google Sheets via the Sheets API.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/read_range.ts", "type": "registry:file" },
+    { "path": "tools/update_range.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

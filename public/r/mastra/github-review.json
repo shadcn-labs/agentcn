@@ -1,0 +1,55 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Mastra agent that fetches a GitHub pull request and returns adaptive, file-by-file code review feedback.",
+  "files": [
+    {
+      "content": "import { agentConfig } from '@mastra/core/agent'\n\nexport default agentConfig({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "config.ts",
+      "target": "config.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are an expert code reviewer specializing in thorough, constructive pull request reviews. Your goal is to help developers ship better code by providing actionable, well-reasoned feedback.\n\n## Core Behavior\n\nWhen given a GitHub PR URL:\n1. Use the `fetch_pr` tool to fetch PR metadata (title, description, author, base/head branches, and total changed files count).\n2. Check the `changedFiles` count to determine PR size and plan your approach:\n   - **Small PRs (≤6 files):** Review all files with diffs thoroughly.\n   - **Medium PRs (7–20 files):** Focus on logic correctness and architectural decisions.\n   - **Large PRs (21+ files):** Focus only on critical issues — bugs, security vulnerabilities, and major design concerns.\n3. When deeper context is needed for a specific file, use the full source code to understand the changes.\n\n## Review Guidelines\n\n- **Always include file paths and line numbers** in every piece of feedback.\n- **Prioritize critical issues** (bugs, security, data loss) over style suggestions.\n- **Acknowledge good patterns and smart decisions** — positive reinforcement matters.\n- **Consider the PR description and context** when reviewing; understand the \"why\" before critiquing the \"how.\"\n\n## Output Structure\n\nAlways structure your review using the following sections:\n\n### PR Summary\nWhat the PR does in 1–2 sentences.\n\n### Overall Assessment\nA quality score from 1 to 10 and a verdict: **APPROVE**, **REQUEST_CHANGES**, or **COMMENT**.\n\n### Critical Issues\nMust-fix problems. Each item must include a `file:line` reference and a clear explanation of the issue and how to fix it.\n\n### Security Concerns\nAny security issues found. Include `file:line` references. If none, state \"No security concerns identified.\"\n\n### Performance Notes\nPerformance observations and optimization opportunities. Include `file:line` references where applicable. If none, state \"No performance concerns identified.\"\n\n### Suggestions\nNon-critical improvements — better naming, refactoring opportunities, test coverage gaps, documentation improvements.\n\n### Positive Notes\nGood patterns, clean abstractions, thoughtful decisions, or well-written tests worth acknowledging.\n\nOnly comment on what's in the diff. Don't speculate about code you can't see.",
+      "path": "instructions.md",
+      "target": "instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { Memory } from '@mastra/memory'\n\nexport default new Memory({\n  options: {\n    lastMessages: 10,\n  },\n})\n",
+      "path": "memory.ts",
+      "target": "memory.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\n\nconst GITHUB_API = 'https://api.github.com'\n\nconst headers = () => ({\n  Accept: 'application/vnd.github+json',\n  Authorization: `Bearer ${process.env.GITHUB_TOKEN ?? ''}`,\n  'X-GitHub-Api-Version': '2022-11-28',\n})\n\nconst prIdentifierSchema = z.object({\n  owner: z.string().describe('Repository owner (user or organization)'),\n  repo: z.string().describe('Repository name'),\n  pullNumber: z.number().describe('Pull request number'),\n})\n\nconst prSchema = z.object({\n  title: z.string(),\n  body: z.string().nullable(),\n  state: z.string(),\n  author: z.string(),\n  baseBranch: z.string(),\n  headBranch: z.string(),\n  headSha: z.string().describe('Head commit SHA — persists even after the branch is deleted'),\n  labels: z.array(z.string()),\n  createdAt: z.string(),\n  updatedAt: z.string(),\n  additions: z.number(),\n  deletions: z.number(),\n  changedFiles: z.number(),\n})\n\nconst fileSchema = z.object({\n  filename: z.string(),\n  status: z.string(),\n  additions: z.number(),\n  deletions: z.number(),\n  changes: z.number(),\n  patch: z.string().optional(),\n})\n\nfunction mapPRResponse(data: any) {\n  return {\n    title: data.title as string,\n    body: (data.body as string) ?? null,\n    state: data.state as string,\n    author: (data.user?.login as string) ?? 'ghost',\n    baseBranch: data.base.ref as string,\n    headBranch: data.head.ref as string,\n    headSha: data.head.sha as string,\n    labels: ((data.labels ?? []) as Array<{ name: string }>).map(l => l.name),\n    createdAt: data.created_at as string,\n    updatedAt: data.updated_at as string,\n    additions: data.additions as number,\n    deletions: data.deletions as number,\n    changedFiles: data.changed_files as number,\n  }\n}\n\nfunction mapFilesResponse(data: any[]) {\n  return data.map(f => ({\n    filename: f.filename as string,\n    status: f.status as string,\n    additions: f.additions as number,\n    deletions: f.deletions as number,\n    changes: f.changes as number,\n    ...(f.patch !== undefined ? { patch: f.patch as string } : {}),\n  }))\n}\n\nexport default createTool({\n  id: 'fetch_pr',\n  description:\n    'Fetches a GitHub pull request — its metadata and the list of changed files with patches.',\n  inputSchema: prIdentifierSchema,\n  outputSchema: z.object({\n    pr: prSchema,\n    files: z.array(fileSchema),\n  }),\n  execute: async (inputData) => {\n    const { owner, repo, pullNumber } = inputData\n    const base = `${GITHUB_API}/repos/${owner}/${repo}/pulls/${pullNumber}`\n    const [prResponse, filesResponse] = await Promise.all([\n      fetch(base, { headers: headers() }).then((r) => r.json()),\n      fetch(`${base}/files?per_page=100`, { headers: headers() }).then((r) => r.json()),\n    ])\n    return {\n      pr: mapPRResponse(prResponse),\n      files: mapFilesResponse(filesResponse),\n    }\n  },\n})",
+      "path": "tools/fetch_pr.ts",
+      "target": "tools/fetch_pr.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\n\nexport default createTool({\n  id: 'parse_github_url',\n  description:\n    'Parses a GitHub pull request URL and extracts the owner, repository name, and PR number.',\n  inputSchema: z.object({\n    url: z.string().url().describe('GitHub pull request URL'),\n  }),\n  outputSchema: z.object({\n    owner: z.string(),\n    repo: z.string(),\n    prNumber: z.number(),\n  }),\n  execute: async (inputData) => {\n    const { url } = inputData\n    const match = url.match(/^https?:\\/\\/github\\.com\\/([^/]+)\\/([^/]+)\\/pull\\/(\\d+)/)\n    if (!match) {\n      throw new Error(`Invalid GitHub PR URL: ${url}`)\n    }\n    return {\n      owner: match[1],\n      repo: match[2],\n      prNumber: parseInt(match[3], 10),\n    }\n  },\n})\n",
+      "path": "tools/parse_github_url.ts",
+      "target": "tools/parse_github_url.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\n\nconst GITHUB_API = 'https://api.github.com'\n\nconst headers = () => ({\n  Accept: 'application/vnd.github+json',\n  Authorization: `Bearer ${process.env.GITHUB_TOKEN ?? ''}`,\n  'X-GitHub-Api-Version': '2022-11-28',\n})\n\nexport default createTool({\n  id: 'get_pr_files',\n  description: 'Gets the list of files changed in a GitHub pull request.',\n  inputSchema: z.object({\n    owner: z.string().describe('Repository owner (user or organization)'),\n    repo: z.string().describe('Repository name'),\n    prNumber: z.number().describe('Pull request number'),\n  }),\n  outputSchema: z.object({\n    files: z.array(\n      z.object({\n        filename: z.string(),\n        status: z.string(),\n        additions: z.number(),\n        deletions: z.number(),\n      }),\n    ),\n  }),\n  execute: async (inputData) => {\n    const { owner, repo, prNumber } = inputData\n    const url = `${GITHUB_API}/repos/${owner}/${repo}/pulls/${prNumber}/files?per_page=100`\n    const data = await fetch(url, { headers: headers() }).then((r) => r.json())\n    return {\n      files: (data as any[]).map((f) => ({\n        filename: f.filename as string,\n        status: f.status as string,\n        additions: f.additions as number,\n        deletions: f.deletions as number,\n      })),\n    }\n  },\n})\n",
+      "path": "tools/get_pr_files.ts",
+      "target": "tools/get_pr_files.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\n\nconst GITHUB_API = 'https://api.github.com'\n\nconst headers = () => ({\n  Accept: 'application/vnd.github+json',\n  Authorization: `Bearer ${process.env.GITHUB_TOKEN ?? ''}`,\n  'X-GitHub-Api-Version': '2022-11-28',\n})\n\nexport default createTool({\n  id: 'get_file_content',\n  description:\n    'Gets the raw content of a specific file from a GitHub repository.',\n  inputSchema: z.object({\n    owner: z.string().describe('Repository owner (user or organization)'),\n    repo: z.string().describe('Repository name'),\n    filePath: z.string().describe('Path to the file in the repository'),\n    ref: z\n      .string()\n      .optional()\n      .describe('Branch, tag, or commit SHA (defaults to the default branch)'),\n  }),\n  outputSchema: z.object({\n    content: z.string(),\n    encoding: z.string(),\n  }),\n  execute: async (inputData) => {\n    const { owner, repo, filePath, ref } = inputData\n    const url = new URL(\n      `${GITHUB_API}/repos/${owner}/${repo}/contents/${filePath}`,\n    )\n    if (ref) url.searchParams.set('ref', ref)\n    const data = await fetch(url.toString(), { headers: headers() }).then(\n      (r) => r.json(),\n    )\n    if (data.encoding === 'base64') {\n      return {\n        content: Buffer.from(data.content as string, 'base64').toString('utf-8'),\n        encoding: 'utf-8',\n      }\n    }\n    return {\n      content: (data.content as string) ?? '',\n      encoding: (data.encoding as string) ?? 'none',\n    }\n  },\n})\n",
+      "path": "tools/get_file_content.ts",
+      "target": "tools/get_file_content.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "github-review",
+  "title": "GitHub PR Code Review Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@mastra/core",
+    "@mastra/memory"
+  ]
+}

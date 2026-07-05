@@ -49,7 +49,7 @@ const SponsorLogo = ({ sponsor }: { sponsor: Sponsor }) => {
 
 export const metadata: Metadata = createPageMetadata({
   description:
-    "Support agentcn — a registry of complete agent recipes for Eve and Flue. Sponsor tiers, stargazers, and how to contribute.",
+    "Support agentcn — a registry of complete agent recipes for Eve, Flue, and Mastra. Sponsor tiers, stargazers, and how to contribute.",
   path: ROUTES.SPONSOR,
   title: "Sponsor",
 });
@@ -65,8 +65,8 @@ const SponsorPage = async () => {
             Support the project
           </h1>
           <p className="text-base text-muted-foreground text-balance">
-            agentcn is a registry of complete agent recipes for Eve and Flue.
-            Every recipe is free and that&apos;s not changing.
+            agentcn is a registry of complete agent recipes for Eve, Flue, and
+            Mastra. Every recipe is free and that&apos;s not changing.
           </p>
           <p className="text-sm text-muted-foreground text-balance">
             I&apos;m not going to paywall features or gate recipes behind a

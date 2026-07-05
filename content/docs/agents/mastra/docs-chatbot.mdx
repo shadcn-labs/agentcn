@@ -1,0 +1,99 @@
+---
+title: Docs Chatbot
+description: Answers questions about a library's functions by looking up structured documentation.
+---
+
+<DocsBaseSwitcher base="mastra" agent="docs-chatbot" />
+
+<AgentPreview
+  agent="docs-chatbot"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "query",
+      label: "Question",
+      placeholder: "Tell me about the getPlanetaryData function.",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Docs Chatbot Agent** answers questions about a code library's API. It looks
+up structured function documentation — signatures, parameters, and examples — and
+answers using only what the docs say. Reach for it to drop a grounded "ask the
+docs" assistant into a docs site, an IDE, or a support channel.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/docs-chatbot
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/docs-chatbot/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/docs-chatbot/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/docs-chatbot/data/functions.json"
+  title="data/functions.json"
+/>
+
+<ComponentSource
+  src="registry/mastra/docs-chatbot/tools/lookup_docs.ts"
+  title="tools/lookup_docs.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent definition (model + config)
+├── instructions.md       # Docs-grounded answering instructions
+├── data/
+│   └── functions.json    # Sample documentation source
+└── tools/
+    └── lookup_docs.ts    # Looks up functions by name or keyword
+```
+
+## Customization
+
+- **Point at your docs.** Replace `data/functions.json` with your generated API
+  docs (e.g. from TypeDoc), or change `lookup_docs` to fetch from a remote source.
+- **Improve matching.** Swap the substring filter for embeddings-based search to
+  handle paraphrased questions.
+- **Expose it as MCP.** Wrap `lookup_docs` in an MCP server so other clients can
+  query the same docs.
+- **Swap the model.** Edit `config.ts`.

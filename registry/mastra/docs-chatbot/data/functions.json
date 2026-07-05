@@ -1,0 +1,21 @@
+[
+  {
+    "name": "getPlanetaryData",
+    "signature": "getPlanetaryData(planet: string): Promise<PlanetaryData>",
+    "description": "Fetches orbital and physical data for a planet in the solar system.",
+    "parameters": [
+      { "name": "planet", "type": "string", "description": "Planet name, e.g. \"mars\"." }
+    ],
+    "example": "const data = await getPlanetaryData('mars')"
+  },
+  {
+    "name": "computeOrbit",
+    "signature": "computeOrbit(body: string, days: number): Orbit",
+    "description": "Computes the projected orbit of a body over a number of days.",
+    "parameters": [
+      { "name": "body", "type": "string", "description": "Body identifier." },
+      { "name": "days", "type": "number", "description": "Projection window in days." }
+    ],
+    "example": "const orbit = computeOrbit('halley', 365)"
+  }
+]

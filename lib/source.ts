@@ -14,31 +14,39 @@ export const source = loader({
 
 const EVE_AGENT_PREFIX = `${ROUTES.DOCS_AGENTS}/eve/`;
 const FLUE_AGENT_PREFIX = `${ROUTES.DOCS_AGENTS}/flue/`;
+const MASTRA_AGENT_PREFIX = `${ROUTES.DOCS_AGENTS}/mastra/`;
 
 /**
  * Previous/next neighbours for a docs page.
  *
  * The Agents sidebar lists the Eve recipes plus a base switcher, so the Flue
- * recipe pages are absent from the page tree and `findNeighbour` returns nothing
- * for them. For those pages we mirror the Eve neighbours, rewriting Eve recipe
- * URLs to their Flue counterparts so the prev/next controls match the Eve view.
+ * and Mastra recipe pages are absent from the page tree and `findNeighbour`
+ * returns nothing for them. For those pages we mirror the Eve neighbours,
+ * rewriting Eve recipe URLs to their Flue/Mastra counterparts so the prev/next
+ * controls match the Eve view.
  */
 export const getDocNeighbours = (url: string) => {
-  if (!url.startsWith(FLUE_AGENT_PREFIX)) {
+  if (
+    !url.startsWith(FLUE_AGENT_PREFIX) &&
+    !url.startsWith(MASTRA_AGENT_PREFIX)
+  ) {
     return findNeighbour(source.pageTree, url);
   }
 
+  const isFlue = url.startsWith(FLUE_AGENT_PREFIX);
+  const targetPrefix = isFlue ? FLUE_AGENT_PREFIX : MASTRA_AGENT_PREFIX;
+
   const eve = findNeighbour(
     source.pageTree,
-    url.replace(FLUE_AGENT_PREFIX, EVE_AGENT_PREFIX)
+    url.replace(targetPrefix, EVE_AGENT_PREFIX)
   );
 
-  const toFlue = <T extends { url: string }>(node: T | undefined) =>
+  const toTarget = <T extends { url: string }>(node: T | undefined) =>
     node?.url.startsWith(EVE_AGENT_PREFIX)
-      ? { ...node, url: node.url.replace(EVE_AGENT_PREFIX, FLUE_AGENT_PREFIX) }
+      ? { ...node, url: node.url.replace(EVE_AGENT_PREFIX, targetPrefix) }
       : node;
 
-  return { next: toFlue(eve.next), previous: toFlue(eve.previous) };
+  return { next: toTarget(eve.next), previous: toTarget(eve.previous) };
 };
 
 export const getPageImage = (page: InferPageType<typeof source>) => {

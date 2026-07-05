@@ -1,0 +1,103 @@
+---
+title: Google Sheets Analysis
+description: Reads, analyzes, and edits Google Sheets via the Sheets API.
+---
+
+<DocsBaseSwitcher base="mastra" agent="google-sheets" />
+
+<AgentPreview
+  agent="google-sheets"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "spreadsheetId",
+      label: "Spreadsheet ID",
+      placeholder: "1A2b3C4d5E6f7G8h9I0j…",
+      type: "text",
+    },
+    {
+      name: "request",
+      label: "Request",
+      placeholder: "Total revenue by region and write it to F1.",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Google Sheets Analysis Agent** reads a spreadsheet, answers questions about
+it, and — on request — writes results back. It loads ranges in A1 notation,
+computes totals/trends/joins, and updates cells only when you ask. Reach for it to
+turn a sheet into a conversational analyst or to automate routine spreadsheet
+edits.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/google-sheets
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/google-sheets/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/google-sheets/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/google-sheets/tools/read_range.ts"
+  title="tools/read_range.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/google-sheets/tools/update_range.ts"
+  title="tools/update_range.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent definition (model + config)
+├── instructions.md       # Read-before-write analysis instructions
+└── tools/
+    ├── read_range.ts     # Reads a range (A1 notation)
+    └── update_range.ts   # Writes values to a range
+```
+
+## Customization
+
+- **Use a service account.** Mint the access token from a service account for
+  unattended runs.
+- **Add operations.** Add tools for appending rows, formatting, or creating sheets.
+- **Guard writes.** Require explicit confirmation before any `update_range` call.
+- **Swap the model.** Edit `config.ts`.

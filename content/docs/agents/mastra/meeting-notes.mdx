@@ -1,0 +1,92 @@
+---
+title: Meeting Notes
+description: Turns a raw meeting transcript into a structured summary, decisions, and action items.
+---
+
+<DocsBaseSwitcher base="mastra" agent="meeting-notes" />
+
+<AgentPreview
+  agent="meeting-notes"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "transcript",
+      label: "Transcript",
+      placeholder: "Paste the raw meeting transcript here…",
+      type: "textarea",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Meeting Notes Agent** takes a raw meeting transcript and returns clean,
+structured notes: a short summary, the decisions that were made, action items as
+owner/task pairs, and any open questions. Reach for it to close out standups,
+planning sessions, or customer calls without writing up notes by hand.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/meeting-notes
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/meeting-notes/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/meeting-notes/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/meeting-notes/tools/save_notes.ts"
+  title="tools/save_notes.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts           # Agent definition (model + config)
+├── instructions.md     # Notes-extraction instructions
+└── tools/
+    └── save_notes.ts   # Saves the structured notes
+```
+
+## Customization
+
+- **Reshape the notes.** Edit the schema in `save_notes` to add fields like
+  attendees, risks, or next meeting date.
+- **Persist the output.** Change `save_notes` to write to Notion, Linear, or a
+  database instead of returning JSON.
+- **Tune the extraction.** Edit `instructions.md` to change how owners are
+  inferred or how decisions are phrased.
+- **Swap the model.** Edit `config.ts` for longer transcripts or faster runs.

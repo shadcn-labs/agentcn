@@ -1,0 +1,16 @@
+{
+  "name": "meeting-notes",
+  "type": "registry:block",
+  "title": "Meeting Notes Agent",
+  "description": "Mastra agent that turns a raw meeting transcript into a structured summary, decisions, and action items.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/save_notes.ts", "type": "registry:file" },
+    { "path": "tools/list_meetings.ts", "type": "registry:file" },
+    { "path": "tools/get_transcript.ts", "type": "registry:file" },
+    { "path": "workflows/ingest-meeting.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "support-project",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "mastra dev",
+    "build": "mastra build"
+  },
+  "dependencies": {
+    "@mastra/core": "^1.48.0",
+    "@mastra/memory": "^1.48.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "mastra": "^1.48.0"
+  }
+}

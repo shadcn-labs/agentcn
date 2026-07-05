@@ -12,6 +12,12 @@
       "sourceType": "github",
       "skillPath": "skills/launch-shadcn-registry/SKILL.md",
       "computedHash": "17a0c8751bac286ce315bcfdec7c9a6b500883d048e40bc61ae75844491f7783"
+    },
+    "mastra-file-agents": {
+      "source": "shadcn-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mastra-file-agents/SKILL.md",
+      "computedHash": "52f1d38fda28343482feb4f69ff6e2109e6d4c3946858913d70e07aab083f7e5"
     }
   }
 }

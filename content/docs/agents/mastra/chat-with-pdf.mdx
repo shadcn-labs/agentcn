@@ -1,0 +1,126 @@
+---
+title: Chat with PDF
+description: Indexes a PDF into a vector store and answers questions over it with page-cited retrieval and stratified sampling.
+---
+
+<DocsBaseSwitcher base="mastra" agent="chat-with-pdf" />
+
+<AgentPreview
+  agent="chat-with-pdf"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "PDF URL",
+      placeholder: "https://example.com/whitepaper.pdf",
+      type: "text",
+    },
+    {
+      name: "question",
+      label: "Question",
+      placeholder: "What does the paper conclude about latency?",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Chat with PDF Agent** lets you ask questions about a PDF and get answers
+grounded in the document, with a page citation for every claim. It indexes the
+PDF into a vector store, retrieves only the relevant chunks per question using
+stratified sampling across page ranges, and can also generate comprehension
+quizzes from real passages. Reach for it to turn manuals, papers, and reports
+into something you can query.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/chat-with-pdf
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/libsql @mastra/rag pdf-parse
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/chat-with-pdf/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-pdf/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-pdf/memory.ts"
+  title="memory.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-pdf/lib/vector-store.ts"
+  title="lib/vector-store.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-pdf/tools/list_documents.ts"
+  title="tools/list_documents.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-pdf/tools/query_pdf.ts"
+  title="tools/query_pdf.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/chat-with-pdf/workflows/index_pdf.ts"
+  title="workflows/index_pdf.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts              # Agent definition (model + config)
+├── instructions.md        # Detailed assistant instructions
+├── memory.ts              # Memory instance for conversation history
+├── lib/
+│   └── vector-store.ts    # LibSQLVector store + index management
+├── tools/
+│   ├── list_documents.ts  # List all indexed PDF documents
+│   └── query_pdf.ts       # Query with stratified page sampling
+└── workflows/
+    └── index_pdf.ts       # 3-step workflow: download → chunk → embed
+```
+
+## Customization
+
+- **Swap the vector store.** `lib/vector-store.ts` uses `@mastra/libsql` — replace it with
+  Pinecone, Qdrant, Chroma, or pgvector by swapping the vector store import.
+- **Tune chunking.** Adjust the `splitIntoChunks` step's `maxSize` and `overlap` in `workflows/index_pdf.ts`.
+- **Swap the embedding model.** Change the model in tools and workflows from `openai/text-embedding-3-small`.
+- **Add quizzes.** The instructions already support quiz generation from
+  retrieved passages — extend them with your preferred format.
+- **Add more tools.** Create additional tools in `tools/` — they'll be auto-discovered.

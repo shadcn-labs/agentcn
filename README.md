@@ -6,7 +6,7 @@
 
 <p align="center">
   Free & open-source, customizable and production-ready AI agent recipes.<br/>
-  Zero config. One command setup. Built on <a href="https://vercel.com/docs/eve">Eve</a> and <a href="https://flueframework.com">Flue</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn</a> CLI.
+  Zero config. One command setup. Built on <a href="https://vercel.com/docs/eve">Eve</a>, <a href="https://flueframework.com">Flue</a>, and <a href="https://mastra.ai">Mastra</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn</a> CLI.
 </p>
 
 <p align="center">
@@ -27,13 +27,21 @@
 - 🎯 **Zero config** — Works out of the box with sensible defaults
 - 📦 **shadcn/ui compatible** — Uses the same registry format and CLI
 - 🧩 **Composable** — Build complex terminal UIs with simple, declarative components
-- ⌨️ **Eve and Flue powered** — Full access to powerful agent frameworks
+- ⌨️ **Eve, Flue, and Mastra powered** — Full access to powerful agent frameworks
 - 🍳 **Complete recipes** — Full agent source: instructions, tools, skills, and workflows
 - 🧪 **Live previews** — Run each agent right from its docs page
 
 ## Development
 
 Please refer to the [Development Guide](./DEVELOPMENT.md) for more details.
+
+## Showcase
+
+Consider showcasing your work on:
+
+- [awesome-eve-agents](https://github.com/shadcn-labs/awesome-eve-agents) — Curated list of awesome resources and AI agents built with Eve
+- [awesome-flue-agents](https://github.com/shadcn-labs/awesome-flue-agents) — Curated list of awesome resources and AI agents built with Flue
+- [awesome-mastra-agents](https://github.com/shadcn-labs/awesome-mastra-agents) — Curated list of awesome resources and AI agents built with Mastra
 
 ## Contributing
 

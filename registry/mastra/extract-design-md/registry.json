@@ -1,0 +1,16 @@
+{
+  "name": "extract-design-md",
+  "type": "registry:block",
+  "title": "Extract DESIGN.md Agent",
+  "description": "Mastra agent that turns a domain into a self-contained DESIGN.md — gathering the styleguide, screenshot, and homepage Markdown from context.dev, then composing the document in a single Claude call with the screenshot as a vision image.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/compose_design_md.ts", "type": "registry:file" },
+    { "path": "lib/compose.ts", "type": "registry:file" },
+    { "path": "lib/design-md.ts", "type": "registry:file" },
+    { "path": "lib/derive-tokens.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

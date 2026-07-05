@@ -1,0 +1,87 @@
+---
+title: Weather
+description: Looks up the current weather for a location via the Open-Meteo API.
+---
+
+<DocsBaseSwitcher base="mastra" agent="weather" />
+
+<AgentPreview
+  agent="weather"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "location",
+      label: "Location",
+      placeholder: "Pune",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Weather Agent** is the classic starter: ask about a place and it reports the
+current conditions. It geocodes the location and fetches live weather from the
+free Open-Meteo API — no key required. Reach for it as a minimal, end-to-end
+example of an agent with a single tool.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/weather
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource src="registry/mastra/weather/config.ts" title="config.ts" />
+
+<ComponentSource
+  src="registry/mastra/weather/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/weather/tools/get_weather.ts"
+  title="tools/get_weather.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent definition (model + config)
+├── instructions.md       # Weather assistant instructions
+└── tools/
+    └── get_weather.ts    # Geocode + current forecast (Open-Meteo)
+```
+
+## Customization
+
+- **Add a forecast.** Extend `get_weather` to request daily/hourly data.
+- **Add units.** Pass a `units` parameter (metric/imperial) to the API.
+- **Add more tools.** This is a good base to graduate into a travel or planning
+  agent.
+- **Swap the model.** Edit `config.ts`.

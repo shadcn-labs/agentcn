@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Mastra agent that turns a PDF into study flash cards, with optional AI-generated images per concept.",
+  "files": [
+    {
+      "content": "import { agentConfig } from '@mastra/core/agent'\n\nexport default agentConfig({\n  model: 'anthropic/claude-sonnet-4-6',\n})\n",
+      "path": "config.ts",
+      "target": "config.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "You are an educational flash card generator. Your job is to create high-quality study flash cards from PDF documents.\n\n## How it works\n\n1. The user attaches a PDF file in the chat. You receive the PDF content as a file attachment.\n2. Use the parse_pdf tool with the URL to get the text content.\n3. Analyze the extracted text and generate flash cards.\n4. If the user asks for images, use the generate_image tool for key concepts.\n\n## Flash card generation rules\n\n- Create between 10-20 flash cards per PDF unless the user specifies a different number.\n- Each card has a clear **question** on the front and a concise **answer** on the back.\n- Assign a difficulty level to each card: easy, medium, or hard.\n- Assign a category/topic to each card based on the content.\n- Cover the most important concepts, definitions, facts, and relationships.\n- Vary question types: definitions, explanations, comparisons, applications.\n- Keep answers factual and based only on the PDF content.\n\n## Output format\n\nPresent flash cards in a clean, structured format:\n\n### Flash Cards: [Subject Area]\n\n**Card 1** (easy) — [Category]\n- **Q:** [Question]\n- **A:** [Answer]\n\n**Card 2** (medium) — [Category]\n- **Q:** [Question]\n- **A:** [Answer]\n\n...and so on.\n\n## Image generation\n\nOnly generate images if the user explicitly requests them. When generating images:\n- Pick the 3-5 most visual concepts that benefit from illustration.\n- Use the generate_image tool for each.\n- Include the image path in the card output.\n\n## Important\n\n- If no PDF is attached, ask the user to attach one.\n- If the PDF has very little text, let the user know and generate what you can.\n- Be faithful to the source material — don't invent information not in the PDF.",
+      "path": "instructions.md",
+      "target": "instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { Memory } from '@mastra/memory'\n\nexport default new Memory({\n  options: {\n    lastMessages: 10,\n  },\n})\n",
+      "path": "memory.ts",
+      "target": "memory.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\nimport pdf from 'pdf-parse'\n\nexport default createTool({\n  id: 'parse_pdf',\n  description: 'Extract text content from a PDF file at the given URL',\n  inputSchema: z.object({\n    url: z.string().url().describe('URL of the PDF file to parse'),\n  }),\n  outputSchema: z.object({\n    text: z.string().describe('Extracted text content from the PDF'),\n    pageCount: z.number().describe('Number of pages in the PDF'),\n  }),\n  execute: async (inputData) => {\n    const { url } = inputData\n\n    try {\n      const response = await fetch(url)\n      if (!response.ok) {\n        throw new Error(`Failed to download PDF: ${response.status} ${response.statusText}`)\n      }\n\n      const arrayBuffer = await response.arrayBuffer()\n      const buffer = Buffer.from(arrayBuffer)\n\n      const data = await pdf(buffer)\n\n      return {\n        text: data.text.substring(0, 10000),\n        pageCount: data.numpages,\n      }\n    } catch (error) {\n      const errorMessage = error instanceof Error ? error.message : 'Unknown error'\n      throw new Error(`Failed to parse PDF: ${errorMessage}`)\n    }\n  },\n})",
+      "path": "tools/parse_pdf.ts",
+      "target": "tools/parse_pdf.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\n\nexport default createTool({\n  id: 'generate_image',\n  description: 'Generate an educational image for a flash card concept using DALL-E 3. Saves the image locally.',\n  inputSchema: z.object({\n    concept: z.string().describe('The concept to visualize'),\n    subjectArea: z.string().describe('The subject area (e.g., biology, physics, history)'),\n  }),\n  outputSchema: z.object({\n    imagePath: z.string().describe('Local file path to the generated image'),\n    revisedPrompt: z.string().describe('The prompt DALL-E actually used'),\n  }),\n  execute: async (inputData) => {\n    const { concept, subjectArea } = inputData\n    const prompt = `Create a clear, educational diagram or illustration about \"${concept}\" in the subject of ${subjectArea}. The image should be suitable for a study flash card. Use clean visuals, labels where helpful, and no walls of text. Style: educational, clean, minimal.`\n\n    const response = await fetch('https://api.openai.com/v1/images/generations', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`,\n      },\n      body: JSON.stringify({\n        model: 'dall-e-3',\n        prompt,\n        size: '1024x1024',\n      }),\n    })\n\n    if (!response.ok) {\n      throw new Error(`Image generation failed: ${response.status} ${response.statusText}`)\n    }\n\n    const data = (await response.json()) as { data?: { url?: string; revised_prompt?: string }[] }\n\n    return {\n      imagePath: data.data?.[0]?.url ?? '',\n      revisedPrompt: data.data?.[0]?.revised_prompt ?? prompt,\n    }\n  },\n})",
+      "path": "tools/generate_image.ts",
+      "target": "tools/generate_image.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "flashcards-pdf",
+  "title": "Flash Cards from PDF Agent",
+  "type": "registry:block",
+  "dependencies": [
+    "@mastra/core",
+    "@mastra/memory",
+    "pdf-parse"
+  ]
+}

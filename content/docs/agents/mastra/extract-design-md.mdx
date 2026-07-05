@@ -1,0 +1,125 @@
+---
+title: Extract DESIGN.md
+description: Turns a domain into a self-contained DESIGN.md — gathering the styleguide, screenshot, and homepage Markdown from context.dev, then composing the document in a single Claude call.
+---
+
+<DocsBaseSwitcher base="mastra" agent="extract-design-md" />
+
+<AgentPreview
+  agent="extract-design-md"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "domain",
+      label: "Domain",
+      placeholder: "stripe.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Extract DESIGN.md Agent** turns any public website into design artifacts.
+The `compose_design_md` tool gathers the styleguide, brand, a homepage
+screenshot, and clean page Markdown through context.dev, then returns **three
+outputs**, which the agent relays verbatim:
+
+- **DESIGN.md** — composed in **one Claude call** (screenshot passed as
+  a vision image): token frontmatter (`version: alpha`, colors, typography,
+  rounded, spacing, components) plus the canonical sections (Overview, Colors,
+  Typography, Layout, Elevation, Shapes, Components, Do's and Don'ts).
+- **Tailwind v4 `@theme` block** — derived **deterministically** from the
+  styleguide + brand in `lib/derive-tokens.ts`.
+- **CSS `:root` tokens** — the same tokens as vanilla CSS variables.
+
+It follows the [designmd.supply](https://designmd.supply) pipeline — the same
+prompt spec and deterministic token derivers — running on Claude.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/extract-design-md
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core context.dev ai @ai-sdk/anthropic
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/extract-design-md/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/extract-design-md/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/extract-design-md/tools/compose_design_md.ts"
+  title="tools/compose_design_md.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/extract-design-md/lib/compose.ts"
+  title="lib/compose.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/extract-design-md/lib/design-md.ts"
+  title="lib/design-md.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/extract-design-md/lib/derive-tokens.ts"
+  title="lib/derive-tokens.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts                  # Agent definition (model + config)
+├── instructions.md            # Call compose_design_md, relay all three artifacts
+├── tools/
+│   └── compose_design_md.ts   # Returns DESIGN.md + Tailwind + CSS
+└── lib/
+    ├── compose.ts             # Fetches signals; Claude call + token derivers
+    ├── design-md.ts           # The verbatim DESIGN.md prompt spec
+    └── derive-tokens.ts       # Deterministic Tailwind v4 @theme + CSS :root tokens
+```
+
+## Customization
+
+- **Data source.** The styleguide, screenshot, and Markdown are pulled through
+  [context.dev](https://context.dev). Set `CONTEXT_DEV_API_KEY`, and
+  `ANTHROPIC_API_KEY` for the model call.
+- **Reshape the document.** Edit `lib/design-md.ts` — the prompt spec is
+  the single source of truth for the frontmatter keys, token names, and sections.
+- **Swap the model.** Change the model in `lib/compose.ts` — it uses
+  `claude-sonnet-4-6` (vision-capable). The reference uses `gpt-5.4-mini`; any
+  multimodal model that can read the screenshot works.
+- **Temperature.** Adjust `temperature` in `lib/compose.ts` (the reference
+  uses `0.2`) to trade determinism for variety.

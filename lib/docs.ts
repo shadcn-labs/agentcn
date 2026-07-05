@@ -25,8 +25,11 @@ export const PAGES_NEW: string[] = [
   ROUTES.DOCS_CHANGELOG,
   `${ROUTES.DOCS_AGENTS}/eve/deep-search`,
   `${ROUTES.DOCS_AGENTS}/flue/deep-search`,
+  `${ROUTES.DOCS_AGENTS}/mastra/deep-search`,
   `${ROUTES.DOCS_AGENTS}/eve/ai-seo-audit`,
   `${ROUTES.DOCS_AGENTS}/flue/ai-seo-audit`,
+  `${ROUTES.DOCS_AGENTS}/mastra/ai-seo-audit`,
   `${ROUTES.DOCS_AGENTS}/eve/openui-assistant`,
   `${ROUTES.DOCS_AGENTS}/flue/openui-assistant`,
+  `${ROUTES.DOCS_AGENTS}/mastra/openui-assistant`,
 ];

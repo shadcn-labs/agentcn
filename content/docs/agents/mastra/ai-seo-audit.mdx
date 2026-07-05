@@ -1,0 +1,138 @@
+---
+title: AI SEO Audit
+description: Runs a deterministic AI-SEO audit on a page through context.dev — scoring ~30 checks across six categories into a 0–100 total, returning failing checks and an agent-ready fix prompt.
+---
+
+<DocsBaseSwitcher base="mastra" agent="ai-seo-audit" />
+
+<AgentPreview
+  agent="ai-seo-audit"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com/blog/how-it-works",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **AI SEO Audit Agent** evaluates a page for how readable it is to AI answer
+engines — ChatGPT, Claude, and Perplexity — rather than classic blue-link
+search. It fetches the page through context.dev (never touching the site
+directly), then runs a **deterministic rubric** of ~30 checks across six
+categories to a 0–100 total. The model doesn't eyeball the score — `audit_page`
+computes it in `lib/rules.ts`, so the same page always yields the same
+result. The agent presents the breakdown, lists the failing checks by impact,
+and returns an **agent-ready fix prompt** you can paste straight into a coding
+agent. Reach for it when you want a page to get cited by AI assistants.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/ai-seo-audit
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core context.dev
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/ai-seo-audit/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/ai-seo-audit/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/mastra/ai-seo-audit/tools/audit_page.ts"
+  title="tools/audit_page.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/ai-seo-audit/lib/audit.ts"
+  title="lib/audit.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/ai-seo-audit/lib/rules.ts"
+  title="lib/rules.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/ai-seo-audit/lib/agent-fix-prompt.ts"
+  title="lib/agent-fix-prompt.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/ai-seo-audit/lib/audit-types.ts"
+  title="lib/audit-types.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/ai-seo-audit/lib/url.ts"
+  title="lib/url.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/ai-seo-audit/skills/seo-audit/SKILL.md"
+  title="skills/seo-audit/SKILL.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts              # Agent definition (model + config)
+├── instructions.md        # Audit-and-report instructions
+├── tools/
+│   └── audit_page.ts      # Runs the deterministic audit, returns the scored result
+├── lib/
+│   ├── audit.ts           # Fetches via context.dev, parses, and scores the rules
+│   ├── rules.ts           # The ~30 checks and six category weights
+│   ├── agent-fix-prompt.ts # Builds the copy-paste fix prompts from the findings
+│   ├── audit-types.ts     # Shared result types
+│   └── url.ts             # URL normalization helpers
+└── skills/
+    └── seo-audit/
+        └── SKILL.md       # How the agent presents the audit_page result
+```
+
+## Customization
+
+- **Fetching.** The page is fetched through [context.dev](https://context.dev) —
+  the recipe never hits the audited site directly. Set `CONTEXT_DEV_API_KEY`.
+- **Tune the rubric.** Edit `lib/rules.ts` to add checks, reweight
+  categories, or change the scoring bands — this is the single source of truth
+  for the score.
+- **Reshape the output.** Edit `instructions.md` or `SKILL.md` to emit
+  JSON, a shorter summary, or a different fix-prompt format.
+- **Swap the model.** Edit `config.ts`. The model only narrates the
+  deterministic result, so any capable model works.

@@ -53,6 +53,21 @@
   --color-code-number: var(--code-number);
   --color-selection: var(--selection);
   --color-selection-foreground: var(--selection-foreground);
+  --color-sponsor-gold-bg: var(--sponsor-gold-bg);
+  --color-sponsor-gold-border: var(--sponsor-gold-border);
+  --color-sponsor-gold-slot-bg: var(--sponsor-gold-slot-bg);
+  --color-sponsor-gold-slot-border: var(--sponsor-gold-slot-border);
+  --color-sponsor-gold-text: var(--sponsor-gold-text);
+  --color-sponsor-silver-bg: var(--sponsor-silver-bg);
+  --color-sponsor-silver-border: var(--sponsor-silver-border);
+  --color-sponsor-silver-slot-bg: var(--sponsor-silver-slot-bg);
+  --color-sponsor-silver-slot-border: var(--sponsor-silver-slot-border);
+  --color-sponsor-silver-text: var(--sponsor-silver-text);
+  --color-sponsor-bronze-bg: var(--sponsor-bronze-bg);
+  --color-sponsor-bronze-border: var(--sponsor-bronze-border);
+  --color-sponsor-bronze-slot-bg: var(--sponsor-bronze-slot-bg);
+  --color-sponsor-bronze-slot-border: var(--sponsor-bronze-slot-border);
+  --color-sponsor-bronze-text: var(--sponsor-bronze-text);
 }
 
 :root {
@@ -96,6 +111,39 @@
   --code-number: oklch(0.56 0 0);
   --selection: oklch(0.145 0 0);
   --selection-foreground: oklch(1 0 0);
+  --sponsor-gold-bg: linear-gradient(
+    145deg,
+    #d4a84b 0%,
+    #f5d98a 30%,
+    #c9952e 60%,
+    #e8c55a 100%
+  );
+  --sponsor-gold-border: #c9952e;
+  --sponsor-gold-slot-bg: rgba(212, 168, 75, 0.08);
+  --sponsor-gold-slot-border: rgba(201, 149, 46, 0.25);
+  --sponsor-gold-text: #5c3d0e;
+  --sponsor-silver-bg: linear-gradient(
+    145deg,
+    #a8a8a8 0%,
+    #d4d4d4 30%,
+    #8a8a8a 60%,
+    #c0c0c0 100%
+  );
+  --sponsor-silver-border: #8a8a8a;
+  --sponsor-silver-slot-bg: rgba(168, 168, 168, 0.06);
+  --sponsor-silver-slot-border: rgba(138, 138, 138, 0.2);
+  --sponsor-silver-text: #2a2a2a;
+  --sponsor-bronze-bg: linear-gradient(
+    145deg,
+    #b5745a 0%,
+    #d4956e 30%,
+    #8c5a3e 60%,
+    #c98a68 100%
+  );
+  --sponsor-bronze-border: #8c5a3e;
+  --sponsor-bronze-slot-bg: rgba(181, 116, 90, 0.06);
+  --sponsor-bronze-slot-border: rgba(140, 90, 62, 0.2);
+  --sponsor-bronze-text: #3d1e0e;
 }
 
 .dark {

@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: Install an agent recipe into your Eve or Flue project.
+description: Install an agent recipe into your Eve, Flue, or Mastra project.
 ---
 
 ## Prerequisites
@@ -13,10 +13,12 @@ Complete these before running the install command.
   Recipes install under `agent/`, which Eve discovers automatically.
 - **Flue** — `npx flue@latest init my-agent` ([docs](https://flueframework.com)).
   Recipes install under `agents/`, `workflows/`, `tools/`, and `skills/`.
+- **Mastra** — `npx create-mastra@latest` ([docs](https://mastra.ai)).
+  Recipes install under `src/mastra/agents/<name>/`, which Mastra discovers automatically.
 
-**2. The framework package.** Each recipe declares its framework package (`eve`
-or `@flue/runtime`) as a dependency, so the shadcn CLI prompts to install it if
-it is missing.
+**2. The framework package.** Each recipe declares its framework package (`eve`,
+`@flue/runtime`, or `@mastra/core`) as a dependency, so the shadcn CLI prompts
+to install it if it is missing.
 
 **3. Environment variables.** Some recipes call external services and need
 secrets set in your project's environment — for example `BRIGHTDATA_API_KEY` for
@@ -37,7 +39,6 @@ example, the [Deep Search](/docs/agents/eve/deep-search) agent:
 ### Eve
 
 ```bash
-# Eve
 npx shadcn@latest add @agentcn/eve/deep-search
 ```
 
@@ -47,9 +48,16 @@ npx shadcn@latest add @agentcn/eve/deep-search
 npx shadcn@latest add @agentcn/flue/deep-search
 ```
 
+### Mastra
+
+```bash
+npx shadcn@latest add @agentcn/mastra/deep-search
+```
+
 The CLI writes the recipe's files into your project at their target paths — for
 Eve, under `agent/`; for Flue, under `agents/`, `workflows/`, `tools/`, and
-`skills/`. Your framework discovers them automatically.
+`skills/`; for Mastra, under `src/mastra/agents/<name>/` with `config.ts`,
+`instructions.md`, and `tools/*.ts`. Your framework discovers them automatically.
 
 Prefer short names like `@agentcn/eve/deep-search`? Register the namespace once —
 see [Registry](/docs/registry).

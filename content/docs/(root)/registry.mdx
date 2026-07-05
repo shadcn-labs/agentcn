@@ -3,10 +3,10 @@ title: Registry
 description: Use the agentcn registry with the shadcn CLI.
 ---
 
-The **agentcn** registry ships complete Eve and Flue agent recipes in the
-[shadcn registry format](https://ui.shadcn.com/docs/registry). Each item bundles
-everything one recipe needs — the agent definition, instructions, tools, skills,
-and workflows. Register the namespace once in `components.json`, then pull
+The **agentcn** registry ships complete Eve, Flue, and Mastra agent recipes in
+the [shadcn registry format](https://ui.shadcn.com/docs/registry). Each item
+bundles everything one recipe needs — the agent definition, instructions, tools,
+skills, and workflows. Register the namespace once in `components.json`, then pull
 recipes by name with the CLI.
 
 ## Setup
@@ -40,6 +40,11 @@ npx shadcn@latest add @agentcn/eve/deep-search
 ```bash
 # Flue
 npx shadcn@latest add @agentcn/flue/deep-search
+```
+
+```bash
+# Mastra
+npx shadcn@latest add @agentcn/mastra/deep-search
 ```
 
 Without a registry alias, use the full URL shown on each recipe page:

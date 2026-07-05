@@ -1,0 +1,13 @@
+{
+  "name": "slack-agent",
+  "type": "registry:block",
+  "title": "Slack Agent",
+  "description": "Mastra agent that replies to Slack mentions and DMs, scoped to the thread, via the Slack Web API.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/post_message.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

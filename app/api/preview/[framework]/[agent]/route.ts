@@ -4,7 +4,7 @@ import { runPreview } from "@/lib/preview/runner";
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-const FRAMEWORKS = new Set(["eve", "flue"]);
+const FRAMEWORKS = new Set(["eve", "flue", "mastra"]);
 
 // In-memory rate limit: 10 requests per IP per hour. Resets on server restart.
 const RATE_LIMIT = 10;
