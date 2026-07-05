@@ -1187,7 +1187,7 @@ const browserAgent: Agent = {
 const openuiAssistant: Agent = {
   description:
     "An OpenUI-powered assistant with real-time UI generation capabilities.",
-  frameworks: ["eve", "flue"],
+  frameworks: ["eve", "flue", "mastra"],
   inputFields: [
     {
       label: "Message",
@@ -1228,6 +1228,21 @@ const openuiAssistant: Agent = {
       {
         role: "agent",
         text: "Fetched the current time for Asia/Tokyo and returned the formatted result.",
+      },
+    ],
+    mastra: [
+      {
+        role: "user",
+        text: "What time is it in Tokyo?",
+      },
+      {
+        detail: "timezone=Asia/Tokyo",
+        role: "tool",
+        tool: "get_current_time",
+      },
+      {
+        role: "agent",
+        text: "It's Tuesday, July 1, 2026 at 10:47 PM JST in Tokyo.",
       },
     ],
   },
