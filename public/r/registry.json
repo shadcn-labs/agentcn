@@ -394,6 +394,13 @@
       "type": "registry:block"
     },
     {
+      "description": "Mastra agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+      "framework": "mastra",
+      "name": "mastra/openui-assistant",
+      "title": "Open UI Assistant",
+      "type": "registry:block"
+    },
+    {
       "description": "Mastra agent that replies to Slack mentions and DMs, scoped to the thread, via the Slack Web API.",
       "framework": "mastra",
       "name": "mastra/slack-agent",

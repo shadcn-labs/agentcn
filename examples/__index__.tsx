@@ -35,4 +35,19 @@ export const ExamplesIndex: Record<string, Record<string, any>> = {
       name: "openui-assistant",
     },
   },
+  mastra: {
+    "openui-assistant": {
+      component: React.lazy(async () => {
+        const mod = await import("./mastra/openui-assistant");
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === "function" || typeof mod[key] === "object"
+          ) || "openui-assistant";
+        return { default: mod.default || mod[exportName] };
+      }),
+      filePath: "examples/mastra/openui-assistant.tsx",
+      name: "openui-assistant",
+    },
+  },
 };
