@@ -1,0 +1,11 @@
+{
+  "name": "error-copy",
+  "type": "registry:block",
+  "title": "Error Copy",
+  "description": "Surface user-facing error states and fix poor copy.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/error-copy.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

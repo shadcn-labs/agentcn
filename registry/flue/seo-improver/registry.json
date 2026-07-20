@@ -1,0 +1,11 @@
+{
+  "name": "seo-improver",
+  "type": "registry:block",
+  "title": "SEO Improvement Agent",
+  "description": "Flue agent that analyzes website SEO and suggests improvements.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/seo-improver.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

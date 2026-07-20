@@ -1,0 +1,12 @@
+{
+  "name": "release-notes",
+  "type": "registry:block",
+  "title": "Release Notes Agent",
+  "description": "Eve agent that generates release notes from merged PRs and commits",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

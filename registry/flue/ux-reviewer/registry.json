@@ -1,0 +1,11 @@
+{
+  "name": "ux-reviewer",
+  "type": "registry:block",
+  "title": "UX Review Agent",
+  "description": "Flue agent that reviews user interfaces for UX issues and suggests improvements.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/ux-reviewer.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

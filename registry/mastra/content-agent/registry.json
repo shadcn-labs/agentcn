@@ -1,0 +1,12 @@
+{
+  "name": "content-agent",
+  "type": "registry:block",
+  "title": "Content Agent",
+  "description": "Mastra agent that researches audience conversations and creates evidence-backed content drafts.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

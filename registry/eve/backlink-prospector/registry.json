@@ -1,0 +1,12 @@
+{
+  "name": "backlink-prospector",
+  "type": "registry:block",
+  "title": "Backlink Prospector",
+  "description": "Eve agent that finds backlink opportunities where competitors have links but this project does not.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

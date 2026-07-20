@@ -1,0 +1,13 @@
+{
+  "name": "community-support",
+  "type": "registry:block",
+  "title": "Community Support",
+  "description": "Mastra agent that reads Discord messages and prepares support review drafts.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/read_messages.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

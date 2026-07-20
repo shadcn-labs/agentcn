@@ -1,0 +1,1 @@
+Test if a new developer can get the repo running by following docs

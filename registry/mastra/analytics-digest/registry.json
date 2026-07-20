@@ -1,0 +1,12 @@
+{
+  "name": "analytics-digest",
+  "type": "registry:block",
+  "title": "Analytics Digest",
+  "description": "Mastra agent that pulls key event trends from PostHog and creates weekly analytics digests.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "onboarding-tester",
+  "type": "registry:block",
+  "title": "Onboarding Tester Agent",
+  "description": "LangGraph agent that tests if a new developer can get the repo running by following docs.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

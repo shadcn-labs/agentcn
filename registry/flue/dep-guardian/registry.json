@@ -1,0 +1,11 @@
+{
+  "name": "dep-guardian",
+  "type": "registry:block",
+  "title": "Dependency Guardian",
+  "description": "Triage dependency update PRs and security alerts, open upgrade PRs for critical fixes.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/dep-guardian.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

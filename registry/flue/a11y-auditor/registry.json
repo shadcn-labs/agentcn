@@ -1,0 +1,11 @@
+{
+  "name": "a11y-auditor",
+  "type": "registry:block",
+  "title": "Accessibility Auditor",
+  "description": "Flue agent that audits project pages for accessibility violations using axe-core and files GitHub issues for verified violations.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/a11y-auditor.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

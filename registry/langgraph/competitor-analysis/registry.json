@@ -1,0 +1,12 @@
+{
+  "name": "competitor-analysis",
+  "type": "registry:block",
+  "title": "Competitor Analysis Agent",
+  "description": "LangGraph agent that watches competitor pages for material changes and alerts Slack.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

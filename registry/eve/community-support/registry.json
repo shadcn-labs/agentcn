@@ -1,0 +1,13 @@
+{
+  "name": "community-support",
+  "type": "registry:block",
+  "title": "Community Support",
+  "description": "Eve agent that reads Discord messages and prepares support review drafts.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" },
+    { "path": "agent/tools/read_messages.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "postiz",
+  "type": "registry:block",
+  "title": "Social Media Content Agent",
+  "description": "Flue agent that researches audience and creates/schedules social media posts.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/postiz.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

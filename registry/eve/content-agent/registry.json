@@ -1,0 +1,12 @@
+{
+  "name": "content-agent",
+  "type": "registry:block",
+  "title": "Content Agent",
+  "description": "Eve agent that researches audience conversations and creates evidence-backed content drafts.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

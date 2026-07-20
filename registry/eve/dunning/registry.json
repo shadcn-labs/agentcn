@@ -1,0 +1,12 @@
+{
+  "name": "dunning",
+  "type": "registry:block",
+  "title": "Dunning Triage",
+  "description": "Eve agent that reviews failed Stripe payments and drafts recovery actions.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

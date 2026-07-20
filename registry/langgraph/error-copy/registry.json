@@ -1,0 +1,12 @@
+{
+  "name": "error-copy",
+  "type": "registry:block",
+  "title": "Error Copy Agent",
+  "description": "LangGraph agent that surfaces user-facing error states and fixes poor copy.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

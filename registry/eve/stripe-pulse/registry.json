@@ -1,0 +1,12 @@
+{
+  "name": "stripe-pulse",
+  "type": "registry:block",
+  "title": "Stripe Pulse Agent",
+  "description": "Eve agent that monitors Stripe account for revenue trends and anomalies.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

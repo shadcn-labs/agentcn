@@ -1,0 +1,11 @@
+{
+  "name": "funnel-analyst",
+  "type": "registry:block",
+  "title": "Funnel Analyst",
+  "description": "Build funnels from PostHog data and find conversion drop-offs.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/funnel-analyst.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

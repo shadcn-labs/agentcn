@@ -1,0 +1,13 @@
+{
+  "name": "perf-auditor",
+  "type": "registry:block",
+  "title": "Performance Auditor Agent",
+  "description": "Eve agent that measures URL performance and files issues for budget violations",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" },
+    { "path": "agent/tools/run_pagespeed.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

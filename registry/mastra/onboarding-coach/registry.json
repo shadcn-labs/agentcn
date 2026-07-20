@@ -1,0 +1,12 @@
+{
+  "name": "onboarding-coach",
+  "type": "registry:block",
+  "title": "Onboarding Coach",
+  "description": "Mastra agent that finds users stuck before activation and drafts nudge messages.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}
