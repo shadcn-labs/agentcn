@@ -5,5 +5,5 @@ export default agent({
     "Documentation sync agent that keeps documentation current with recently merged code.",
   model: "anthropic/claude-haiku-4-5",
   systemPrompt:
-    'You are a documentation sync agent. You keep documentation current with recently merged code changes.\n\nUse the gh CLI to interact with GitHub for PR and commit history.',
+    "You are a documentation sync agent. You keep documentation current with recently merged code changes.\n\nUse the gh CLI to interact with GitHub for PR and commit history.",
 });
