@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ROUTES } from "@/constants/routes";
-import { TOP_LEVEL_SECTIONS } from "@/constants/site";
+import { TOP_LEVEL_SECTIONS } from "@/constants/nav";
 import { EXCLUDED_SECTIONS, isAgentsFolder, PAGES_NEW } from "@/lib/docs";
 import { getAllPagesFromFolder, getPagesFromFolder } from "@/lib/page-tree";
 import type { source } from "@/lib/source";

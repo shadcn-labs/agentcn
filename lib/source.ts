@@ -5,7 +5,7 @@ import { loader } from "fumadocs-core/source";
 import { docs } from "@/.source/server";
 import { ROUTES } from "@/constants/routes";
 import { AGENT_DOCS_DIRECTIVE_MARKDOWN } from "@/lib/agent-discovery/directive";
-import { docsContentRoute, docsImageRoute } from "@/lib/docs";
+import { docsContentRoute } from "@/lib/docs";
 
 export const source = loader({
   baseUrl: ROUTES.DOCS,
@@ -53,15 +53,6 @@ export const getDocNeighbours = (url: string) => {
       : node;
 
   return { next: toTarget(eve.next), previous: toTarget(eve.previous) };
-};
-
-export const getPageImage = (page: InferPageType<typeof source>) => {
-  const segments = [...page.slugs, "image.png"];
-
-  return {
-    segments,
-    url: `${docsImageRoute}/${segments.join("/")}`,
-  };
 };
 
 export const getPageMarkdownUrl = (page: InferPageType<typeof source>) => {

@@ -34,8 +34,7 @@ export const createPageMetadata = ({
     canonical === ROUTES.DOCS || canonical.startsWith(`${ROUTES.DOCS}/`)
       ? `${canonical}.md`
       : undefined;
-  const resolvedOgImage =
-    ogImage ?? `${ROUTES.OG}${canonical === ROUTES.HOME ? "" : canonical}`;
+  const resolvedOgImage = ogImage ?? SITE.OG_IMAGE;
   const resolvedTitle = ogTitle ?? title;
 
   return {

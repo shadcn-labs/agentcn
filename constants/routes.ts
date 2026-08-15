@@ -15,7 +15,6 @@ export const ROUTES = {
   LLMS_MD: "/llms.md",
   MANIFEST: "/manifest.webmanifest",
   MCP: "/mcp",
-  OG: "/og",
   OPENAPI: "/openapi.json",
   REGISTRY: "/r/registry.json",
   ROBOTS: "/robots.txt",

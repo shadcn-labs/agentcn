@@ -1,5 +1,3 @@
-import { ROUTES } from "./routes";
-
 export const FALLBACK_SITE_ORIGIN = "https://agentcn.vercel.app" as const;
 
 const getBaseUrl = () => {
@@ -49,13 +47,3 @@ export const META_THEME_COLORS = {
 export const UTM_PARAMS = {
   utm_source: new URL(baseUrl).hostname,
 };
-
-export const TOP_LEVEL_SECTIONS = [
-  { href: ROUTES.DOCS, name: "Introduction" },
-  { href: ROUTES.DOCS_INSTALLATION, name: "Installation" },
-  { href: ROUTES.DOCS_AGENTS, name: "Agents" },
-  { href: ROUTES.DOCS_MCP, name: "MCP" },
-  { href: ROUTES.DOCS_REGISTRY, name: "Registry" },
-  { href: ROUTES.LLMS, name: "llms.txt" },
-  { href: ROUTES.DOCS_CHANGELOG, name: "Changelog" },
-];

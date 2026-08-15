@@ -14,7 +14,6 @@ import { ROUTES } from "@/constants/routes";
 import { formatTitleFromSlug } from "@/lib/docs";
 import {
   getDocNeighbours,
-  getPageImage,
   getPageMarkdownUrl,
   source,
 } from "@/lib/source";
@@ -40,11 +39,9 @@ export const generateMetadata = async (props: {
   }
 
   const doc = page.data;
-  const ogImage = getPageImage(page).url;
 
   return createPageMetadata({
     description: doc.description,
-    ogImage,
     ogType: "article",
     path: page.url,
     title: doc.title,

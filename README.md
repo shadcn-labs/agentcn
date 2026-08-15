@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/og.png" alt="agentcn banner" />
+  <img src="./.github/assets/gh.png" alt="agentcn banner" />
 </p>
 
 <h1 align="center">agentcn</h1>
@@ -94,4 +94,10 @@ This project is proudly supported by:
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=shadcn-labs/agentcn&type=Date)](https://star-history.com/#shadcn-labs/agentcn&Date)
+<a href="https://www.star-history.com/?type=date&repos=shadcn-labs%2Fagentcn">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=shadcn-labs/agentcn&type=date&theme=dark&legend=top-left&sealed_token=M10nGy9nIv-6AgitxCGGoirEscXndQaCGpIKkgIYqX2HOOrRQmgYN5s67n1T--wiRs23MNfXyZ3CxT9CYVvlE0miB-_U55ef1l7HtFp7sLKGfoYs1HptQgvnrZKfKwqW7Zy6GBtfN-VRCtiX9CzA4mlVYtlyP0ZtWpMrNIGsg3r89V7ynPZR_9RXOaMD" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=shadcn-labs/agentcn&type=date&legend=top-left&sealed_token=M10nGy9nIv-6AgitxCGGoirEscXndQaCGpIKkgIYqX2HOOrRQmgYN5s67n1T--wiRs23MNfXyZ3CxT9CYVvlE0miB-_U55ef1l7HtFp7sLKGfoYs1HptQgvnrZKfKwqW7Zy6GBtfN-VRCtiX9CzA4mlVYtlyP0ZtWpMrNIGsg3r89V7ynPZR_9RXOaMD" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=shadcn-labs/agentcn&type=date&legend=top-left&sealed_token=M10nGy9nIv-6AgitxCGGoirEscXndQaCGpIKkgIYqX2HOOrRQmgYN5s67n1T--wiRs23MNfXyZ3CxT9CYVvlE0miB-_U55ef1l7HtFp7sLKGfoYs1HptQgvnrZKfKwqW7Zy6GBtfN-VRCtiX9CzA4mlVYtlyP0ZtWpMrNIGsg3r89V7ynPZR_9RXOaMD" />
+ </picture>
+</a>

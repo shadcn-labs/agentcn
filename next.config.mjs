@@ -9,9 +9,6 @@ const { ROUTES } = await jiti.import("./constants/routes");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   devIndicators: false,
-  experimental: {
-    viewTransition: true,
-  },
   headers() {
     const link = [
       `<${ROUTES.API_CATALOG}>; rel="api-catalog"`,
