@@ -1,0 +1,78 @@
+---
+title: Backlink Prospector
+description: Prospect for backlink opportunities by analyzing competitor link profiles and identifying potential outreach targets.
+---
+
+<DocsBaseSwitcher base="eve" agent="backlink-prospector" />
+
+<AgentPreview
+  agent="backlink-prospector"
+  framework="eve"
+  inputFields={[
+    {
+      name: "competitor",
+      label: "Competitor Domain",
+      placeholder: "example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Backlink Prospector** is an agent that prospects for backlink opportunities by analyzing competitor link profiles and identifying potential outreach targets. It scrapes competitor backlinks, filters for high-authority domains, and generates outreach email templates for link building campaigns.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/backlink-prospector
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/backlink-prospector/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/backlink-prospector/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

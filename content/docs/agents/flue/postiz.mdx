@@ -1,0 +1,75 @@
+---
+title: Postiz
+description: Researches audience interests and creates scheduled social media posts.
+---
+
+<DocsBaseSwitcher base="flue" agent="postiz" />
+
+<AgentPreview
+  agent="postiz"
+  framework="flue"
+  inputFields={[
+    {
+      name: "topic",
+      label: "Topic",
+      placeholder: "Product launch announcement",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Postiz Agent** researches your audience's interests and pain points, then
+creates and schedules engaging social media posts. It analyzes trending topics
+and competitor content to craft posts that provide value, spark conversation, and
+align with the brand voice.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/postiz
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/postiz/agents/postiz.ts"
+  title="agents/postiz.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── postiz.ts             # Agent definition (model + config)
+```
+
+## Customization
+
+- **Add scheduling.** Integrate with a social media scheduling API.
+- **Swap the model.** Edit `agents/postiz.ts`.

@@ -1,0 +1,78 @@
+---
+title: Dunning Triage
+description: Handle dunning workflows by triaging failed payments, sending retry notifications, and escalating critical issues.
+---
+
+<DocsBaseSwitcher base="eve" agent="dunning" />
+
+<AgentPreview
+  agent="dunning"
+  framework="eve"
+  inputFields={[
+    {
+      name: "payment",
+      label: "Payment ID",
+      placeholder: "pay_123456",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Dunning Triage** is an agent that handles dunning workflows by triaging failed payments, sending retry notifications, and escalating critical issues. It monitors payment failures, categorizes by failure type, schedules retry attempts, and generates customer communication for payment recovery.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/dunning
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/dunning/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/dunning/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

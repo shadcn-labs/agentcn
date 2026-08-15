@@ -1,0 +1,74 @@
+---
+title: PPC Assist
+description: Analyzes PPC campaign data and suggests optimizations for bids, budgets, and ad copy.
+---
+
+<DocsBaseSwitcher base="flue" agent="ppc-assist" />
+
+<AgentPreview
+  agent="ppc-assist"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Analyze current PPC campaigns",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **PPC Assist** analyzes campaign data from PostHog and Google Ads APIs to
+identify optimization opportunities. It evaluates metrics like CTR, CPC,
+conversion rate, and ROAS, then suggests bid adjustments, budget reallocations,
+and ad copy improvements to maximize campaign performance.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/ppc-assist
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/ppc-assist/agents/ppc-assist.ts"
+  title="agents/ppc-assist.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── ppc-assist.ts          # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/ppc-assist.ts`.

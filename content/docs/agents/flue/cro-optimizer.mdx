@@ -1,0 +1,74 @@
+---
+title: CRO Optimizer
+description: Analyzes conversion funnels and files experiment hypotheses with success metrics.
+---
+
+<DocsBaseSwitcher base="flue" agent="cro-optimizer" />
+
+<AgentPreview
+  agent="cro-optimizer"
+  framework="flue"
+  inputFields={[
+    {
+      name: "url",
+      label: "Landing page URL",
+      placeholder: "https://example.com/pricing",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **CRO Optimizer** analyzes conversion funnels using PostHog data and
+inspects landing pages with agent-browser. It finds conversion drop-offs,
+identifies friction points, and files experiment hypotheses with clear success
+metrics, estimated impact, and implementation notes.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/cro-optimizer
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/cro-optimizer/agents/cro-optimizer.ts"
+  title="agents/cro-optimizer.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── cro-optimizer.ts       # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/cro-optimizer.ts`.

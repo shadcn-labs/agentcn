@@ -1,0 +1,79 @@
+---
+title: Onboarding Coach
+description: Guides new users through product onboarding with personalized tips.
+---
+
+<DocsBaseSwitcher base="mastra" agent="onboarding-coach" />
+
+<AgentPreview
+  agent="onboarding-coach"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "user",
+      label: "User Context",
+      placeholder: "New user, technical background, interested in API features",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Onboarding Coach Agent** personalizes the onboarding experience by adapting guidance based on user background, goals, and progress. It provides contextual tips, celebrates milestones, and helps users reach their "aha moment" faster.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/onboarding-coach
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/onboarding-coach/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/onboarding-coach/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

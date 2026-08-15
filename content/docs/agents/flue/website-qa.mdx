@@ -1,0 +1,74 @@
+---
+title: Website QA
+description: Crawls websites to find broken links, console errors, and responsive layout problems.
+---
+
+<DocsBaseSwitcher base="flue" agent="website-qa" />
+
+<AgentPreview
+  agent="website-qa"
+  framework="flue"
+  inputFields={[
+    {
+      name: "url",
+      label: "Website URL",
+      placeholder: "https://example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Website QA Agent** crawls websites and checks for broken links, console
+errors, missing alt text, form validation issues, responsive layout problems,
+and loading errors. It generates a QA report with severity levels and steps to
+reproduce each issue found.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/website-qa
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/website-qa/agents/website-qa.ts"
+  title="agents/website-qa.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── website-qa.ts          # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/website-qa.ts`.

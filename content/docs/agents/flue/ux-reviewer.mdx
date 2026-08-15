@@ -1,0 +1,74 @@
+---
+title: UX Reviewer
+description: Inspects web interfaces and evaluates usability, accessibility, and user flow.
+---
+
+<DocsBaseSwitcher base="flue" agent="ux-reviewer" />
+
+<AgentPreview
+  agent="ux-reviewer"
+  framework="flue"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com/dashboard",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **UX Reviewer** uses agent-browser to inspect web interfaces and evaluate
+usability, accessibility, visual hierarchy, consistency, and user flow. It
+identifies friction points, confusing navigation, and accessibility violations,
+then provides prioritized, actionable improvement suggestions with rationale.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/ux-reviewer
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/ux-reviewer/agents/ux-reviewer.ts"
+  title="agents/ux-reviewer.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── ux-reviewer.ts         # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/ux-reviewer.ts`.

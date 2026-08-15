@@ -1,0 +1,74 @@
+---
+title: Stripe Pulse
+description: Monitors Stripe revenue data, subscription metrics, and customer churn.
+---
+
+<DocsBaseSwitcher base="flue" agent="stripe-pulse" />
+
+<AgentPreview
+  agent="stripe-pulse"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Pull latest Stripe metrics",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Stripe Pulse Agent** uses the Stripe CLI to pull payment data, subscription
+metrics, and customer churn. It identifies revenue trends, anomalies, and
+actionable insights, presenting findings with clear summaries and flagging
+anything that needs immediate attention.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/stripe-pulse
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/stripe-pulse/agents/stripe-pulse.ts"
+  title="agents/stripe-pulse.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── stripe-pulse.ts        # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/stripe-pulse.ts`.

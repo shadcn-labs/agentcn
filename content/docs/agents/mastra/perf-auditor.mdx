@@ -1,0 +1,79 @@
+---
+title: Performance Auditor
+description: Audits web performance and generates Core Web Vitals reports.
+---
+
+<DocsBaseSwitcher base="mastra" agent="perf-auditor" />
+
+<AgentPreview
+  agent="perf-auditor"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Performance Auditor Agent** measures Core Web Vitals (LCP, INP, CLS), identifies render-blocking resources, and generates prioritized optimization recommendations. It provides both quick wins and long-term performance improvement strategies.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/perf-auditor
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/perf-auditor/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/perf-auditor/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

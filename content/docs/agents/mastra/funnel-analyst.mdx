@@ -1,0 +1,79 @@
+---
+title: Funnel Analyst
+description: Analyzes user funnels and identifies drop-off points.
+---
+
+<DocsBaseSwitcher base="mastra" agent="funnel-analyst" />
+
+<AgentPreview
+  agent="funnel-analyst"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "funnel",
+      label: "Funnel Description",
+      placeholder: "Signup → Onboarding → First Purchase",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Funnel Analyst Agent** maps user journeys through conversion funnels, calculates step-by-step conversion rates, and pinpoints where users drop off. It generates actionable recommendations to improve each funnel stage.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/funnel-analyst
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/funnel-analyst/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/funnel-analyst/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

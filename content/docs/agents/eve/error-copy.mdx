@@ -1,0 +1,78 @@
+---
+title: Error Copy
+description: Generate user-friendly error messages and copy for error states across applications.
+---
+
+<DocsBaseSwitcher base="eve" agent="error-copy" />
+
+<AgentPreview
+  agent="error-copy"
+  framework="eve"
+  inputFields={[
+    {
+      name: "error",
+      label: "Error Message",
+      placeholder: "Connection timeout",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Error Copy** is an agent that generates user-friendly error messages and copy for error states across applications. It transforms technical error messages into clear, actionable copy that helps users understand what went wrong and how to fix it.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/error-copy
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/error-copy/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/error-copy/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

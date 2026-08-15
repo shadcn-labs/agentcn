@@ -1,0 +1,78 @@
+---
+title: PPC Assist
+description: Analyzes PPC campaign data and suggests optimizations.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="ppc-assist" />
+
+<AgentPreview
+  agent="ppc-assist"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **PPC Assist** agent analyzes PPC campaign data and suggests optimizations to improve performance and ROI. It uses PostHog and Google Ads APIs to analyze campaign data, helping you get the most out of your advertising spend.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/ppc-assist
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/ppc-assist/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/ppc-assist/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

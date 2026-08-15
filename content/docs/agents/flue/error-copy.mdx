@@ -1,0 +1,74 @@
+---
+title: Error Copy
+description: Surfaces vague error messages in the app and files GitHub issues with suggested replacements.
+---
+
+<DocsBaseSwitcher base="flue" agent="error-copy" />
+
+<AgentPreview
+  agent="error-copy"
+  framework="flue"
+  inputFields={[
+    {
+      name: "url",
+      label: "App URL",
+      placeholder: "https://app.example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Error Copy Agent** navigates your app with agent-browser to find vague,
+unhelpful, or inconsistent error messages. It opens GitHub issues with specific
+file paths, current copy, and suggested replacements. Errors shown to unpaid
+users and onboarding flows are prioritized.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/error-copy
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/error-copy/agents/error-copy.ts"
+  title="agents/error-copy.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── error-copy.ts          # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/error-copy.ts`.

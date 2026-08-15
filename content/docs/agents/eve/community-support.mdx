@@ -1,0 +1,78 @@
+---
+title: Discord Community Support
+description: Provide Discord community support by answering questions, triaging issues, and escalating critical problems.
+---
+
+<DocsBaseSwitcher base="eve" agent="community-support" />
+
+<AgentPreview
+  agent="community-support"
+  framework="eve"
+  inputFields={[
+    {
+      name: "question",
+      label: "Question",
+      placeholder: "How do I install the package?",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Community Support** is an agent that provides Discord community support by answering questions, triaging issues, and escalating critical problems. It monitors Discord channels, responds to user queries, categorizes issues by severity, and routes complex problems to human support staff.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/community-support
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/community-support/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/community-support/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

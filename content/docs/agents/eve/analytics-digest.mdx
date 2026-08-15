@@ -1,0 +1,78 @@
+---
+title: Analytics Digest
+description: Pull key event trends from PostHog and create a weekly digest summarizing product usage patterns.
+---
+
+<DocsBaseSwitcher base="eve" agent="analytics-digest" />
+
+<AgentPreview
+  agent="analytics-digest"
+  framework="eve"
+  inputFields={[
+    {
+      name: "timeframe",
+      label: "Timeframe",
+      placeholder: "past 7 days",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Analytics Digest** is an agent that pulls key event trends from PostHog and creates a weekly digest summarizing product usage patterns. It queries event data, identifies top events by volume, computes week-over-week changes, detects notable trends, and composes a concise digest with actionable recommendations.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/analytics-digest
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/analytics-digest/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/analytics-digest/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.
