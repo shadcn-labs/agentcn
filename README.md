@@ -31,10 +31,6 @@
 - 🍳 **Complete recipes** — Full agent source: instructions, tools, skills, and workflows
 - 🧪 **Live previews** — Run each agent right from its docs page
 
-## Development
-
-Please refer to the [Development Guide](./DEVELOPMENT.md) for more details.
-
 ## Showcase
 
 Consider showcasing your work on:
