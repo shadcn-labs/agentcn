@@ -1,0 +1,78 @@
+---
+title: Analytics Digest
+description: Pulls key event trends from PostHog and creates a weekly digest.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="analytics-digest" />
+
+<AgentPreview
+  agent="analytics-digest"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Analytics Digest** creates concise weekly digests from PostHog data. It focuses on top events by volume and growth rate, unusual spikes or drops in key metrics, user cohort trends (new vs returning), feature adoption rates, and funnel conversion changes. Presents findings as a structured digest with key takeaways and action items.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/analytics-digest
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/analytics-digest/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/analytics-digest/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

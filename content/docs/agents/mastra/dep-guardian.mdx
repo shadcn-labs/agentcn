@@ -1,0 +1,79 @@
+---
+title: Dependency Guardian
+description: Monitors dependencies for vulnerabilities, license issues, and update recommendations.
+---
+
+<DocsBaseSwitcher base="mastra" agent="dep-guardian" />
+
+<AgentPreview
+  agent="dep-guardian"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "project",
+      label: "Project Path",
+      placeholder: "./my-project",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Dependency Guardian Agent** scans project dependencies for known vulnerabilities, license compliance issues, and outdated packages. It generates prioritized upgrade recommendations with risk assessments and migration guides.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/dep-guardian
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/dep-guardian/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/dep-guardian/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

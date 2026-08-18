@@ -1,0 +1,73 @@
+---
+title: SEO Improver
+description: Analyzes websites for SEO issues and provides prioritized improvement recommendations.
+---
+
+<DocsBaseSwitcher base="flue" agent="seo-improver" />
+
+<AgentPreview
+  agent="seo-improver"
+  framework="flue"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **SEO Improver** analyzes websites for SEO issues including meta tags,
+headings, keyword usage, page speed, mobile-friendliness, and structured data.
+It provides actionable recommendations prioritized by impact.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/seo-improver
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/seo-improver/agents/seo-improver.ts"
+  title="agents/seo-improver.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── seo-improver.ts        # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/seo-improver.ts`.

@@ -1,0 +1,12 @@
+{
+  "name": "ux-reviewer",
+  "type": "registry:block",
+  "title": "UX Reviewer Agent",
+  "description": "Eve agent that reviews user interface for UX issues and suggests improvements.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

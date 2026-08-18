@@ -1,0 +1,13 @@
+{
+  "name": "seo-improver",
+  "type": "registry:block",
+  "title": "SEO Improvement Agent",
+  "description": "Mastra agent that analyzes website SEO and suggests improvements for better search engine rankings.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

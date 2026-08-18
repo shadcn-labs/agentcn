@@ -1,0 +1,13 @@
+{
+  "name": "ux-reviewer",
+  "type": "registry:block",
+  "title": "UX Review Agent",
+  "description": "Mastra agent that reviews user interface for UX issues and suggests improvements.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

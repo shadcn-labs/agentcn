@@ -1,0 +1,12 @@
+{
+  "name": "community-support",
+  "type": "registry:block",
+  "title": "Community Support",
+  "description": "Flue agent that reads Discord messages and prepares support review drafts.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/community-support.ts", "type": "registry:file" },
+    { "path": "tools/read-messages.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

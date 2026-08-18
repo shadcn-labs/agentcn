@@ -1,0 +1,74 @@
+---
+title: Sanity Docs Feedback
+description: Reviews Sanity documentation for accuracy, completeness, and clarity.
+---
+
+<DocsBaseSwitcher base="flue" agent="sanity-docs-feedback" />
+
+<AgentPreview
+  agent="sanity-docs-feedback"
+  framework="flue"
+  inputFields={[
+    {
+      name: "url",
+      label: "Documentation URL",
+      placeholder: "https://www.sanity.io/docs",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Sanity Docs Feedback Agent** reviews Sanity documentation for accuracy,
+completeness, and clarity. It navigates documentation pages with the browser,
+identifies outdated information, missing examples, and confusing explanations,
+then provides structured feedback with specific improvement suggestions.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/sanity-docs-feedback
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/sanity-docs-feedback/agents/sanity-docs-feedback.ts"
+  title="agents/sanity-docs-feedback.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── sanity-docs-feedback.ts  # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/sanity-docs-feedback.ts`.

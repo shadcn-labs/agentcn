@@ -1,0 +1,13 @@
+{
+  "name": "dep-guardian",
+  "type": "registry:block",
+  "title": "Dependency Guardian",
+  "description": "Triages dependency update PRs and security alerts, opens upgrade PRs for critical fixes.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

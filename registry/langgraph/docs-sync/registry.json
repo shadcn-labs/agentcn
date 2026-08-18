@@ -1,0 +1,12 @@
+{
+  "name": "docs-sync",
+  "type": "registry:block",
+  "title": "Documentation Sync Agent",
+  "description": "LangGraph agent that keeps documentation current with recently merged code.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

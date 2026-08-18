@@ -1,0 +1,12 @@
+{
+  "name": "standup-bot",
+  "type": "registry:block",
+  "title": "Standup Bot Agent",
+  "description": "LangGraph agent that collects standup updates from team members and creates a summary.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

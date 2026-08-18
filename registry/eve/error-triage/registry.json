@@ -1,0 +1,12 @@
+{
+  "name": "error-triage",
+  "type": "registry:block",
+  "title": "Error Triage",
+  "description": "Eve agent that pulls Sentry issues and drafts debugging reports.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

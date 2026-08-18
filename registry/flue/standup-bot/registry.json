@@ -1,0 +1,11 @@
+{
+  "name": "standup-bot",
+  "type": "registry:block",
+  "title": "Standup Bot Agent",
+  "description": "Flue agent that collects standup updates from team members and creates summaries.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/standup-bot.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

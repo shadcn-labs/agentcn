@@ -1,0 +1,11 @@
+{
+  "name": "experiment-analyst",
+  "type": "registry:block",
+  "title": "Experiment Analyst",
+  "description": "Read PostHog A/B experiment results and summarize learnings.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/experiment-analyst.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

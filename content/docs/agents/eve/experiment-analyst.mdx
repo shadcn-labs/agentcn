@@ -1,0 +1,78 @@
+---
+title: Experiment Analyst
+description: Analyze A/B test results, calculate statistical significance, and generate experiment reports.
+---
+
+<DocsBaseSwitcher base="eve" agent="experiment-analyst" />
+
+<AgentPreview
+  agent="experiment-analyst"
+  framework="eve"
+  inputFields={[
+    {
+      name: "experiment",
+      label: "Experiment Name",
+      placeholder: "Button color test",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Experiment Analyst** is an agent that analyzes A/B test results, calculates statistical significance, and generates experiment reports. It processes experiment data, computes confidence intervals, identifies winning variants, and provides recommendations for next steps.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/experiment-analyst
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/experiment-analyst/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/experiment-analyst/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

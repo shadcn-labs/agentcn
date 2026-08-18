@@ -1,0 +1,78 @@
+---
+title: Competitor Analysis
+description: Watches competitor pages for material changes and alerts Slack.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="competitor-analysis" />
+
+<AgentPreview
+  agent="competitor-analysis"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Competitor Analysis** agent monitors competitor websites for meaningful changes. It detects pricing changes, new features or product announcements, changes to positioning or messaging, and updates to integrations or partnerships. When material changes are detected, it sends concise alerts to a designated Slack channel.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/competitor-analysis
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/competitor-analysis/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/competitor-analysis/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

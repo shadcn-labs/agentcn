@@ -1,0 +1,83 @@
+---
+title: Community Support
+description: Reads Discord messages and drafts support review responses, triaged by urgency and topic.
+---
+
+<DocsBaseSwitcher base="flue" agent="community-support" />
+
+<AgentPreview
+  agent="community-support"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Review recent Discord messages",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Community Support Agent** reads Discord messages, triages them by urgency
+and topic, drafts helpful responses for unanswered questions, and flags issues
+that need maintainer attention. Reach for it to keep your community responsive
+without manual monitoring.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/community-support
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/community-support/agents/community-support.ts"
+  title="agents/community-support.ts"
+/>
+
+<ComponentSource
+  src="registry/flue/community-support/tools/read-messages.ts"
+  title="tools/read-messages.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── community-support.ts   # Agent + Discord message reader
+tools/
+└── read-messages.ts        # Reads messages from Discord channels
+```
+
+## Customization
+
+- **Add auto-reply.** Wire in a Discord reply tool for instant responses.
+- **Scope by channel.** Filter messages by channel ID or category.
+- **Swap the model.** Edit `agents/community-support.ts`.

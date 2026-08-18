@@ -1,0 +1,83 @@
+---
+title: Performance Auditor
+description: Measures URL performance using PageSpeed Insights and files issues for budget violations.
+---
+
+<DocsBaseSwitcher base="flue" agent="perf-auditor" />
+
+<AgentPreview
+  agent="perf-auditor"
+  framework="flue"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Performance Auditor** measures URL performance using PageSpeed Insights and
+identifies issues that violate performance budgets. It analyzes Core Web Vitals
+(LCP, INP, CLS), files GitHub issues for violations, and provides actionable
+recommendations for improvement.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/perf-auditor
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/perf-auditor/agents/perf-auditor.ts"
+  title="agents/perf-auditor.ts"
+/>
+
+<ComponentSource
+  src="registry/flue/perf-auditor/tools/run-pagespeed.ts"
+  title="tools/run-pagespeed.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── perf-auditor.ts        # Agent + PageSpeed runner
+tools/
+└── run-pagespeed.ts        # Calls PageSpeed Insights API
+```
+
+## Customization
+
+- **Set budgets.** Adjust performance thresholds in the agent instructions.
+- **Add more metrics.** Extend `run-pagespeed.ts` to capture additional data.
+- **Swap the model.** Edit `agents/perf-auditor.ts`.

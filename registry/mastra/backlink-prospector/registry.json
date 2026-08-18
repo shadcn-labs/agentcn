@@ -1,0 +1,12 @@
+{
+  "name": "backlink-prospector",
+  "type": "registry:block",
+  "title": "Backlink Prospector",
+  "description": "Mastra agent that finds backlink opportunities where competitors have links but this project doesn't.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

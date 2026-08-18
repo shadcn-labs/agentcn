@@ -1,0 +1,12 @@
+{
+  "name": "stripe-pulse",
+  "type": "registry:block",
+  "title": "Stripe Monitoring Agent",
+  "description": "LangGraph agent that monitors Stripe account for revenue trends and anomalies.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}
