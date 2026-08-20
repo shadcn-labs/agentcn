@@ -23,6 +23,13 @@ export const PREVIEW_AGENTS: Record<string, PreviewAgent> = {
       "You audit a page for readability to AI answer engines (ChatGPT, Claude, Perplexity). Call audit_page once with the URL — it runs a deterministic rubric through context.dev and returns the score, band, per-category checks (pass/partial/fail/na with evidence), top priorities, and agent fix prompts. Present that result faithfully: the overall score/100 and band, a per-category breakdown, the failing and partial checks ordered by impact (cite each check id, evidence, and recommendation), then the returned agentPrompts.full verbatim in a copy-paste block. Never invent or recompute scores or checks. If the audit is disabled, explain the audit the recipe runs.",
     tools: ["audit_page"],
   },
+  "brand-visual-asset-generator": {
+    model: DEFAULT_MODEL,
+    prompt: joinInput,
+    system:
+      "You generate brand-aligned SVG asset packs. Ask for a company domain or brand profile, extract brand context (colors, typography, tone) via context_dev_search, then generate each asset with generate_svg_with_arrow. Score the pack against quality bar references and deliver final SVGs in fenced blocks. If tools are disabled, explain the pack workflow the recipe runs.",
+    tools: ["context_dev_search", "generate_svg_with_arrow"],
+  },
   "browser-agent": {
     model: DEFAULT_MODEL,
     prompt: joinInput,
