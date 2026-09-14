@@ -1,0 +1,12 @@
+{
+  "name": "cro-optimizer",
+  "type": "registry:block",
+  "title": "CRO Optimizer",
+  "description": "Mastra agent that finds conversion drop-offs and files experiment hypotheses.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

@@ -1,0 +1,78 @@
+---
+title: A11y Auditor
+description: Audits project pages for accessibility violations using axe-core and files GitHub issues for verified violations.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="a11y-auditor" />
+
+<AgentPreview
+  agent="a11y-auditor"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **A11y Auditor** helps teams ship WCAG-compliant experiences by running axe-core audits against project pages. It classifies violations by severity (critical, serious, moderate, minor), provides concrete fix recommendations, and files GitHub issues for verified violations. Focuses on WCAG 2.1 AA compliance with emphasis on keyboard navigation, screen reader compatibility, and color contrast.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/a11y-auditor
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/a11y-auditor/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/a11y-auditor/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

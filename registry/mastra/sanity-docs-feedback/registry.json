@@ -1,0 +1,12 @@
+{
+  "name": "sanity-docs-feedback",
+  "type": "registry:block",
+  "title": "Sanity Docs Feedback Agent",
+  "description": "Mastra agent that reviews Sanity documentation for accuracy and suggests improvements.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

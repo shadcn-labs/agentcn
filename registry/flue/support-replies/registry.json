@@ -1,0 +1,11 @@
+{
+  "name": "support-replies",
+  "type": "registry:block",
+  "title": "Support Reply Drafting Agent",
+  "description": "Flue agent that drafts support replies based on customer inquiries.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/support-replies.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

@@ -1,0 +1,79 @@
+---
+title: PPC Assistant
+description: Optimizes pay-per-click ad campaigns and keyword strategies.
+---
+
+<DocsBaseSwitcher base="mastra" agent="ppc-assist" />
+
+<AgentPreview
+  agent="ppc-assist"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "campaign",
+      label: "Campaign Data",
+      placeholder: "Google Ads campaign for SaaS product",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **PPC Assistant Agent** analyzes ad campaign performance, suggests keyword bid adjustments, identifies negative keywords, and recommends budget reallocation. It provides data-driven insights to improve ROAS across Google Ads and Meta Ads.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/ppc-assist
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/ppc-assist/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/ppc-assist/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

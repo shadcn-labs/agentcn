@@ -1,0 +1,78 @@
+---
+title: Stripe Pulse
+description: Monitors Stripe account for revenue trends and anomalies.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="stripe-pulse" />
+
+<AgentPreview
+  agent="stripe-pulse"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Stripe Pulse** agent monitors your Stripe account for revenue health and identifies anomalies. It tracks unusual patterns like sudden drops in revenue, increased failed payments, subscription churn spikes, or unusual transaction volumes, then provides clear alerts and actionable insights.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/stripe-pulse
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/stripe-pulse/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/stripe-pulse/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

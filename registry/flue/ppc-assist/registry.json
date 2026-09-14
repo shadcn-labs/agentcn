@@ -1,0 +1,11 @@
+{
+  "name": "ppc-assist",
+  "type": "registry:block",
+  "title": "PPC Advertising Assistant",
+  "description": "Flue agent that analyzes PPC campaign data and suggests optimizations.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/ppc-assist.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

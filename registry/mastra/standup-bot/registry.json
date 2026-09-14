@@ -1,0 +1,13 @@
+{
+  "name": "standup-bot",
+  "type": "registry:block",
+  "title": "Standup Bot Agent",
+  "description": "Mastra agent that collects standup updates from team members and creates a summary.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

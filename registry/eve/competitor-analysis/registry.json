@@ -1,0 +1,12 @@
+{
+  "name": "competitor-analysis",
+  "type": "registry:block",
+  "title": "Competitor Analysis",
+  "description": "Eve agent that watches competitor pages for material changes and alerts Slack.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

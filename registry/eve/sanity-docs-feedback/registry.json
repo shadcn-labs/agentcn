@@ -1,0 +1,12 @@
+{
+  "name": "sanity-docs-feedback",
+  "type": "registry:block",
+  "title": "Sanity Docs Feedback Agent",
+  "description": "Eve agent that reviews Sanity documentation for accuracy and suggests improvements",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

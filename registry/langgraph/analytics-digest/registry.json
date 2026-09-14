@@ -1,0 +1,12 @@
+{
+  "name": "analytics-digest",
+  "type": "registry:block",
+  "title": "Analytics Digest Agent",
+  "description": "LangGraph agent that pulls key event trends from PostHog and creates a weekly digest.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

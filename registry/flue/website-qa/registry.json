@@ -1,0 +1,11 @@
+{
+  "name": "website-qa",
+  "type": "registry:block",
+  "title": "Website QA Agent",
+  "description": "Flue agent that tests websites for broken links, errors, and quality issues.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/website-qa.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

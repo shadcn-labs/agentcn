@@ -1,0 +1,12 @@
+{
+  "name": "backlink-prospector",
+  "type": "registry:block",
+  "title": "Backlink Prospecting Agent",
+  "description": "LangGraph agent that finds backlink opportunities where competitors have links but this project doesn't.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

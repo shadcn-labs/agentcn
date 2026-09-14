@@ -1,0 +1,12 @@
+{
+  "name": "postiz",
+  "type": "registry:block",
+  "title": "Social Media Content Agent",
+  "description": "Eve agent that researches audience and creates/schedules social media posts",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

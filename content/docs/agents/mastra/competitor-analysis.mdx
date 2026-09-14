@@ -1,0 +1,79 @@
+---
+title: Competitor Analysis
+description: Analyzes competitor websites and strategies for competitive intelligence.
+---
+
+<DocsBaseSwitcher base="mastra" agent="competitor-analysis" />
+
+<AgentPreview
+  agent="competitor-analysis"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "competitor",
+      label: "Competitor URL",
+      placeholder: "https://competitor.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Competitor Analysis Agent** scrapes and analyzes competitor websites, extracting positioning, feature sets, pricing, and content strategy. It produces structured comparison reports with actionable competitive intelligence.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/competitor-analysis
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/competitor-analysis/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/competitor-analysis/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

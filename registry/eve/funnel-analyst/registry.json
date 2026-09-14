@@ -1,0 +1,12 @@
+{
+  "name": "funnel-analyst",
+  "type": "registry:block",
+  "title": "Funnel Analyst",
+  "description": "Eve agent that builds funnels from PostHog data and finds conversion drop-offs.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

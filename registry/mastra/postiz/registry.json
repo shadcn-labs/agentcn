@@ -1,0 +1,12 @@
+{
+  "name": "postiz",
+  "type": "registry:block",
+  "title": "Social Media Content Agent",
+  "description": "Mastra agent that researches audience and creates/schedules social media posts.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "release-notes",
+  "type": "registry:block",
+  "title": "Release Notes Agent",
+  "description": "Mastra agent that generates release notes from merged PRs and commits.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

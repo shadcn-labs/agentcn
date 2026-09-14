@@ -1,0 +1,11 @@
+{
+  "name": "docs-sync",
+  "type": "registry:block",
+  "title": "Documentation Sync",
+  "description": "Keep documentation current with recently merged code.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/docs-sync.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

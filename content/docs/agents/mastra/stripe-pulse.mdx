@@ -1,0 +1,79 @@
+---
+title: Stripe Pulse
+description: Monitors Stripe payments and flags anomalies in revenue metrics.
+---
+
+<DocsBaseSwitcher base="mastra" agent="stripe-pulse" />
+
+<AgentPreview
+  agent="stripe-pulse"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "input",
+      label: "Monitoring Request",
+      placeholder: "Check last 24h payment health",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Stripe Pulse Agent** monitors Stripe transaction data for anomalies like unusual churn spikes, failed payment patterns, and revenue dips. It provides real-time alerts and trend analysis to keep revenue health visible.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/stripe-pulse
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/stripe-pulse/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/stripe-pulse/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

@@ -1,0 +1,12 @@
+{
+  "name": "seo-improver",
+  "type": "registry:block",
+  "title": "SEO Improver Agent",
+  "description": "Eve agent that analyzes website SEO and suggests improvements for better search rankings.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

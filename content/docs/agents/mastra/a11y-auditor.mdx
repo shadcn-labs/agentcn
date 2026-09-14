@@ -1,0 +1,79 @@
+---
+title: Accessibility Auditor
+description: Audits web pages for accessibility issues and generates WCAG compliance reports.
+---
+
+<DocsBaseSwitcher base="mastra" agent="a11y-auditor" />
+
+<AgentPreview
+  agent="a11y-auditor"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com/about",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Accessibility Auditor Agent** evaluates a web page against WCAG 2.1 guidelines, identifying issues like missing alt text, insufficient color contrast, keyboard navigation problems, and ARIA misconfigurations. It generates a structured report with severity levels and actionable remediation steps.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/a11y-auditor
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/a11y-auditor/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/a11y-auditor/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

@@ -1,0 +1,13 @@
+{
+  "name": "perf-auditor",
+  "type": "registry:block",
+  "title": "Performance Auditor Agent",
+  "description": "LangGraph agent that measures URL performance and files issues for budget violations.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/run_pagespeed.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

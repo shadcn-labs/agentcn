@@ -1,0 +1,13 @@
+{
+  "name": "experiment-analyst",
+  "type": "registry:block",
+  "title": "Experiment Analyst",
+  "description": "Reads PostHog A/B experiment results and summarizes learnings.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

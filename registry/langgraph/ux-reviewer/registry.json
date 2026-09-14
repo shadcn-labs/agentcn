@@ -1,0 +1,12 @@
+{
+  "name": "ux-reviewer",
+  "type": "registry:block",
+  "title": "UX Review Agent",
+  "description": "LangGraph agent that reviews user interface for UX issues and suggests improvements.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

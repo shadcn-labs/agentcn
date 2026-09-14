@@ -1,0 +1,11 @@
+{
+  "name": "release-notes",
+  "type": "registry:block",
+  "title": "Release Notes Agent",
+  "description": "Flue agent that generates release notes from merged PRs and commits.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/release-notes.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

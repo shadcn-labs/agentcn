@@ -1,0 +1,11 @@
+{
+  "name": "stripe-pulse",
+  "type": "registry:block",
+  "title": "Stripe Monitoring Agent",
+  "description": "Flue agent that monitors Stripe account for revenue trends and anomalies.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/stripe-pulse.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

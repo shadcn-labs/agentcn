@@ -1,0 +1,74 @@
+---
+title: Dunning
+description: Reviews failed Stripe payments and drafts recovery actions by failure reason.
+---
+
+<DocsBaseSwitcher base="flue" agent="dunning" />
+
+<AgentPreview
+  agent="dunning"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Review recent failed payments",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Dunning Agent** reviews failed Stripe payments and drafts recovery actions.
+It categorizes failures by reason (expired card, insufficient funds, etc.) and
+recommends next steps: automatic retry, customer outreach email, or account
+suspension. Drafts personalized recovery emails when appropriate.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/dunning
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/dunning/agents/dunning.ts"
+  title="agents/dunning.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── dunning.ts             # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/dunning.ts`.

@@ -1,0 +1,74 @@
+---
+title: Funnel Analyst
+description: Builds funnels from PostHog data and identifies conversion drop-offs by segment.
+---
+
+<DocsBaseSwitcher base="flue" agent="funnel-analyst" />
+
+<AgentPreview
+  agent="funnel-analyst"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Analyze signup-to-paid funnel",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Funnel Analyst** builds funnels from PostHog data and finds conversion
+drop-offs. It compares funnels across segments (device, traffic source, user
+type), highlights steps with the biggest drop-offs, and suggests hypotheses for
+why users leave.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/funnel-analyst
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/funnel-analyst/agents/funnel-analyst.ts"
+  title="agents/funnel-analyst.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── funnel-analyst.ts      # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/funnel-analyst.ts`.

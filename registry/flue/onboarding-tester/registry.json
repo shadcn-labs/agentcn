@@ -1,0 +1,11 @@
+{
+  "name": "onboarding-tester",
+  "type": "registry:block",
+  "title": "Onboarding Tester Agent",
+  "description": "Flue agent that tests if a new developer can get the repo running by following docs.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/onboarding-tester.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

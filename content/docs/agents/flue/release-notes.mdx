@@ -1,0 +1,74 @@
+---
+title: Release Notes
+description: Generates clear, user-facing release notes from merged PRs and commits.
+---
+
+<DocsBaseSwitcher base="flue" agent="release-notes" />
+
+<AgentPreview
+  agent="release-notes"
+  framework="flue"
+  inputFields={[
+    {
+      name: "version",
+      label: "Version",
+      placeholder: "v1.2.0",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Release Notes Agent** generates clear, user-facing release notes from merged
+PRs and commits. It groups changes by category (features, fixes, breaking
+changes), highlights important updates, and writes in a concise, professional
+tone.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/release-notes
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/release-notes/agents/release-notes.ts"
+  title="agents/release-notes.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── release-notes.ts       # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/release-notes.ts`.

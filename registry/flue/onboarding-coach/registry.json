@@ -1,0 +1,11 @@
+{
+  "name": "onboarding-coach",
+  "type": "registry:block",
+  "title": "Onboarding Coach Agent",
+  "description": "Flue agent that finds users stuck before activation and drafts nudge messages.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/onboarding-coach.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

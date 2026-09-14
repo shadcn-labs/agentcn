@@ -1,0 +1,12 @@
+{
+  "name": "experiment-analyst",
+  "type": "registry:block",
+  "title": "Experiment Analyst",
+  "description": "Eve agent that reads PostHog A/B experiment results and summarizes learnings.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

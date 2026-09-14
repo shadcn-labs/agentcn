@@ -1,0 +1,12 @@
+{
+  "name": "error-copy",
+  "type": "registry:block",
+  "title": "Error Copy",
+  "description": "Eve agent that surfaces user-facing error states and fixes poor copy.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

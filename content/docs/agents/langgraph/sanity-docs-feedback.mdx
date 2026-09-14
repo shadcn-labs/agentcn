@@ -1,0 +1,78 @@
+---
+title: Sanity Docs Feedback
+description: Reviews Sanity documentation for accuracy and suggests improvements.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="sanity-docs-feedback" />
+
+<AgentPreview
+  agent="sanity-docs-feedback"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Sanity Docs Feedback** agent reviews documentation for accuracy, completeness, and clarity. It uses a browser agent to navigate Sanity documentation and provides constructive feedback to help improve the docs.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/sanity-docs-feedback
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/sanity-docs-feedback/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/sanity-docs-feedback/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

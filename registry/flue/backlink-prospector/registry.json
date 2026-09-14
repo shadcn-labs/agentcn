@@ -1,0 +1,11 @@
+{
+  "name": "backlink-prospector",
+  "type": "registry:block",
+  "title": "Backlink Prospector",
+  "description": "Flue agent that finds backlink opportunities where competitors have links but this project doesn't.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/backlink-prospector.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

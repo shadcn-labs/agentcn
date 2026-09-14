@@ -1,0 +1,79 @@
+---
+title: Support Replies
+description: Drafts contextual support ticket replies from templates and history.
+---
+
+<DocsBaseSwitcher base="mastra" agent="support-replies" />
+
+<AgentPreview
+  agent="support-replies"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "ticket",
+      label: "Support Ticket",
+      placeholder: "Customer reports login issues on mobile",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Support Replies Agent** drafts personalized support responses by analyzing ticket context, customer history, and knowledge base articles. It maintains brand tone while resolving issues efficiently.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/support-replies
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/support-replies/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/support-replies/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

@@ -1,0 +1,12 @@
+{
+  "name": "funnel-analyst",
+  "type": "registry:block",
+  "title": "Funnel Analyst Agent",
+  "description": "LangGraph agent that builds funnels from PostHog data and finds conversion drop-offs.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

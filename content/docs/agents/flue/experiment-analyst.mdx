@@ -1,0 +1,74 @@
+---
+title: Experiment Analyst
+description: Reads PostHog A/B experiment results and summarizes statistical significance and impact.
+---
+
+<DocsBaseSwitcher base="flue" agent="experiment-analyst" />
+
+<AgentPreview
+  agent="experiment-analyst"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Analyze current A/B experiments",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Experiment Analyst** reads PostHog A/B experiment results and summarizes
+learnings. It calculates statistical significance, identifies winners, and for
+each experiment reports variant performance, sample size, confidence level, and
+business impact. Experiments needing more time or sample size are flagged.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/experiment-analyst
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/experiment-analyst/agents/experiment-analyst.ts"
+  title="agents/experiment-analyst.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── experiment-analyst.ts   # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/experiment-analyst.ts`.

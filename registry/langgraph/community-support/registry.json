@@ -1,0 +1,13 @@
+{
+  "name": "community-support",
+  "type": "registry:block",
+  "title": "Community Support Agent",
+  "description": "LangGraph agent that reads Discord messages and prepares support review drafts.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/read_messages.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

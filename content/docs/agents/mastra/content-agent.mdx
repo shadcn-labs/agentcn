@@ -1,0 +1,79 @@
+---
+title: Content Agent
+description: Creates blog posts, articles, and marketing copy from briefs.
+---
+
+<DocsBaseSwitcher base="mastra" agent="content-agent" />
+
+<AgentPreview
+  agent="content-agent"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "brief",
+      label: "Content Brief",
+      placeholder: "Write a blog post about React Server Components",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Content Agent** transforms briefs into polished content pieces. It researches topics, structures outlines, drafts copy, and refines based on brand voice guidelines. Supports multiple content formats including blog posts, landing pages, and social media copy.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/content-agent
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/content-agent/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/content-agent/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

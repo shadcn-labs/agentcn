@@ -1,0 +1,78 @@
+---
+title: Error Triage
+description: Triage and categorize errors, prioritize issues, and route them to appropriate teams for resolution.
+---
+
+<DocsBaseSwitcher base="eve" agent="error-triage" />
+
+<AgentPreview
+  agent="error-triage"
+  framework="eve"
+  inputFields={[
+    {
+      name: "error",
+      label: "Error Log",
+      placeholder: "Error: Failed to fetch",
+      type: "textarea",
+    },
+  ]}
+/>
+
+## Summary
+
+**Error Triage** is an agent that triages and categorizes errors, prioritizes issues, and routes them to appropriate teams for resolution. It analyzes error logs, identifies root causes, assigns severity levels, and creates structured bug reports with reproduction steps.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/error-triage
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/error-triage/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/error-triage/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

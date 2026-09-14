@@ -1,0 +1,11 @@
+{
+  "name": "analytics-digest",
+  "type": "registry:block",
+  "title": "Analytics Digest",
+  "description": "Flue agent that pulls key event trends from PostHog and creates a weekly digest.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/analytics-digest.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

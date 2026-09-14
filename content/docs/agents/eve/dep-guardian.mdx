@@ -1,0 +1,78 @@
+---
+title: Dependency Guardian
+description: Monitor and manage project dependencies, update packages, and identify security vulnerabilities.
+---
+
+<DocsBaseSwitcher base="eve" agent="dep-guardian" />
+
+<AgentPreview
+  agent="dep-guardian"
+  framework="eve"
+  inputFields={[
+    {
+      name: "action",
+      label: "Action",
+      placeholder: "check for updates",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Dependency Guardian** is an agent that monitors and manages project dependencies, updates packages, and identifies security vulnerabilities. It scans package.json files, checks for outdated dependencies, identifies known vulnerabilities, and generates update recommendations with compatibility notes.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/dep-guardian
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/dep-guardian/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/dep-guardian/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

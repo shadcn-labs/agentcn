@@ -1,0 +1,11 @@
+{
+  "name": "error-triage",
+  "type": "registry:block",
+  "title": "Error Triage",
+  "description": "Pull Sentry issues and draft debugging report.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/error-triage.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

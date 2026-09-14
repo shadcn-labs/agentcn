@@ -1,0 +1,78 @@
+---
+title: Error Copy
+description: Surfaces user-facing error states and fixes poor copy.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="error-copy" />
+
+<AgentPreview
+  agent="error-copy"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Error Copy** agent surfaces user-facing error states and fixes poor error messaging. It uses a browser agent to inspect UI error states and the GitHub CLI to propose code changes that improve error copy clarity and helpfulness.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/error-copy
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/error-copy/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/error-copy/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

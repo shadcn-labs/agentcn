@@ -1,0 +1,78 @@
+---
+title: Support Replies
+description: Drafts support replies based on customer inquiries.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="support-replies" />
+
+<AgentPreview
+  agent="support-replies"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Support Replies** agent creates helpful, empathetic customer service responses. It analyzes customer inquiries and drafts professional, solution-oriented replies that match the tone to the customer's frustration level, provide clear next steps, and ensure all relevant information is included.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/support-replies
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/support-replies/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/support-replies/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

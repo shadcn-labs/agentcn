@@ -1,0 +1,11 @@
+{
+  "name": "cro-optimizer",
+  "type": "registry:block",
+  "title": "CRO Optimizer",
+  "description": "Flue agent that finds conversion drop-offs and files experiment hypotheses.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/cro-optimizer.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

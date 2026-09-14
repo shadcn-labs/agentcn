@@ -1,0 +1,78 @@
+---
+title: Standup Bot
+description: Collects standup updates from team members and creates a summary.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="standup-bot" />
+
+<AgentPreview
+  agent="standup-bot"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Standup Bot** facilitates daily team standups by collecting updates from team members including what they did yesterday, what they're doing today, and any blockers. It creates a concise, well-formatted standup summary that highlights progress and identifies blockers that need attention.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/standup-bot
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/standup-bot/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/standup-bot/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

@@ -1,0 +1,12 @@
+{
+  "name": "ppc-assist",
+  "type": "registry:block",
+  "title": "PPC Advertising Assistant",
+  "description": "LangGraph agent that analyzes PPC campaign data and suggests optimizations.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

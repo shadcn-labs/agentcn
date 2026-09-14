@@ -1,0 +1,12 @@
+{
+  "name": "seo-improver",
+  "type": "registry:block",
+  "title": "SEO Improvement Agent",
+  "description": "LangGraph agent that analyzes website SEO and suggests improvements for better search engine rankings.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

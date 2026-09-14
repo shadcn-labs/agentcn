@@ -1,0 +1,12 @@
+{
+  "name": "cro-optimizer",
+  "type": "registry:block",
+  "title": "CRO Optimization Agent",
+  "description": "LangGraph agent that finds conversion drop-offs and files experiment hypotheses.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

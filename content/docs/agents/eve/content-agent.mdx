@@ -1,0 +1,78 @@
+---
+title: Content Agent
+description: Create and manage content across multiple channels including blog posts, social media, and documentation.
+---
+
+<DocsBaseSwitcher base="eve" agent="content-agent" />
+
+<AgentPreview
+  agent="content-agent"
+  framework="eve"
+  inputFields={[
+    {
+      name: "topic",
+      label: "Topic",
+      placeholder: "AI in healthcare",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Content Agent** is an agent that creates and manages content across multiple channels including blog posts, social media, and documentation. It generates content based on topics, optimizes for SEO, adapts tone for different platforms, and maintains a consistent brand voice across all outputs.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/content-agent
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/content-agent/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/content-agent/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

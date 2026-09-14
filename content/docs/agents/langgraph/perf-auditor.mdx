@@ -1,0 +1,83 @@
+---
+title: Perf Auditor
+description: Measures URL performance and files issues for budget violations.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="perf-auditor" />
+
+<AgentPreview
+  agent="perf-auditor"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Perf Auditor** measures web page performance and files GitHub issues when performance budgets are violated. It uses the PageSpeed Insights API to measure performance metrics and the GitHub CLI to file issues for violations.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/perf-auditor
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/perf-auditor/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/perf-auditor/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/langgraph/perf-auditor/tools/run_pagespeed.ts"
+  title="tools/run_pagespeed.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/run_pagespeed.ts
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

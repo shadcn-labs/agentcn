@@ -1,0 +1,78 @@
+---
+title: UX Reviewer
+description: Reviews user interface for UX issues and suggests improvements.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="ux-reviewer" />
+
+<AgentPreview
+  agent="ux-reviewer"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **UX Reviewer** analyzes user interfaces for usability issues. It navigates through user flows and identifies UX problems, focusing on usability heuristics, accessibility, visual hierarchy, consistency, and user error prevention. Provides specific, actionable improvement suggestions with priority levels.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/ux-reviewer
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/ux-reviewer/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/ux-reviewer/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.
