@@ -114,6 +114,13 @@
       "type": "registry:block"
     },
     {
+      "description": "Eve agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+      "framework": "eve",
+      "name": "eve/openui-assistant",
+      "title": "Open UI Assistant",
+      "type": "registry:block"
+    },
+    {
       "description": "Eve agent that replies to Slack mentions and DMs, threaded, via the Slack Web API.",
       "framework": "eve",
       "name": "eve/slack-agent",
@@ -247,6 +254,13 @@
       "type": "registry:block"
     },
     {
+      "description": "Flue agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+      "framework": "flue",
+      "name": "flue/openui-assistant",
+      "title": "Open UI Assistant",
+      "type": "registry:block"
+    },
+    {
       "description": "Flue agent that replies to Slack mentions and DMs, threaded, via the Slack Web API.",
       "framework": "flue",
       "name": "flue/slack-agent",
@@ -377,6 +391,13 @@
       "framework": "mastra",
       "name": "mastra/meeting-notes",
       "title": "Meeting Notes Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Mastra agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+      "framework": "mastra",
+      "name": "mastra/openui-assistant",
+      "title": "Open UI Assistant",
       "type": "registry:block"
     },
     {

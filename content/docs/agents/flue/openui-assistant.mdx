@@ -1,0 +1,85 @@
+---
+title: OpenUI Assistant
+description: An OpenUI-powered assistant with real-time UI generation capabilities.
+---
+
+<DocsBaseSwitcher base="flue" agent="openui-assistant" />
+
+<AgentPreview
+  agent="openui-assistant"
+  framework="flue"
+  inputFields={[
+    {
+      name: "message",
+      label: "Message",
+      placeholder: "What time is it in Tokyo?",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **OpenUI Assistant** is a conversational agent powered by OpenUI's
+real-time UI generation. It can render interactive React components inline
+during a conversation — charts, forms, data tables, and more — using the
+OpenUI Lang component library. It also includes a timezone-aware time tool
+as a baseline demonstration of the tool-call path.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/openui-assistant
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/openui-assistant/agents/open-ui-assistant.ts"
+  title="agents/open-ui-assistant.ts"
+/>
+
+<ComponentSource
+  src="registry/flue/openui-assistant/tools/get-current-time.ts"
+  title="tools/get-current-time.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── open-ui-assistant.ts    # Agent with model, instructions, and tools
+tools/
+└── get-current-time.ts     # Timezone-aware current time tool
+```
+
+## Customization
+
+- **Swap the model.** Change the `model` field on the agent.
+- **Add a workflow.** Wrap it in a workflow with a typed schema.
+- **Add more tools.** Extend the agent with additional capabilities.
+- **Customize instructions.** Edit the inline instructions string.
