@@ -1,0 +1,128 @@
+---
+title: Brand Visual Asset Generator
+description: Turns a company domain into a coherent pack of brand-aligned SVG visual assets — extracting brand context through Context.dev, generating each asset via Quiver Arrow, and scoring the pack for consistency and visual quality.
+---
+
+<DocsBaseSwitcher base="eve" agent="brand-visual-asset-generator" />
+
+<AgentPreview
+  agent="brand-visual-asset-generator"
+  framework="eve"
+  inputFields={[
+    {
+      name: "domain",
+      label: "Company website or domain",
+      placeholder: "linear.app",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Brand Visual Asset Generator** turns a company domain into a coherent pack
+of brand-aligned SVG visual assets. It pulls brand colors, typography, logos, and
+product context from Context.dev, plans an asset pack (icons, empty states, hero
+illustrations, badges, feature graphics, onboarding visuals, changelog art, and
+dashboard or modal visuals), then calls `generate_svg_with_arrow` once per
+finalized brief. The Quiver Arrow tool uses `quiverai/arrow-1.1` through Vercel
+AI Gateway and returns editable SVG markup. The agent scores every asset against
+quality and taste references, regenerating any that feel generic or off-brand,
+and delivers a cohesive set with shared palette, stroke language, and geometry.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/brand-visual-asset-generator
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve ai zod
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/brand-visual-asset-generator/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/brand-visual-asset-generator/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<ComponentSource
+  src="registry/eve/brand-visual-asset-generator/agent/connections/context-dev.ts"
+  title="agent/connections/context-dev.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/brand-visual-asset-generator/agent/tools/generate_svg_with_arrow.ts"
+  title="agent/tools/generate_svg_with_arrow.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/brand-visual-asset-generator/agent/skills/brand-visual-assets/SKILL.md"
+  title="agent/skills/brand-visual-assets/SKILL.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts                          # Agent definition (model + config)
+├── instructions.md                   # Mission, workflow, output contract, guardrails
+├── connections/
+│   └── context-dev.ts                # MCP connection to Context.dev for brand data
+├── tools/
+│   └── generate_svg_with_arrow.ts    # SVG generation via Quiver Arrow
+└── skills/
+    └── brand-visual-assets/
+        ├── SKILL.md                  # Pack workflow
+        └── references/
+            ├── brief-template.md     # Per-asset brief template
+            ├── consistency.md        # Cross-pack consistency rules
+            ├── default-pack.md       # Default feature-launch pack
+            ├── quality-bar.md        # Quality gate checklist
+            ├── scorecard.md          # Visual scoring rubric
+            └── visual-taste.md       # Taste bar for generic/ugly rejection
+```
+
+## Customization
+
+- **Brand data source.** Brand context is pulled through
+  [Context.dev](https://context.dev) — set `CONTEXT_DEV_API_KEY` (and optionally
+  `CONTEXT_API_KEY` as a fallback). Edit `agent/connections/context-dev.ts` to
+  point at a different MCP server.
+- **SVG generation.** `generate_svg_with_arrow` uses `quiverai/arrow-1.1` through
+  Vercel AI Gateway — set `AI_GATEWAY_API_KEY` or `VERCEL_OIDC_TOKEN`. Edit
+  `agent/tools/generate_svg_with_arrow.ts` to swap the image model or adjust
+  reference image handling.
+- **Pack defaults.** Edit `agent/skills/brand-visual-assets/references/default-pack.md`
+  to change which assets are generated when the user asks for a "visual pack"
+  without listing items.
+- **Quality bar.** Tune `references/quality-bar.md` and `references/scorecard.md`
+  to raise or lower the acceptance threshold for generated assets.
+- **Swap the model.** Edit `agent/agent.ts` — `deepseek/deepseek-v4-pro` for
+  orchestration. Any capable model works.

@@ -1383,6 +1383,65 @@ const extractDesignMd: Agent = {
   },
 };
 
+const brandVisualAssetGenerator: Agent = {
+  description:
+    "Generate brand-aligned SVG asset packs for SaaS products using Context.dev brand extraction and a Quiver Arrow SVG tool.",
+  frameworks: ["eve", "flue"],
+  inputFields: [
+    {
+      label: "Company website or domain",
+      name: "domain",
+      placeholder: "linear.app",
+      type: "url-list",
+    },
+  ],
+  shortTitle: "Brand Visual Assets",
+  slug: "brand-visual-asset-generator",
+  title: "Brand Visual Asset Generator",
+  transcript: {
+    eve: [
+      {
+        role: "user",
+        text: 'Create a feature launch visual pack for linear.app: hero illustration, three feature icons, an empty state, a "new feature" badge, and an onboarding visual.',
+      },
+      {
+        detail: "brand data + styleguide via context.dev",
+        role: "tool",
+        tool: "connection_search",
+      },
+      {
+        detail: "generate_svg_with_arrow — hero illustration",
+        role: "tool",
+        tool: "generate_svg_with_arrow",
+      },
+      {
+        role: "agent",
+        text: "Generated a 5-asset brand pack for Linear: hero illustration, three feature icons, an empty state, a badge, and an onboarding visual — all sharing palette, stroke language, and geometry from the extracted brand profile.",
+      },
+    ],
+    flue: [
+      {
+        role: "user",
+        text: 'Create a feature launch visual pack for linear.app: hero illustration, three feature icons, an empty state, a "new feature" badge, and an onboarding visual.',
+      },
+      {
+        detail: "brand data via context_dev_search",
+        role: "tool",
+        tool: "context_dev_search",
+      },
+      {
+        detail: "generate_svg_with_arrow — hero illustration",
+        role: "tool",
+        tool: "generate_svg_with_arrow",
+      },
+      {
+        role: "agent",
+        text: "Generated a 5-asset brand pack for Linear: hero illustration, three feature icons, an empty state, a badge, and an onboarding visual — all sharing palette, stroke language, and geometry from the extracted brand profile.",
+      },
+    ],
+  },
+};
+
 export const AGENTS: readonly Agent[] = [
   deepSearch,
   aiSeoAudit,
@@ -1403,6 +1462,7 @@ export const AGENTS: readonly Agent[] = [
   claw,
   browserAgent,
   companyKnowledge,
+  brandVisualAssetGenerator,
 ] as const;
 
 export const getAgent = (slug: string): Agent | undefined =>

@@ -239,6 +239,64 @@ const TOOLS: Record<string, PreviewTool> = {
     },
     name: "capture_screenshot",
   },
+  context_dev_search: {
+    description:
+      "Search Context.dev for brand data, styleguides, and webpage content. Use this to gather brand colors, typography, logos, and product context from a domain before generating SVG assets.",
+    execute: async (input) => {
+      const apiKey =
+        process.env.CONTEXT_DEV_API_KEY?.trim() ||
+        process.env.CONTEXT_API_KEY?.trim();
+      if (!apiKey) {
+        return disabled("CONTEXT_DEV_API_KEY", "Context.dev brand search");
+      }
+      const query = str(input.query);
+      const domain = str(input.domain);
+      if (!query) {
+        return { error: "Provide a search query." };
+      }
+      try {
+        const body: Record<string, unknown> = {
+          method: "tools/call",
+          params: {
+            arguments: { query },
+            name: "search_docs",
+          },
+        };
+        if (domain) {
+          (body.params as Record<string, unknown>).arguments = {
+            ...((body.params as Record<string, unknown>).arguments as Record<
+              string,
+              unknown
+            >),
+            domain,
+          };
+        }
+        const res = await fetch("https://context-dev.stlmcp.com", {
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+            "x-context-dev-api-key": apiKey,
+          },
+          method: "POST",
+        });
+        if (!res.ok) {
+          return { error: `Context.dev API ${res.status}: ${res.statusText}` };
+        }
+        return await res.json();
+      } catch (error) {
+        return { error: String(error) };
+      }
+    },
+    input_schema: {
+      properties: {
+        domain: { type: "string" },
+        query: { type: "string" },
+      },
+      required: ["query"],
+      type: "object",
+    },
+    name: "context_dev_search",
+  },
   extract_styleguide: {
     description:
       "Extracts a domain's design tokens — colors, typography, spacing, radii, and components.",
@@ -342,6 +400,29 @@ const TOOLS: Record<string, PreviewTool> = {
       type: "object",
     },
     name: "generate_image",
+  },
+  generate_svg_with_arrow: {
+    description:
+      "Generate one editable SVG asset by calling the Quiver Arrow image model through Vercel AI Gateway. Use once per finalized asset brief.",
+    execute: () =>
+      Promise.resolve(
+        disabled(
+          "AI_GATEWAY_API_KEY or VERCEL_OIDC_TOKEN",
+          "SVG generation via Quiver Arrow"
+        )
+      ),
+    input_schema: {
+      properties: {
+        assetType: { type: "string" },
+        brief: { type: "string" },
+        dimensions: { type: "string" },
+        filename: { type: "string" },
+        referenceImages: { items: { type: "object" }, type: "array" },
+      },
+      required: ["filename", "assetType", "brief", "dimensions"],
+      type: "object",
+    },
+    name: "generate_svg_with_arrow",
   },
   get_brand: {
     description:

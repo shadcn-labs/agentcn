@@ -9,6 +9,13 @@
       "type": "registry:block"
     },
     {
+      "description": "Generate brand-aligned SVG asset packs for SaaS products using Context.dev brand extraction and a Quiver Arrow SVG tool.",
+      "framework": "eve",
+      "name": "eve/brand-visual-asset-generator",
+      "title": "Brand Visual Asset Generator",
+      "type": "registry:block"
+    },
+    {
       "description": "Eve agent that drives a real browser with Playwright using a snapshot-and-selector pattern to complete web tasks.",
       "framework": "eve",
       "name": "eve/browser-agent",
@@ -139,6 +146,13 @@
       "framework": "flue",
       "name": "flue/ai-seo-audit",
       "title": "AI SEO Audit Agent",
+      "type": "registry:block"
+    },
+    {
+      "description": "Generate brand-aligned SVG asset packs for SaaS products using Context.dev brand extraction and a Quiver Arrow SVG tool.",
+      "framework": "flue",
+      "name": "flue/brand-visual-asset-generator",
+      "title": "Brand Visual Asset Generator",
       "type": "registry:block"
     },
     {

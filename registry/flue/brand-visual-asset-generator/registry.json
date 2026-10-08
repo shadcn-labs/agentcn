@@ -1,0 +1,20 @@
+{
+  "name": "brand-visual-asset-generator",
+  "type": "registry:block",
+  "title": "Brand Visual Asset Generator",
+  "description": "Generate brand-aligned SVG asset packs for SaaS products using Context.dev brand extraction and a Quiver Arrow SVG tool.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/brand-visual-asset-generator.ts", "type": "registry:file" },
+    { "path": "tools/generate-svg-with-arrow.ts", "type": "registry:file" },
+    { "path": "tools/context-dev-search.ts", "type": "registry:file" },
+    { "path": "skills/brand-visual-assets/SKILL.md", "type": "registry:file" },
+    { "path": "skills/brand-visual-assets/references/brief-template.md", "type": "registry:file" },
+    { "path": "skills/brand-visual-assets/references/consistency.md", "type": "registry:file" },
+    { "path": "skills/brand-visual-assets/references/default-pack.md", "type": "registry:file" },
+    { "path": "skills/brand-visual-assets/references/quality-bar.md", "type": "registry:file" },
+    { "path": "skills/brand-visual-assets/references/scorecard.md", "type": "registry:file" },
+    { "path": "skills/brand-visual-assets/references/visual-taste.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

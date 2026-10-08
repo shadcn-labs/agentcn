@@ -1,0 +1,121 @@
+---
+title: Brand Visual Asset Generator
+description: Turns a company domain into a coherent pack of brand-aligned SVG visual assets — extracting brand context through Context.dev, generating each asset via Quiver Arrow, and scoring the pack for consistency and visual quality.
+---
+
+<DocsBaseSwitcher base="flue" agent="brand-visual-asset-generator" />
+
+<AgentPreview
+  agent="brand-visual-asset-generator"
+  framework="flue"
+  inputFields={[
+    {
+      name: "domain",
+      label: "Company website or domain",
+      placeholder: "linear.app",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Brand Visual Asset Generator** turns a company domain into a coherent pack
+of brand-aligned SVG visual assets. It pulls brand colors, typography, logos, and
+product context from Context.dev, plans an asset pack (icons, empty states, hero
+illustrations, badges, feature graphics, onboarding visuals, changelog art, and
+dashboard or modal visuals), then calls `generate_svg_with_arrow` once per
+finalized brief. The Quiver Arrow tool uses `quiverai/arrow-1.1` through Vercel
+AI Gateway and returns editable SVG markup. The agent scores every asset against
+quality and taste references, regenerating any that feel generic or off-brand,
+and delivers a cohesive set with shared palette, stroke language, and geometry.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/brand-visual-asset-generator
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime ai valibot
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/brand-visual-asset-generator/agents/brand-visual-asset-generator.ts"
+  title="agents/brand-visual-asset-generator.ts"
+/>
+
+<ComponentSource
+  src="registry/flue/brand-visual-asset-generator/tools/generate-svg-with-arrow.ts"
+  title="tools/generate-svg-with-arrow.ts"
+/>
+
+<ComponentSource
+  src="registry/flue/brand-visual-asset-generator/tools/context-dev-search.ts"
+  title="tools/context-dev-search.ts"
+/>
+
+<ComponentSource
+  src="registry/flue/brand-visual-asset-generator/skills/brand-visual-assets/SKILL.md"
+  title="skills/brand-visual-assets/SKILL.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── brand-visual-asset-generator.ts   # Agent definition (model, instructions, tools, skills)
+tools/
+├── generate-svg-with-arrow.ts        # SVG generation via Quiver Arrow (Valibot schemas)
+└── context-dev-search.ts             # Context.dev brand data lookup
+skills/
+└── brand-visual-assets/
+    ├── SKILL.md                      # Pack workflow
+    └── references/
+        ├── brief-template.md         # Per-asset brief template
+        ├── consistency.md            # Cross-pack consistency rules
+        ├── default-pack.md           # Default feature-launch pack
+        ├── quality-bar.md            # Quality gate checklist
+        ├── scorecard.md              # Visual scoring rubric
+        └── visual-taste.md           # Taste bar for generic/ugly rejection
+```
+
+## Customization
+
+- **Brand data source.** Brand context is pulled through
+  [Context.dev](https://context.dev) — set `CONTEXT_DEV_API_KEY` (and optionally
+  `CONTEXT_API_KEY` as a fallback). Edit `tools/context-dev-search.ts` to swap
+  the API endpoint or add more Context.dev tools.
+- **SVG generation.** `generate_svg_with_arrow` uses `quiverai/arrow-1.1` through
+  Vercel AI Gateway — set `AI_GATEWAY_API_KEY` or `VERCEL_OIDC_TOKEN`. Edit
+  `tools/generate-svg-with-arrow.ts` to swap the image model or adjust reference
+  image handling.
+- **Pack defaults.** Edit `skills/brand-visual-assets/references/default-pack.md`
+  to change which assets are generated when the user asks for a "visual pack"
+  without listing items.
+- **Quality bar.** Tune `references/quality-bar.md` and `references/scorecard.md`
+  to raise or lower the acceptance threshold for generated assets.
+- **Swap the model.** Edit `agents/brand-visual-asset-generator.ts` —
+  `deepseek/deepseek-v4-pro` for orchestration. Any capable model works.
