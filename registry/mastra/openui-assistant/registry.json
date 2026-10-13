@@ -1,0 +1,14 @@
+{
+  "name": "openui-assistant",
+  "type": "registry:block",
+  "title": "Open UI Assistant",
+  "description": "Mastra agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "tools/get_current_time.ts", "type": "registry:file" },
+    { "path": "workflows/openui-assistant.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

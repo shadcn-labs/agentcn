@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Eve agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+  "files": [
+    {
+      "content": "import { createOpenAI } from \"@ai-sdk/openai\";\nimport { defineAgent } from \"eve\";\n\nconst apiKey = process.env.LLM_API_KEY || process.env.OPENAI_API_KEY;\nconst baseURL =\n  process.env.LLM_BASE_URL || process.env.OPENAI_BASE_URL || \"https://api.openai.com/v1\";\nconst modelName = process.env.LLM_MODEL || process.env.OPENAI_MODEL || \"gpt-5.5\";\nconst openai = createOpenAI({\n  apiKey,\n  baseURL,\n});\n\nconst model = openai(modelName);\n\nexport default defineAgent({\n  model,\n  build: {\n    externalDependencies: [\"@openuidev/react-lang\", \"@openuidev/react-ui\", \"react\", \"react-dom\"],\n  },\n});\n",
+      "path": "agent/agent.ts",
+      "target": "agent/agent.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "# Identity\n\nYou are a helpful assistant.\n",
+      "path": "agent/instructions.md",
+      "target": "agent/instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { none } from \"eve/channels/auth\";\nimport { eveChannel } from \"eve/channels/eve\";\n\n/**\n * Eve's built-in HTTP channel: serves the standard `/eve/v1/session*` routes\n * (deliver + resumable NDJSON event stream). The OpenUI client talks to these\n * directly via `eve/client`, so there is no custom transport to maintain.\n *\n * `none()` allows anonymous traffic for the local demo — swap in `bearer()` /\n * `basic()` before exposing this publicly.\n */\nexport default eveChannel({ auth: none() });\n",
+      "path": "agent/channels/eve.ts",
+      "target": "agent/channels/eve.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from \"eve/tools\";\nimport { z } from \"zod\";\n\n/**\n * A tiny, dependency-free tool so the demo exercises the full tool-call path:\n * the model emits a tool call, Eve runs `execute`, and OpenUI renders the call\n * (name + arguments) in its \"behind the scenes\" panel. The runtime tool name is\n * the filename slug, `get_current_time`.\n */\nexport default defineTool({\n  description:\n    \"Get the current date and time, optionally for a specific IANA timezone \" +\n    \"(e.g. 'America/New_York', 'Asia/Tokyo'). Use this whenever the user asks \" +\n    \"what the current time or date is.\",\n  inputSchema: z.object({\n    timezone: z\n      .string()\n      .optional()\n      .describe(\"IANA timezone name such as 'Asia/Kolkata'. Defaults to UTC.\"),\n  }),\n  outputSchema: z.object({\n    iso: z.string(),\n    formatted: z.string(),\n    timezone: z.string(),\n  }),\n  execute({ timezone }) {\n    const now = new Date();\n    let tz = timezone?.trim() || \"UTC\";\n    let formatted: string;\n    try {\n      formatted = new Intl.DateTimeFormat(\"en-US\", {\n        dateStyle: \"full\",\n        timeStyle: \"long\",\n        timeZone: tz,\n      }).format(now);\n    } catch {\n      // Unknown timezone: fall back to UTC rather than failing the turn.\n      tz = \"UTC\";\n      formatted = new Intl.DateTimeFormat(\"en-US\", {\n        dateStyle: \"full\",\n        timeStyle: \"long\",\n        timeZone: tz,\n      }).format(now);\n    }\n    return { iso: now.toISOString(), formatted, timezone: tz };\n  },\n});\n",
+      "path": "agent/tools/get_current_time.ts",
+      "target": "agent/tools/get_current_time.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { openuiChatLibrary, openuiChatPromptOptions } from \"@openuidev/react-ui/genui-lib\";\nimport { defineDynamic, defineInstructions } from \"eve/instructions\";\n\n/**\n * Teach the agent to answer in OpenUI Lang. Resolved once per session so the\n * (large) component-library prompt is only attached when a conversation starts.\n */\nexport default defineDynamic({\n  events: {\n    \"session.started\": () =>\n      defineInstructions({\n        markdown: openuiChatLibrary.prompt(openuiChatPromptOptions),\n      }),\n  },\n});\n",
+      "path": "agent/instructions/openui.ts",
+      "target": "agent/instructions/openui.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "openui-assistant",
+  "title": "Open UI Assistant",
+  "type": "registry:block",
+  "dependencies": [
+    "eve"
+  ]
+}

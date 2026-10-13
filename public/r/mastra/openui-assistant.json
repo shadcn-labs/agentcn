@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Mastra agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+  "files": [
+    {
+      "content": "import { agentConfig } from '@mastra/core/agent'\nimport { openuiAssistantWorkflow } from './workflows/openui-assistant'\n\nexport default agentConfig({\n  model: 'openai/gpt-5.5',\n  description: 'An OpenUI-powered assistant with real-time UI generation capabilities.',\n  workflows: { openuiAssistantWorkflow },\n})\n",
+      "path": "config.ts",
+      "target": "config.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "# Identity\n\nYou are a helpful assistant powered by OpenUI's real-time UI generation. You can render interactive React components inline during a conversation — charts, forms, data tables, and more — using the OpenUI Lang component library.\n\nUse the get_current_time tool whenever the user asks about the current time or date. You can provide the time for any IANA timezone.\n",
+      "path": "instructions.md",
+      "target": "instructions.md",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createTool } from '@mastra/core/tools'\nimport { z } from 'zod'\n\nexport default createTool({\n  id: 'get_current_time',\n  description:\n    \"Get the current date and time, optionally for a specific IANA timezone \" +\n    \"(e.g. 'America/New_York', 'Asia/Tokyo'). Use this whenever the user asks \" +\n    \"what the current time or date is.\",\n  inputSchema: z.object({\n    timezone: z\n      .string()\n      .optional()\n      .describe(\"IANA timezone name such as 'Asia/Kolkata'. Defaults to UTC.\"),\n  }),\n  outputSchema: z.object({\n    iso: z.string(),\n    formatted: z.string(),\n    timezone: z.string(),\n  }),\n  execute: async ({ timezone }) => {\n    const now = new Date()\n    let tz = timezone?.trim() || 'UTC'\n    let formatted: string\n    try {\n      formatted = new Intl.DateTimeFormat('en-US', {\n        dateStyle: 'full',\n        timeStyle: 'long',\n        timeZone: tz,\n      }).format(now)\n    } catch {\n      tz = 'UTC'\n      formatted = new Intl.DateTimeFormat('en-US', {\n        dateStyle: 'full',\n        timeStyle: 'long',\n        timeZone: tz,\n      }).format(now)\n    }\n    return { iso: now.toISOString(), formatted, timezone: tz }\n  },\n})\n",
+      "path": "tools/get_current_time.ts",
+      "target": "tools/get_current_time.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { createWorkflow, createStep } from '@mastra/core/workflows'\nimport { z } from 'zod'\n\nconst processMessage = createStep({\n  id: 'process-message',\n  description: 'Processes a user message and generates a response',\n  inputSchema: z.object({\n    message: z.string(),\n  }),\n  outputSchema: z.object({\n    response: z.string(),\n  }),\n  execute: async ({ inputData, mastra }) => {\n    const agent = mastra?.getAgent('openui-assistant')\n    const response = await agent?.generate(inputData.message)\n    return {\n      response: response?.text || 'No response generated.',\n    }\n  },\n})\n\nexport const openuiAssistantWorkflow = createWorkflow({\n  id: 'openui-assistant-workflow',\n  inputSchema: z.object({\n    message: z.string(),\n  }),\n  outputSchema: z.object({\n    response: z.string(),\n  }),\n})\n  .then(processMessage)\n\nopenuiAssistantWorkflow.commit()\n",
+      "path": "workflows/openui-assistant.ts",
+      "target": "workflows/openui-assistant.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "openui-assistant",
+  "title": "Open UI Assistant",
+  "type": "registry:block",
+  "dependencies": [
+    "@mastra/core"
+  ]
+}

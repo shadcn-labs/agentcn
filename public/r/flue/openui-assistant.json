@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "description": "Flue agent that acts as an OpenUI-powered assistant with real-time UI generation capabilities.",
+  "files": [
+    {
+      "content": "import { createAgent } from '@flue/runtime'\nimport type { AgentRouteHandler } from '@flue/runtime'\nimport { getCurrentTime } from '../tools/get-current-time.ts'\n\nexport const route: AgentRouteHandler = async (_c, next) => next()\n\nexport default createAgent(() => ({\n  model: 'openai/gpt-5.5',\n  instructions: `\n    You are a helpful assistant. Use the get_current_time tool when the user asks\n    about the current time or date. You can provide the time for any IANA timezone.\n  `,\n  tools: [getCurrentTime],\n}))\n",
+      "path": "agents/open-ui-assistant.ts",
+      "target": "agents/open-ui-assistant.ts",
+      "type": "registry:file"
+    },
+    {
+      "content": "import { defineTool } from '@flue/runtime'\nimport * as v from 'valibot'\n\nexport const getCurrentTime = defineTool({\n  name: 'get_current_time',\n  description:\n    \"Get the current date and time, optionally for a specific IANA timezone \" +\n    \"(e.g. 'America/New_York', 'Asia/Tokyo'). Use this whenever the user asks \" +\n    \"what the current time or date is.\",\n  parameters: v.object({\n    timezone: v.optional(\n      v.string(),\n      'UTC',\n    ),\n  }),\n  execute: async ({ timezone }) => {\n    const now = new Date()\n    let tz = timezone?.trim() || 'UTC'\n    let formatted: string\n    try {\n      formatted = new Intl.DateTimeFormat('en-US', {\n        dateStyle: 'full',\n        timeStyle: 'long',\n        timeZone: tz,\n      }).format(now)\n    } catch {\n      tz = 'UTC'\n      formatted = new Intl.DateTimeFormat('en-US', {\n        dateStyle: 'full',\n        timeStyle: 'long',\n        timeZone: tz,\n      }).format(now)\n    }\n    return JSON.stringify({ iso: now.toISOString(), formatted, timezone: tz })\n  },\n})\n",
+      "path": "tools/get-current-time.ts",
+      "target": "tools/get-current-time.ts",
+      "type": "registry:file"
+    }
+  ],
+  "name": "openui-assistant",
+  "title": "Open UI Assistant",
+  "type": "registry:block",
+  "dependencies": [
+    "@flue/runtime"
+  ]
+}
