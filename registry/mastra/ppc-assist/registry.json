@@ -1,0 +1,12 @@
+{
+  "name": "ppc-assist",
+  "type": "registry:block",
+  "title": "PPC Advertising Assistant",
+  "description": "Mastra agent that analyzes PPC campaign data and suggests optimizations.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

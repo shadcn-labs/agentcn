@@ -1,0 +1,75 @@
+---
+title: Content Agent
+description: Researches audience conversations and creates evidence-backed content drafts.
+---
+
+<DocsBaseSwitcher base="flue" agent="content-agent" />
+
+<AgentPreview
+  agent="content-agent"
+  framework="flue"
+  inputFields={[
+    {
+      name: "topic",
+      label: "Topic",
+      placeholder: "Developer tooling trends",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Content Agent** researches audience conversations using the last30days
+skill and gh CLI to find trending discussions, pain points, and questions in your
+domain. It creates evidence-backed content drafts that address real audience
+needs with data and examples from community discussions.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/content-agent
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/content-agent/agents/content-agent.ts"
+  title="agents/content-agent.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── content-agent.ts       # Agent definition (model + config)
+```
+
+## Customization
+
+- **Add output formats.** Generate blog posts, threads, or newsletter sections.
+- **Swap the model.** Edit `agents/content-agent.ts`.

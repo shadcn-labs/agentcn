@@ -1,0 +1,11 @@
+{
+  "name": "sanity-docs-feedback",
+  "type": "registry:block",
+  "title": "Sanity Docs Feedback Agent",
+  "description": "Flue agent that reviews Sanity documentation for accuracy and suggests improvements.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/sanity-docs-feedback.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

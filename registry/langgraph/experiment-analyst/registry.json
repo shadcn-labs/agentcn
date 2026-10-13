@@ -1,0 +1,12 @@
+{
+  "name": "experiment-analyst",
+  "type": "registry:block",
+  "title": "Experiment Analyst Agent",
+  "description": "LangGraph agent that reads PostHog A/B experiment results and summarizes learnings.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

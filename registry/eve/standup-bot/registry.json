@@ -1,0 +1,12 @@
+{
+  "name": "standup-bot",
+  "type": "registry:block",
+  "title": "Standup Bot Agent",
+  "description": "Eve agent that collects standup updates from team members and creates a summary.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

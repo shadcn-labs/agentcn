@@ -1,0 +1,13 @@
+{
+  "name": "stripe-pulse",
+  "type": "registry:block",
+  "title": "Stripe Monitoring Agent",
+  "description": "Mastra agent that monitors Stripe account for revenue trends and anomalies.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

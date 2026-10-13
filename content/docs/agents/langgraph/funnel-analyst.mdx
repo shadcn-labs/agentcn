@@ -1,0 +1,78 @@
+---
+title: Funnel Analyst
+description: Builds funnels from PostHog data and finds conversion drop-offs.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="funnel-analyst" />
+
+<AgentPreview
+  agent="funnel-analyst"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Funnel Analyst** builds funnels from PostHog data and finds conversion drop-offs. It uses the PostHog CLI to interact with funnel and conversion data, helping you identify where users are dropping off in your conversion flows.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/funnel-analyst
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/funnel-analyst/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/funnel-analyst/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

@@ -1,0 +1,12 @@
+{
+  "name": "a11y-auditor",
+  "type": "registry:block",
+  "title": "Accessibility Auditor",
+  "description": "Eve agent that audits project pages for accessibility violations using axe-core and files GitHub issues for verified violations.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

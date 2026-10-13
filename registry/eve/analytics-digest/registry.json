@@ -1,0 +1,12 @@
+{
+  "name": "analytics-digest",
+  "type": "registry:block",
+  "title": "Analytics Digest",
+  "description": "Eve agent that pulls key event trends from PostHog and creates a weekly digest.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

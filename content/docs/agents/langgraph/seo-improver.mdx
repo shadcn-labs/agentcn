@@ -1,0 +1,78 @@
+---
+title: SEO Improver
+description: Analyzes website SEO and suggests improvements for better search engine rankings.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="seo-improver" />
+
+<AgentPreview
+  agent="seo-improver"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **SEO Improver** analyzes websites and provides actionable improvements for better search engine rankings. It checks meta tags, headings, content structure, internal linking, page speed, and mobile responsiveness, then provides clear, prioritized recommendations.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/seo-improver
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/seo-improver/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/seo-improver/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

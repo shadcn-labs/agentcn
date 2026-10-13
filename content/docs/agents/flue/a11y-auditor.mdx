@@ -1,0 +1,74 @@
+---
+title: Accessibility Auditor
+description: Audits project pages for accessibility violations using axe-core and files GitHub issues.
+---
+
+<DocsBaseSwitcher base="flue" agent="a11y-auditor" />
+
+<AgentPreview
+  agent="a11y-auditor"
+  framework="flue"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com/page",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Accessibility Auditor** scans project pages for WCAG violations using
+axe-core. For each verified issue it files a GitHub issue with a clear
+description, the relevant WCAG criterion, and reproduction steps. Reach for it
+to keep your UI compliant without manual audits.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/a11y-auditor
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/a11y-auditor/agents/a11y-auditor.ts"
+  title="agents/a11y-auditor.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── a11y-auditor.ts       # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/a11y-auditor.ts`.

@@ -1,0 +1,11 @@
+{
+  "name": "content-agent",
+  "type": "registry:block",
+  "title": "Content Agent",
+  "description": "Flue agent that researches audience conversations and creates evidence-backed content drafts.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/content-agent.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

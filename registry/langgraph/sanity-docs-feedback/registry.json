@@ -1,0 +1,12 @@
+{
+  "name": "sanity-docs-feedback",
+  "type": "registry:block",
+  "title": "Sanity Docs Feedback Agent",
+  "description": "LangGraph agent that reviews Sanity documentation for accuracy and suggests improvements.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

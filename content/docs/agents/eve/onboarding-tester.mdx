@@ -1,0 +1,78 @@
+---
+title: Onboarding Tester
+description: Test onboarding flows, identify usability issues, and validate user experience across different paths.
+---
+
+<DocsBaseSwitcher base="eve" agent="onboarding-tester" />
+
+<AgentPreview
+  agent="onboarding-tester"
+  framework="eve"
+  inputFields={[
+    {
+      name: "flow",
+      label: "Flow Name",
+      placeholder: "Sign up flow",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Onboarding Tester** is an agent that tests onboarding flows, identifies usability issues, and validates user experience across different paths. It simulates user interactions, tests edge cases, validates form submissions, and generates comprehensive test reports with improvement recommendations.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/onboarding-tester
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/onboarding-tester/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/onboarding-tester/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

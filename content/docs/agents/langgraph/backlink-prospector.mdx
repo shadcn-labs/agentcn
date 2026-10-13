@@ -1,0 +1,78 @@
+---
+title: Backlink Prospector
+description: Finds backlink opportunities where competitors have links but this project doesn't.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="backlink-prospector" />
+
+<AgentPreview
+  agent="backlink-prospector"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Backlink Prospector** identifies high-quality backlink opportunities by comparing competitor backlink profiles against your project. It finds sites linking to 2+ competitors but not your project, resource page link opportunities, guest post targets, and broken link reclamation opportunities. Results are ranked by domain authority and relevance.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/backlink-prospector
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/backlink-prospector/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/backlink-prospector/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

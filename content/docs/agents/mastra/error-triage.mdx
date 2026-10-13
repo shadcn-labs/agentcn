@@ -1,0 +1,79 @@
+---
+title: Error Triage
+description: Categorizes and prioritizes errors from logs and monitoring systems.
+---
+
+<DocsBaseSwitcher base="mastra" agent="error-triage" />
+
+<AgentPreview
+  agent="error-triage"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "error",
+      label: "Error Log",
+      placeholder: "TypeError: Cannot read property 'map' of undefined",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Error Triage Agent** analyzes error logs and stack traces, categorizing them by type, severity, and probable root cause. It groups related errors, identifies patterns, and recommends prioritization for engineering teams.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/error-triage
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/error-triage/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/error-triage/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

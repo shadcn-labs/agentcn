@@ -1,0 +1,74 @@
+---
+title: Backlink Prospector
+description: Finds backlink opportunities where competitors have links but you don't.
+---
+
+<DocsBaseSwitcher base="flue" agent="backlink-prospector" />
+
+<AgentPreview
+  agent="backlink-prospector"
+  framework="flue"
+  inputFields={[
+    {
+      name: "domain",
+      label: "Your domain",
+      placeholder: "example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Backlink Prospector** uses DataForSEO to find backlink opportunities where
+competitors have links but your project doesn't. It analyzes domain authority,
+relevance, and outreach potential, then produces a ranked prospector report with
+contact information where available.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/backlink-prospector
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/backlink-prospector/agents/backlink-prospector.ts"
+  title="agents/backlink-prospector.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── backlink-prospector.ts  # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/backlink-prospector.ts`.

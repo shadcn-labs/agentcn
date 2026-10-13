@@ -1,0 +1,11 @@
+{
+  "name": "dunning",
+  "type": "registry:block",
+  "title": "Dunning Triage",
+  "description": "Review failed Stripe payments and draft recovery actions.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/dunning.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

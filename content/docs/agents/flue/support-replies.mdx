@@ -1,0 +1,74 @@
+---
+title: Support Replies
+description: Reads customer inquiries and drafts clear, empathetic, and accurate replies.
+---
+
+<DocsBaseSwitcher base="flue" agent="support-replies" />
+
+<AgentPreview
+  agent="support-replies"
+  framework="flue"
+  inputFields={[
+    {
+      name: "inquiry",
+      label: "Customer inquiry",
+      placeholder: "I can't access my account after resetting my password",
+      type: "textarea",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Support Replies Agent** reads incoming customer inquiries from email or
+ticketing systems, understands the issue, and drafts clear, empathetic, and
+accurate replies. It references known docs and FAQs when available and maintains
+a professional, helpful tone.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/support-replies
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/support-replies/agents/support-replies.ts"
+  title="agents/support-replies.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── support-replies.ts     # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/support-replies.ts`.

@@ -1,0 +1,79 @@
+---
+title: Onboarding Tester
+description: Tests onboarding flows and identifies usability friction points.
+---
+
+<DocsBaseSwitcher base="mastra" agent="onboarding-tester" />
+
+<AgentPreview
+  agent="onboarding-tester"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "Onboarding URL",
+      placeholder: "https://app.example.com/onboarding",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Onboarding Tester Agent** simulates new user journeys through onboarding flows, identifying confusing steps, unnecessary friction, and areas where users might abandon. It generates improvement recommendations based on UX best practices.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/onboarding-tester
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/onboarding-tester/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/onboarding-tester/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

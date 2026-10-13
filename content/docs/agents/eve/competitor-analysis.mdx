@@ -1,0 +1,78 @@
+---
+title: Competitor Analysis
+description: Analyze competitor products, pricing, features, and market positioning to inform strategic decisions.
+---
+
+<DocsBaseSwitcher base="eve" agent="competitor-analysis" />
+
+<AgentPreview
+  agent="competitor-analysis"
+  framework="eve"
+  inputFields={[
+    {
+      name: "competitor",
+      label: "Competitor Name",
+      placeholder: "CompetitorX",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Competitor Analysis** is an agent that analyzes competitor products, pricing, features, and market positioning to inform strategic decisions. It scrapes competitor websites, gathers product data, compares feature sets, and generates comprehensive competitive intelligence reports.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/competitor-analysis
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/competitor-analysis/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/competitor-analysis/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

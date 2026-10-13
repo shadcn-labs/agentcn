@@ -1,0 +1,1 @@
+Generate release notes from merged PRs and commits

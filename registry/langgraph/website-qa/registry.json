@@ -1,0 +1,12 @@
+{
+  "name": "website-qa",
+  "type": "registry:block",
+  "title": "Website QA Agent",
+  "description": "LangGraph agent that tests website for broken links, errors, and quality issues.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

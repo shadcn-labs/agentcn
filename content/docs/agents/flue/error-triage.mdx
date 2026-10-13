@@ -1,0 +1,74 @@
+---
+title: Error Triage
+description: Pulls Sentry issues and drafts debugging reports with reproduction steps and fixes.
+---
+
+<DocsBaseSwitcher base="flue" agent="error-triage" />
+
+<AgentPreview
+  agent="error-triage"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Triage unresolved Sentry issues",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Error Triage Agent** pulls Sentry issues sorted by frequency and user
+impact. For each issue it summarizes the stack trace, affected users, and recent
+deployment context, then drafts GitHub issues with reproduction steps, likely
+root cause, and suggested fix.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/error-triage
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/error-triage/agents/error-triage.ts"
+  title="agents/error-triage.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── error-triage.ts        # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/error-triage.ts`.

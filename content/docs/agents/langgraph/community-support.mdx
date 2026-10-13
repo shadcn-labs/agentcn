@@ -1,0 +1,83 @@
+---
+title: Community Support
+description: Reads Discord messages and prepares support review drafts.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="community-support" />
+
+<AgentPreview
+  agent="community-support"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Community Support** agent helps maintainers respond to Discord support requests efficiently. It fetches recent Discord messages, classifies issue types (bug, feature request, question, feedback), assesses urgency based on user impact, drafts responses with troubleshooting steps, and flags messages needing immediate attention.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/community-support
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/community-support/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/community-support/instructions.md"
+  title="instructions.md"
+/>
+
+<ComponentSource
+  src="registry/langgraph/community-support/tools/read_messages.ts"
+  title="tools/read_messages.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/read_messages.ts
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

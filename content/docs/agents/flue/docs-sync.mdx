@@ -1,0 +1,76 @@
+---
+title: Docs Sync
+description: Keeps documentation current by identifying merged PRs that affect public APIs.
+---
+
+<DocsBaseSwitcher base="flue" agent="docs-sync" />
+
+<AgentPreview
+  agent="docs-sync"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Check for docs updates needed",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Docs Sync Agent** keeps documentation current with recently merged code. It
+uses the gh CLI to list merged PRs since the last docs update, identifies changes
+that affect public APIs or user-facing behavior, and drafts docs PRs with the
+necessary updates. PRs touching exported functions, CLI flags, or config schemas
+are flagged as high priority.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/docs-sync
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/docs-sync/agents/docs-sync.ts"
+  title="agents/docs-sync.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── docs-sync.ts           # Agent definition (model + config)
+```
+
+## Customization
+
+- **Filter by label.** Only process PRs with a `docs-needed` label.
+- **Swap the model.** Edit `agents/docs-sync.ts`.

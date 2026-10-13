@@ -25,7 +25,7 @@ export default function IndexPage() {
             <p className="max-w-2xl text-lg text-muted-foreground sm:text-xl">
               Ready to use, customizable AI agent recipes.
               <br className="hidden sm:block" />
-              Built on Eve, Flue, and Mastra. Distributed via shadcn.
+              Built on Eve, Flue, Mastra and LangGraph. Distributed via shadcn.
             </p>
 
             <AgentInstallTabs className="mt-4 w-full max-w-xl" />

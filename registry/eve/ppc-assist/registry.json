@@ -1,0 +1,12 @@
+{
+  "name": "ppc-assist",
+  "type": "registry:block",
+  "title": "PPC Advertising Assistant",
+  "description": "Eve agent that analyzes PPC campaign data and suggests optimizations",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

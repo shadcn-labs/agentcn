@@ -1,0 +1,75 @@
+---
+title: Standup Bot
+description: Collects standup updates via Slack or Discord and generates a clean team summary.
+---
+
+<DocsBaseSwitcher base="flue" agent="standup-bot" />
+
+<AgentPreview
+  agent="standup-bot"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Collect today's standup updates",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Standup Bot** collects standup updates from team members via Slack or
+Discord, parses them for key categories (what they did, what they're doing next,
+blockers), and generates a clean summary. Posts the summary back to the
+appropriate channel.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/standup-bot
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/standup-bot/agents/standup-bot.ts"
+  title="agents/standup-bot.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── standup-bot.ts         # Agent definition (model + config)
+```
+
+## Customization
+
+- **Add scheduling.** Wrap in a cron workflow to trigger at standup time.
+- **Swap the model.** Edit `agents/standup-bot.ts`.

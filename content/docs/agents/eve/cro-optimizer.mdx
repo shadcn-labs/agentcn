@@ -1,0 +1,78 @@
+---
+title: CRO Optimizer
+description: Optimize conversion rates by analyzing user behavior, identifying friction points, and suggesting A/B test variations.
+---
+
+<DocsBaseSwitcher base="eve" agent="cro-optimizer" />
+
+<AgentPreview
+  agent="cro-optimizer"
+  framework="eve"
+  inputFields={[
+    {
+      name: "page",
+      label: "Page URL",
+      placeholder: "https://example.com/checkout",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**CRO Optimizer** is an agent that optimizes conversion rates by analyzing user behavior, identifying friction points, and suggesting A/B test variations. It reviews heatmaps, session recordings, and analytics data to recommend specific changes that improve conversion metrics.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/cro-optimizer
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/cro-optimizer/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/cro-optimizer/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

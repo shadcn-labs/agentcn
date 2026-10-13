@@ -1,0 +1,13 @@
+{
+  "name": "website-qa",
+  "type": "registry:block",
+  "title": "Website QA Agent",
+  "description": "Mastra agent that tests website for broken links, errors, and quality issues.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

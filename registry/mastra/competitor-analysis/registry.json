@@ -1,0 +1,12 @@
+{
+  "name": "competitor-analysis",
+  "type": "registry:block",
+  "title": "Competitor Analysis",
+  "description": "Mastra agent that watches competitor pages for material changes and alerts Slack.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core"]
+}

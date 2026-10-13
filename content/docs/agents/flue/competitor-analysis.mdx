@@ -1,0 +1,76 @@
+---
+title: Competitor Analysis
+description: Monitors competitor pages for material changes and sends strategic alerts to Slack.
+---
+
+<DocsBaseSwitcher base="flue" agent="competitor-analysis" />
+
+<AgentPreview
+  agent="competitor-analysis"
+  framework="flue"
+  inputFields={[
+    {
+      name: "competitor",
+      label: "Competitor URL",
+      placeholder: "https://competitor.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Competitor Analysis Agent** watches competitor pages for material changes —
+pricing updates, feature launches, messaging shifts, and design changes. When a
+significant change is detected, it sends a concise alert to Slack with a summary
+and strategic implications.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/competitor-analysis
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/competitor-analysis/agents/competitor-analysis.ts"
+  title="agents/competitor-analysis.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── competitor-analysis.ts  # Agent definition (model + config)
+```
+
+## Customization
+
+- **Schedule monitoring.** Wrap in a cron workflow to run periodically.
+- **Add Slack posting.** Integrate a Slack tool for real-time alerts.
+- **Swap the model.** Edit `agents/competitor-analysis.ts`.

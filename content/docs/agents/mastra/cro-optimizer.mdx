@@ -1,0 +1,79 @@
+---
+title: CRO Optimizer
+description: Analyzes conversion funnels and suggests optimization improvements.
+---
+
+<DocsBaseSwitcher base="mastra" agent="cro-optimizer" />
+
+<AgentPreview
+  agent="cro-optimizer"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com/pricing",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **CRO Optimizer Agent** examines landing pages and conversion flows, identifying friction points, unclear CTAs, and trust signal gaps. It provides data-informed recommendations to improve conversion rates based on UX best practices and psychological principles.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/cro-optimizer
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/cro-optimizer/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/cro-optimizer/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

@@ -1,0 +1,78 @@
+---
+title: Content Agent
+description: Researches audience conversations and creates evidence-backed content drafts.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="content-agent" />
+
+<AgentPreview
+  agent="content-agent"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Content Agent** creates evidence-backed content based on real audience conversations. It researches what your target audience is discussing across forums, social media, and community channels, then drafts content grounded in real pain points with specific examples and quotes. Suggests multiple angles based on different audience segments.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/content-agent
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/content-agent/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/content-agent/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

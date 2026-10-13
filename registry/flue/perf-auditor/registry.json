@@ -1,0 +1,12 @@
+{
+  "name": "perf-auditor",
+  "type": "registry:block",
+  "title": "Performance Auditor Agent",
+  "description": "Flue agent that measures URL performance and files issues for budget violations.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/perf-auditor.ts", "type": "registry:file" },
+    { "path": "tools/run-pagespeed.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

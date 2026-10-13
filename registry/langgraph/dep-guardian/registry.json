@@ -1,0 +1,12 @@
+{
+  "name": "dep-guardian",
+  "type": "registry:block",
+  "title": "Dependency Guardian Agent",
+  "description": "LangGraph agent that triages dependency update PRs and security alerts, opening upgrade PRs for critical fixes.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

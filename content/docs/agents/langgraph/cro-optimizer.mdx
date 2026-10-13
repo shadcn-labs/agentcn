@@ -1,0 +1,78 @@
+---
+title: CRO Optimizer
+description: Finds conversion drop-offs and files experiment hypotheses.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="cro-optimizer" />
+
+<AgentPreview
+  agent="cro-optimizer"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **CRO Optimizer** identifies drop-offs in user funnels and proposes data-backed experiments. It quantifies the impact of each drop-off point, analyzes possible causes using session data, proposes specific testable experiment hypotheses, and estimates expected lift based on industry benchmarks. Creates structured experiment briefs ready for execution.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/cro-optimizer
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/cro-optimizer/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/cro-optimizer/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

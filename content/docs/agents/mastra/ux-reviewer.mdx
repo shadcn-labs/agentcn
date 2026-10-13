@@ -1,0 +1,79 @@
+---
+title: UX Reviewer
+description: Reviews UI designs and code for usability and accessibility issues.
+---
+
+<DocsBaseSwitcher base="mastra" agent="ux-reviewer" />
+
+<AgentPreview
+  agent="ux-reviewer"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "url",
+      label: "Page URL",
+      placeholder: "https://example.com/dashboard",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **UX Reviewer Agent** evaluates user interfaces against usability heuristics, design system consistency, and accessibility standards. It provides actionable feedback with screenshots and specific improvement suggestions.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/ux-reviewer
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/ux-reviewer/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/ux-reviewer/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

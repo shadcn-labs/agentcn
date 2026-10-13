@@ -1,0 +1,12 @@
+{
+  "name": "dunning",
+  "type": "registry:block",
+  "title": "Dunning Triage Agent",
+  "description": "LangGraph agent that reviews failed Stripe payments and drafts recovery actions.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

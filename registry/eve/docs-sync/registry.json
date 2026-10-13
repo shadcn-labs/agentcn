@@ -1,0 +1,12 @@
+{
+  "name": "docs-sync",
+  "type": "registry:block",
+  "title": "Documentation Sync",
+  "description": "Eve agent that keeps documentation current with recently merged code.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

@@ -1,0 +1,79 @@
+---
+title: Backlink Prospector
+description: Identifies and qualifies potential backlink opportunities for SEO campaigns.
+---
+
+<DocsBaseSwitcher base="mastra" agent="backlink-prospector" />
+
+<AgentPreview
+  agent="backlink-prospector"
+  framework="mastra"
+  inputFields={[
+    {
+      name: "domain",
+      label: "Target Domain",
+      placeholder: "example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Backlink Prospector Agent** discovers potential backlink sources by analyzing competitor link profiles, industry directories, and relevant content publishers. It qualifies prospects based on domain authority, relevance, and link placement likelihood.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/mastra/backlink-prospector
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @mastra/core @mastra/memory
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/mastra/backlink-prospector/config.ts"
+  title="config.ts"
+/>
+
+<ComponentSource
+  src="registry/mastra/backlink-prospector/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── config.ts             # Agent configuration (model + memory)
+├── instructions.md       # Agent instructions
+└── memory.ts             # Memory configuration
+```
+
+## Customization
+
+- **Swap the model.** Edit `config.ts`.
+- **Modify instructions.** Edit `instructions.md`.
+- **Adjust memory.** Edit `memory.ts`.

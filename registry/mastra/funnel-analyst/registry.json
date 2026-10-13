@@ -1,0 +1,13 @@
+{
+  "name": "funnel-analyst",
+  "type": "registry:block",
+  "title": "Funnel Analyst",
+  "description": "Builds funnels from PostHog data and finds conversion drop-offs.",
+  "framework": "mastra",
+  "files": [
+    { "path": "config.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" },
+    { "path": "memory.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@mastra/core", "@mastra/memory"]
+}

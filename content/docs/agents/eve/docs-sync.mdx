@@ -1,0 +1,78 @@
+---
+title: Documentation Sync
+description: Synchronize documentation across multiple sources, identify outdated content, and ensure consistency.
+---
+
+<DocsBaseSwitcher base="eve" agent="docs-sync" />
+
+<AgentPreview
+  agent="docs-sync"
+  framework="eve"
+  inputFields={[
+    {
+      name: "source",
+      label: "Documentation Source",
+      placeholder: "https://docs.example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Documentation Sync** is an agent that synchronizes documentation across multiple sources, identifies outdated content, and ensures consistency. It compares documentation versions, detects breaking changes, updates API references, and generates change logs for documentation updates.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/docs-sync
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/docs-sync/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/docs-sync/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

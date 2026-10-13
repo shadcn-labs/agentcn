@@ -1,0 +1,11 @@
+{
+  "name": "competitor-analysis",
+  "type": "registry:block",
+  "title": "Competitor Analysis",
+  "description": "Flue agent that watches competitor pages for material changes and alerts Slack.",
+  "framework": "flue",
+  "files": [
+    { "path": "agents/competitor-analysis.ts", "type": "registry:file" }
+  ],
+  "dependencies": ["@flue/runtime"]
+}

@@ -1,0 +1,74 @@
+---
+title: Onboarding Coach
+description: Finds stuck users before activation and drafts personalized nudge messages.
+---
+
+<DocsBaseSwitcher base="flue" agent="onboarding-coach" />
+
+<AgentPreview
+  agent="onboarding-coach"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Find users stuck before activation",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Onboarding Coach** analyzes user behavior data from PostHog to identify
+drop-off points, then crafts personalized nudge messages that address specific
+friction points. Messages are concise and action-oriented to help users progress
+toward activation.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/onboarding-coach
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/onboarding-coach/agents/onboarding-coach.ts"
+  title="agents/onboarding-coach.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── onboarding-coach.ts    # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/onboarding-coach.ts`.

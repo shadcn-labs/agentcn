@@ -1,0 +1,12 @@
+{
+  "name": "support-replies",
+  "type": "registry:block",
+  "title": "Support Replies Agent",
+  "description": "Eve agent that drafts support replies based on customer inquiries.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

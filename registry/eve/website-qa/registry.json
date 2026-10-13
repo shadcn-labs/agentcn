@@ -1,0 +1,12 @@
+{
+  "name": "website-qa",
+  "type": "registry:block",
+  "title": "Website QA Agent",
+  "description": "Eve agent that tests website for broken links, errors, and quality issues.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}

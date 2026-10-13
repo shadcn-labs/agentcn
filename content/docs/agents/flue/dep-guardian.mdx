@@ -1,0 +1,75 @@
+---
+title: Dependency Guardian
+description: Triage dependency update PRs and security alerts with risk evaluation and recommendations.
+---
+
+<DocsBaseSwitcher base="flue" agent="dep-guardian" />
+
+<AgentPreview
+  agent="dep-guardian"
+  framework="flue"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Review open dependency PRs",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Dependency Guardian** triages dependency update PRs and security alerts. It
+uses the gh CLI to list open Dependabot/Renovate PRs, evaluates risk by checking
+changelogs and breaking changes, and opens upgrade PRs for critical security
+fixes. Each PR is summarized with a recommendation: merge, review, or hold.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/dep-guardian
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/dep-guardian/agents/dep-guardian.ts"
+  title="agents/dep-guardian.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── dep-guardian.ts         # Agent definition (model + config)
+```
+
+## Customization
+
+- **Prioritize by severity.** Adjust the risk evaluation logic in the agent instructions.
+- **Swap the model.** Edit `agents/dep-guardian.ts`.

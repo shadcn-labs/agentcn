@@ -1,0 +1,78 @@
+---
+title: Accessibility Auditor
+description: Audit project pages for WCAG violations using axe-core via the sandbox CLI.
+---
+
+<DocsBaseSwitcher base="eve" agent="a11y-auditor" />
+
+<AgentPreview
+  agent="a11y-auditor"
+  framework="eve"
+  inputFields={[
+    {
+      name: "url",
+      label: "URL",
+      placeholder: "https://example.com",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+**Accessibility Auditor** is an agent that audits project pages for WCAG violations using axe-core via the sandbox CLI. It receives URLs to audit, runs axe against each page, de-duplicates and groups violations by rule ID and impact level, and files GitHub issues for verified violations.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/eve/a11y-auditor
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install eve
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/eve/a11y-auditor/agent/agent.ts"
+  title="agent/agent.ts"
+/>
+
+<ComponentSource
+  src="registry/eve/a11y-auditor/agent/instructions.md"
+  title="agent/instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agent/
+├── agent.ts             # Agent definition (model + config)
+└── instructions.md      # Agent instructions
+```
+
+## Customization
+
+- **Swap the model.** Edit `agent/agent.ts`.
+- **Modify instructions.** Edit `agent/instructions.md`.

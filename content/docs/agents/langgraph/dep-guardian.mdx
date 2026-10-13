@@ -1,0 +1,78 @@
+---
+title: Dep Guardian
+description: Triages dependency update PRs and security alerts, opening upgrade PRs for critical fixes.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="dep-guardian" />
+
+<AgentPreview
+  agent="dep-guardian"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Dep Guardian** triages dependency update PRs and security alerts, and opens upgrade PRs for critical fixes. It uses the GitHub CLI to interact with GitHub for PR triage and management, helping keep your project's dependencies secure and up to date.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/dep-guardian
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/dep-guardian/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/dep-guardian/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

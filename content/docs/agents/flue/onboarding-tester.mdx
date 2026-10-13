@@ -1,0 +1,74 @@
+---
+title: Onboarding Tester
+description: Tests if a new developer can get the repo running by following the documentation.
+---
+
+<DocsBaseSwitcher base="flue" agent="onboarding-tester" />
+
+<AgentPreview
+  agent="onboarding-tester"
+  framework="flue"
+  inputFields={[
+    {
+      name: "repo",
+      label: "Repository",
+      placeholder: "https://github.com/org/repo",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Onboarding Tester** follows setup instructions step by step, documents any
+issues encountered, and suggests improvements to the onboarding experience. It
+uses the browser to navigate documentation and the GitHub CLI to interact with
+the repository.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/flue/onboarding-tester
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @flue/runtime
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/flue/onboarding-tester/agents/onboarding-tester.ts"
+  title="agents/onboarding-tester.ts"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+agents/
+└── onboarding-tester.ts   # Agent definition (model + config)
+```
+
+## Customization
+
+- **Swap the model.** Edit `agents/onboarding-tester.ts`.

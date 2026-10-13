@@ -1,0 +1,12 @@
+{
+  "name": "content-agent",
+  "type": "registry:block",
+  "title": "Content Creation Agent",
+  "description": "LangGraph agent that researches audience conversations and creates evidence-backed content drafts.",
+  "framework": "langgraph",
+  "files": [
+    { "path": "index.ts", "type": "registry:file" },
+    { "path": "instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["@dawn-ai/sdk"]
+}

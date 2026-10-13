@@ -1,0 +1,78 @@
+---
+title: Onboarding Tester
+description: Tests if a new developer can get the repo running by following docs.
+---
+
+<DocsBaseSwitcher base="langgraph" agent="onboarding-tester" />
+
+<AgentPreview
+  agent="onboarding-tester"
+  framework="langgraph"
+  inputFields={[
+    {
+      name: "input",
+      label: "Input",
+      placeholder: "Enter input...",
+      type: "text",
+    },
+  ]}
+/>
+
+## Summary
+
+The **Onboarding Tester** validates whether documentation is clear and complete for new developers. It uses a browser agent to navigate through documentation and the GitHub CLI to test repository setup steps, ensuring a smooth onboarding experience.
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @agentcn/langgraph/onboarding-tester
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install @dawn-ai/sdk
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource
+  src="registry/langgraph/onboarding-tester/index.ts"
+  title="index.ts"
+/>
+
+<ComponentSource
+  src="registry/langgraph/onboarding-tester/instructions.md"
+  title="instructions.md"
+/>
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+</CodeTabs>
+
+## Composition
+
+```text
+├── index.ts              # Agent definition (model + config)
+├── instructions.md       # Agent instructions
+└── tools/                # Agent tools (if any)
+```
+
+## Customization
+
+- **Swap the model.** Edit `index.ts`.
+- **Modify instructions.** Edit `instructions.md`.

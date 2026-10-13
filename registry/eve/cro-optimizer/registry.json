@@ -1,0 +1,12 @@
+{
+  "name": "cro-optimizer",
+  "type": "registry:block",
+  "title": "CRO Optimizer",
+  "description": "Eve agent that finds conversion drop-offs and files experiment hypotheses.",
+  "framework": "eve",
+  "files": [
+    { "path": "agent/agent.ts", "type": "registry:file" },
+    { "path": "agent/instructions.md", "type": "registry:file" }
+  ],
+  "dependencies": ["eve"]
+}
