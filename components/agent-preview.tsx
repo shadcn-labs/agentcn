@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 
+import { AgentPreviewActions } from "@/components/agent-preview-actions";
 import { CopyButton } from "@/components/copy-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -304,6 +305,17 @@ export const AgentPreview = ({
 
   return (
     <div className="not-prose my-6 overflow-hidden rounded-xl border bg-card">
+      <div className="flex h-10 items-center justify-between border-b bg-muted/30 px-3">
+        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+          <span
+            aria-hidden="true"
+            className="size-1.5 rounded-full bg-emerald-500"
+          />
+          Live preview
+        </div>
+        <AgentPreviewActions agent={agent} framework={framework} />
+      </div>
+
       <div className="flex flex-col gap-4 border-b p-4">
         <div className="flex flex-col gap-3">
           {inputFields.map((field) => (
